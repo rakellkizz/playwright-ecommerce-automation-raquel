@@ -1,11 +1,6 @@
 // ====================================================================================
-// 🎭 Arquivo de Configuração Playwright – Projeto Raquel
-// ------------------------------------------------------------------------------------
-// Aqui definimos:
-// - URL base
-// - Browsers
-// - Configurações mobile e desktop
-// - Tempo limite
+// 🎭 Configuração do Playwright – Projeto Raquel
+// E-commerce oficial para automação: https://www.saucedemo.com/
 // ====================================================================================
 
 import { defineConfig, devices } from '@playwright/test';
@@ -14,7 +9,7 @@ export default defineConfig({
   testDir: './tests',
 
   use: {
-    baseURL: 'https://demo.playwright.dev/ecommerce',
+    baseURL: 'https://www.saucedemo.com/',
     headless: true,
     screenshot: 'only-on-failure',
     video: 'on-first-retry',

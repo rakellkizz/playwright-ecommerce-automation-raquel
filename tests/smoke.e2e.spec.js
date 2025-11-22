@@ -1,38 +1,36 @@
+// ====================================================================================
+// 🧪 Smoke Test – SauceDemo (E-commerce Oficial para Automação)
+// ====================================================================================
+
 import { test, expect } from '@playwright/test';
 
-// ====================================================================================
-// 🧪 Smoke Tests – Playwright E-commerce Demo
-// Oficial: https://demo.playwright.dev/ecommerce
-// ====================================================================================
+// Dados de login válidos (SauceDemo fornece estes usuários oficiais)
+const USER = "standard_user";
+const PASSWORD = "secret_sauce";
 
-// Selectors reais da nova interface
-const searchInput = 'input[placeholder="Search products"]';
-const productCard = '.product-card';
-const productTitle = '.product-details h1';
-
-test("Home carrega com sucesso", async ({ page }) => {
+test("Login funciona com sucesso", async ({ page }) => {
+  // 1. Acessa a página inicial
   await page.goto("/");
 
-  // Verifica titulo da página
-  await expect(page).toHaveTitle(/Playwright Demo/);
+  // 2. Preenche usuário e senha
+  await page.fill("#user-name", USER);
+  await page.fill("#password", PASSWORD);
 
-  // Verifica que tem produtos na home
-  await expect(page.locator(productCard).first()).toBeVisible();
+  // 3. Clica no botão de login
+  await page.click("#login-button");
+
+  // 4. Valida que caiu na página de inventário (produtos)
+  await expect(page).toHaveURL(/inventory/);
 });
 
-test("Busca um produto e abre a página de detalhes", async ({ page }) => {
+test("Home lista produtos com sucesso", async ({ page }) => {
+  // 1. Login
   await page.goto("/");
+  await page.fill("#user-name", USER);
+  await page.fill("#password", PASSWORD);
+  await page.click("#login-button");
 
-  // Digitar "laptop"
-  await page.fill(searchInput, "laptop");
-  await page.keyboard.press("Enter");
-
-  // Deve aparecer resultados
-  await expect(page.locator(productCard).first()).toBeVisible();
-
-  // Clicar no primeiro produto
-  await page.locator(productCard).first().click();
-
-  // Verificar que abriu a página de produto
-  await expect(page.locator(productTitle)).toBeVisible();
+  // 2. Verifica que existe pelo menos 1 produto
+  const firstProduct = page.locator(".inventory_item").first();
+  await expect(firstProduct).toBeVisible();
 });
