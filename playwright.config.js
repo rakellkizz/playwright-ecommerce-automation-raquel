@@ -13,15 +13,13 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
 
-  // 🌐 URL base usada pelo page.goto("/")
   use: {
-    baseURL: 'https://demo.playwright.dev/',
+    baseURL: 'https://demo.playwright.dev/ecommerce',
     headless: true,
     screenshot: 'only-on-failure',
     video: 'on-first-retry',
   },
 
-  // 🧪 Executar em dois perfis: Desktop + Mobile
   projects: [
     {
       name: 'desktop-chrome',

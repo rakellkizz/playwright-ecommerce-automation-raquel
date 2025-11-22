@@ -1,48 +1,38 @@
-// ====================================================================================
-// 🧪 Testes Smoke – Playwright Demo Store
-// ------------------------------------------------------------------------------------
-// Este arquivo valida as funcionalidades básicas da loja demo oficial:
-// - Home
-// - Busca
-// - Página de produto
-// ====================================================================================
-
 import { test, expect } from '@playwright/test';
 
-// Selectors da página
-const searchInput = '#search-input';
-const productCard = '.card';
-// Elemento específico da página de produto
-const productTitle = 'h1';
+// ====================================================================================
+// 🧪 Smoke Tests – Playwright E-commerce Demo
+// Oficial: https://demo.playwright.dev/ecommerce
+// ====================================================================================
 
-test("Módulo 1 – Home carrega com sucesso", async ({ page }) => {
-  // 1. Vai para a home definida no baseURL
+// Selectors reais da nova interface
+const searchInput = 'input[placeholder="Search products"]';
+const productCard = '.product-card';
+const productTitle = '.product-details h1';
+
+test("Home carrega com sucesso", async ({ page }) => {
   await page.goto("/");
 
-  // 2. Valida que o título não está vazio
-  const title = await page.title();
-  expect(title).not.toBe("");
+  // Verifica titulo da página
+  await expect(page).toHaveTitle(/Playwright Demo/);
 
-  // 3. Valida que existe ao menos um produto na home
+  // Verifica que tem produtos na home
   await expect(page.locator(productCard).first()).toBeVisible();
 });
 
-test("Módulo 1 – Busca produto e abre página de produto", async ({ page }) => {
-  // 1. Vai para a home
+test("Busca um produto e abre a página de detalhes", async ({ page }) => {
   await page.goto("/");
 
-  // 2. Digita "laptop" no campo de busca
+  // Digitar "laptop"
   await page.fill(searchInput, "laptop");
-
-  // 3. Pressiona Enter
   await page.keyboard.press("Enter");
 
-  // 4. Valida que apareceu pelo menos 1 resultado
+  // Deve aparecer resultados
   await expect(page.locator(productCard).first()).toBeVisible();
 
-  // 5. Clica no primeiro produto
+  // Clicar no primeiro produto
   await page.locator(productCard).first().click();
 
-  // 6. Valida que a página de produto abriu
+  // Verificar que abriu a página de produto
   await expect(page.locator(productTitle)).toBeVisible();
 });
