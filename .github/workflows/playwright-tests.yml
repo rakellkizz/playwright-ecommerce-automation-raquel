@@ -57,7 +57,7 @@ jobs:
           retention-days: 7
 
   publish-allure:
-    name: Generate and Publish Allure Report
+    name: Generate & Publish Allure Report
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -72,14 +72,25 @@ jobs:
           name: allure-results
           path: allure-results
 
-      - name: Generate Allure Report
-        uses: simple-elf/allure-action@v1.6
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          results: allure-results
-          report: allure-report
-          keep_history: true
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Publish Allure report to GitHub Pages
+      - name: Download Allure CLI
+        run: |
+          wget https://github.com/allure-framework/allure2/releases/latest/download/allure-2.27.0.zip -O allure.zip
+          unzip allure.zip -d allure-cli
+          sudo mv allure-cli/allure-2.27.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+
+      - name: Generate Allure Report
+        run: |
+          allure generate allure-results --clean
+          cp -r allure-report ./allure-report
+
+      - name: Deploy Allure report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
