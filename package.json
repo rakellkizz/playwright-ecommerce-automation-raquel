@@ -13,6 +13,6 @@
   "author": "Raquel G. de Souza",
   "license": "MIT",
   "devDependencies": {
-    "@playwright/test": "^1.49.0"
+    "@playwright/test": "^1.56.1"
   }
 }
