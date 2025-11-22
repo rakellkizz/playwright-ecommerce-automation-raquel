@@ -11,52 +11,53 @@
 
 name: Run Playwright Tests
 
-# 🔄 Quando a pipeline será executada:
 on:
-  push:            # Sempre que enviar código
+  push:
     branches: [ "main" ]
-  pull_request:    # E quando abrir pull request
+  pull_request:
 
 jobs:
   test:
-    name: Playwright E2E Tests
-    runs-on: ubuntu-latest   # 💻 Sistema Linux mais rápido e leve
+    runs-on: ubuntu-latest
 
     steps:
       # 📥 1. Baixar o código do repositório
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 🟢 2. Configurar versão do Node.js
-      - name: Set up Node.js
+      # 🟢 2. Configurar Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18   # Versão recomendada para Playwright
+          node-version: 18
 
-      # 📦 3. Instalar dependências NPM
+      # 📦 3. Instalar dependências do projeto
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      # 🌐 4. Instalar navegadores Playwright (Chromium, Firefox, WebKit)
+      # 🧩 4. Instalar Playwright (método correto)
+      # Este comando é NECESSÁRIO antes de usar --with-deps
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install
 
-      # 🚀 5. Rodar testes Playwright com relatório HTML
+      # 🔧 5. Instalar dependências extras do Linux (libs obrigatórias)
+      - name: Install Linux dependencies
+        run: sudo npx playwright install-deps
+
+      # 🚀 6. Executar os testes com relatório
       - name: Run Playwright tests
         run: npx playwright test --reporter=html
 
-      # 📤 6. Salvar relatório HTML como artifact
+      # 📤 7. Salvar relatório
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report
-          retention-days: 7   # Guarda por 7 dias
 
-      # 📸 7. Salvar screenshots e vídeos
+      # 📸 8. Upload screenshots e vídeos
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         with:
           name: test-artifacts
           path: test-results
-          retention-days: 7
