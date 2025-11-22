@@ -29,7 +29,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install
 
-      - name: Install Playwright Linux deps
+      - name: Install Linux browser deps
         run: sudo npx playwright install-deps
 
       - name: Run Playwright tests
@@ -57,7 +57,7 @@ jobs:
           retention-days: 7
 
   publish-allure:
-    name: Generate and Publish Allure Report
+    name: Generate & Publish Allure Report
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -66,20 +66,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download Allure results
+      - name: Download allure-results
         uses: actions/download-artifact@v4
         with:
           name: allure-results
           path: allure-results
 
-      - name: Generate Allure Report
-        uses: simple-elf/allure-action@v1.6
+      # Instalar Java (obrigatório)
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          results: allure-results
-          report: allure-report
-          keep_history: true
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Publish Allure report to GitHub Pages
+      # Instalar Allure CLI
+      - name: Install Allure CLI
+        run: |
+          sudo apt-add-repository ppa:qameta/allure -y
+          sudo apt-get update
+          sudo apt-get install allure -y
+
+      # Gerar relatório
+      - name: Generate Allure Report
+        run: |
+          allure generate allure-results --clean
+          mv allure-report ./allure-report
+
+      # Publicar no GitHub Pages
+      - name: Deploy Allure report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
