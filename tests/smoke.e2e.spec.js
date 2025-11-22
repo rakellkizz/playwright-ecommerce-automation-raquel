@@ -1,86 +1,48 @@
-// tests/smoke.e2e.spec.js
-// 💜 Módulo 1 – Smoke Test Web + Msite
-// Objetivo: garantir que o fluxo básico do usuário funciona:
-//
-// 1. Abrir a home do site
-// 2. Verificar se carregou sem erro
-// 3. Buscar um produto (termo configurável)
-// 4. Confirmar que há resultados de busca
-// 5. Abrir a página do primeiro produto
-//
-// ⚠ IMPORTANTE: NESTE MÓDULO NÃO FINALIZAMOS COMPRA.
-// NÃO chegamos em "comprar", "finalizar pedido" etc.
-// É um teste seguro, de navegação e experiência.
+// ====================================================================================
+// 🧪 Testes Smoke – Playwright Demo Store
+// ------------------------------------------------------------------------------------
+// Este arquivo valida as funcionalidades básicas da loja demo oficial:
+// - Home
+// - Busca
+// - Página de produto
+// ====================================================================================
 
-import { test, expect } from "@playwright/test";
-import { siteConfig } from "../config/siteConfig.js";
+import { test, expect } from '@playwright/test';
 
-const {
-  defaultSearchTerm,
-  selectors: { searchInput, searchButton, searchResultItem, firstProductLink }
-} = siteConfig;
+// Selectors da página
+const searchInput = '#search-input';
+const productCard = '.card';
+// Elemento específico da página de produto
+const productTitle = 'h1';
 
-// 🔹 Helper: pequena espera visual opcional (pode tirar depois)
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// 🧪 Teste 1 – Home carrega corretamente (Desktop + Mobile)
-test("Módulo 1 – Home carrega com sucesso (Web + Msite)", async ({ page }) => {
-  // 1. Acessa a home usando baseURL do config
+test("Módulo 1 – Home carrega com sucesso", async ({ page }) => {
+  // 1. Vai para a home definida no baseURL
   await page.goto("/");
 
-  // 2. Valida que o título da página não está vazio
+  // 2. Valida que o título não está vazio
   const title = await page.title();
-  console.log("Título da página:", title);
-  await expect(title).not.toEqual("");
+  expect(title).not.toBe("");
 
-  // 3. Verifica se algum elemento de navegação está presente (header, menu, etc.)
-  const hasHeader = await page.locator("header, nav").first().isVisible().catch(() => false);
-
-  expect(hasHeader).toBeTruthy();
+  // 3. Valida que existe ao menos um produto na home
+  await expect(page.locator(productCard).first()).toBeVisible();
 });
 
-// 🧪 Teste 2 – Busca produto e abre página de produto
 test("Módulo 1 – Busca produto e abre página de produto", async ({ page }) => {
-  // 1. Acessa a home
+  // 1. Vai para a home
   await page.goto("/");
 
-  // 2. Localiza campo de busca
-  const searchInputLocator = page.locator(searchInput).first();
+  // 2. Digita "laptop" no campo de busca
+  await page.fill(searchInput, "laptop");
 
-  await expect(searchInputLocator).toBeVisible();
-  await searchInputLocator.fill(defaultSearchTerm);
+  // 3. Pressiona Enter
+  await page.keyboard.press("Enter");
 
-  // 3. Dispara a busca
-  if (searchButton) {
-    const searchButtonLocator = page.locator(searchButton).first();
-    if (await searchButtonLocator.isVisible().catch(() => false)) {
-      await searchButtonLocator.click();
-    } else {
-      // Se botão não existir ou não aparecer, manda Enter
-      await page.keyboard.press("Enter");
-    }
-  } else {
-    // fallback: só Enter
-    await page.keyboard.press("Enter");
-  }
+  // 4. Valida que apareceu pelo menos 1 resultado
+  await expect(page.locator(productCard).first()).toBeVisible();
 
-  // 4. Aguarda resultados aparecerem
-  const results = page.locator(searchResultItem).first();
-  await expect(results).toBeVisible();
+  // 5. Clica no primeiro produto
+  await page.locator(productCard).first().click();
 
-  // 5. Abre o primeiro produto
-  const firstProduct = page.locator(firstProductLink).first();
-  await expect(firstProduct).toBeVisible();
-
-  // Scrollzinho suave antes de clicar (mais "humano")
-  await firstProduct.scrollIntoViewIfNeeded();
-  await wait(500);
-
-  await firstProduct.click();
-
-  // 6. Valida que a página de produto carregou (tem título, ou botão de comprar, etc.)
-  const productTitle = page.locator("h1, [data-testid*='product-name'], .product-title").first();
-  await expect(productTitle).toBeVisible();
-
-  // Aqui NÃO clicamos em "comprar". É só validação de navegação.
+  // 6. Valida que a página de produto abriu
+  await expect(page.locator(productTitle)).toBeVisible();
 });

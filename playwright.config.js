@@ -1,47 +1,35 @@
-// playwright.config.js
-// ⚙️ Configuração do Playwright Test
-// Aqui definimos 2 projetos:
-//  - desktop-chrome → simula navegador desktop
-//  - mobile-chrome  → simula navegador mobile (msite)
+// ====================================================================================
+// 🎭 Arquivo de Configuração Playwright – Projeto Raquel
+// ------------------------------------------------------------------------------------
+// Aqui definimos:
+// - URL base
+// - Browsers
+// - Configurações mobile e desktop
+// - Tempo limite
+// ====================================================================================
 
-import { defineConfig, devices } from "@playwright/test";
-import { siteConfig } from "./config/siteConfig.js";
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  // 📁 Onde ficam os testes
-  testDir: "./tests",
+  testDir: './tests',
 
-  // ⏱️ Tempo máximo por teste (ajustável)
-  timeout: 60 * 1000,
-
-  // 🔁 Repetir testes flaky automaticamente (0 = desativado)
-  retries: 0,
-
-  // 🌐 URL base do site (vem do config central)
+  // 🌐 URL base usada pelo page.goto("/")
   use: {
-    baseURL: siteConfig.baseURL,
-    // Screenshot em caso de erro (útil pra portfólio)
-    screenshot: "only-on-failure",
-    // Salvar trace em falhas
-    trace: "on-first-retry"
+    baseURL: 'https://demo.playwright.dev/',
+    headless: true,
+    screenshot: 'only-on-failure',
+    video: 'on-first-retry',
   },
 
-  // 📊 Relatório em HTML
-  reporter: [["html", { outputFolder: "playwright-report" }]],
-
-  // 🖥️ + 📱 Projetos (desktop e mobile)
+  // 🧪 Executar em dois perfis: Desktop + Mobile
   projects: [
     {
-      name: "desktop-chrome",
-      use: {
-        ...devices["Desktop Chrome"]
-      }
+      name: 'desktop-chrome',
+      use: { ...devices['Desktop Chrome'] },
     },
     {
-      name: "mobile-chrome",
-      use: {
-        ...devices["Pixel 7"]   // emula Chrome mobile (msite)
-      }
-    }
-  ]
+      name: 'mobile-chrome',
+      use: { ...devices['Pixel 5'] },
+    },
+  ],
 });
