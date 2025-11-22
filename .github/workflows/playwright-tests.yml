@@ -1,18 +1,5 @@
 # ====================================================================================
 # 🧪 CI Playwright + Allure – Projeto Raquel
-# ------------------------------------------------------------------------------------
-# Job 1: test
-#   - Instala Node + deps
-#   - Instala Playwright + deps Linux
-#   - Roda testes
-#   - Faz upload de:
-#       • Relatório HTML do Playwright
-#       • test-results (vídeos, screenshots, traces)
-#       • allure-results (para Allure Report)
-# Job 2: publish-allure
-#   - Baixa allure-results do Job 1
-#   - Gera relatório Allure
-#   - Publica no branch gh-pages (GitHub Pages)
 # ====================================================================================
 
 name: Run Playwright Tests
@@ -28,33 +15,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 📥 1. Baixar o código
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 🟢 2. Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      # 📦 3. Instalar dependências do projeto
       - name: Install dependencies
         run: npm ci
 
-      # 🌐 4. Instalar navegadores Playwright
       - name: Install Playwright Browsers
         run: npx playwright install
 
-      # 🧩 5. Instalar dependências extras Linux para browsers
       - name: Install Playwright Linux deps
         run: sudo npx playwright install-deps
 
-      # 🚀 6. Rodar testes (reporters definidos no playwright.config.js)
       - name: Run Playwright tests
         run: npx playwright test
 
-      # 📤 7. HTML report do Playwright
       - name: Upload Playwright HTML report
         uses: actions/upload-artifact@v4
         with:
@@ -62,7 +42,6 @@ jobs:
           path: playwright-report
           retention-days: 7
 
-      # 📤 8. Artifacts (vídeos, screenshots, traces)
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -70,7 +49,6 @@ jobs:
           path: test-results
           retention-days: 7
 
-      # 📤 9. Allure results (dados brutos do Allure)
       - name: Upload Allure results
         uses: actions/upload-artifact@v4
         with:
@@ -80,31 +58,27 @@ jobs:
 
   publish-allure:
     name: Generate and Publish Allure Report
-    needs: test          # ⛓️ Só roda se o job "test" terminar
+    needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'   # 🔒 Só no branch main
+    if: github.ref == 'refs/heads/main'
 
     steps:
-      # 📥 1. Checkout do repositório (necessário para publicar no gh-pages)
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 📥 2. Baixar allure-results gerado no job "test"
       - name: Download Allure results
         uses: actions/download-artifact@v4
         with:
           name: allure-results
           path: allure-results
 
-      # 🧪 3. Gerar relatório Allure (HTML bonito)
-      - name: Generate Allure report
-        uses: simple-elf/allure-report-action@v1.7
+      - name: Generate Allure Report
+        uses: simple-elf/allure-action@v1.6
         with:
-          allure_results: allure-results
-          allure_report: allure-report
-          keep_history: true   # 🕒 Mantém histórico entre execuções
+          results: allure-results
+          report: allure-report
+          keep_history: true
 
-      # 🌐 4. Publicar relatório no branch gh-pages (GitHub Pages)
       - name: Publish Allure report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
