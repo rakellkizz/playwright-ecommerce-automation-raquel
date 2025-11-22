@@ -1,25 +1,35 @@
 // ====================================================================================
-// 🎭 Configuração do Playwright – Projeto Raquel
+// 🎭 Configuração do Playwright – Projeto Raquel +Allure
 // E-commerce oficial para automação: https://www.saucedemo.com/
 // ====================================================================================
 
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
+  // 📂 Pasta onde ficam os testes
   testDir: './tests',
 
+  // 🧾 Reporters usados:
+  // - allure-playwright → gera dados para o Allure
+  // - html → gera o relatório HTML do Playwright
+  // - list → mostra log bonito no terminal/Actions
+  reporter: [
+    ['allure-playwright'],
+    ['html'],
+    ['list'],
+  ],
+
+  // ⚙️ Configurações padrão para todos os testes
   use: {
-  baseURL: 'https://www.saucedemo.com/',
-  headless: true,
+    baseURL: 'https://www.saucedemo.com/', // 🌐 E-commerce alvo
+    headless: true,                        // ✅ Roda sem abrir janela gráfica
+    screenshot: 'only-on-failure',         // 📸 Screenshot só quando falhar
+    video: 'on',                           // 🎥 Grava vídeo (ótimo pro Allure)
+    trace: 'on',                           // 🧬 Trace para debugar
+    outputDir: 'test-results/',            // 📂 Pasta onde ficam artifacts do Playwright
+  },
 
-  // ⭐ Gere artefatos SEMPRE (mesmo quando passa)
-  screenshot: 'on',
-  video: 'on',
-  trace: 'on',
-
-  // Diretório onde serão salvos
-  outputDir: 'test-results/',
-},
+  // 💻 Perfis de execução (projetos)
   projects: [
     {
       name: 'desktop-chrome',
