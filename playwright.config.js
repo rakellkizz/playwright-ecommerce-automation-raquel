@@ -9,12 +9,17 @@ export default defineConfig({
   testDir: './tests',
 
   use: {
-    baseURL: 'https://www.saucedemo.com/',
-    headless: true,
-    screenshot: 'only-on-failure',
-    video: 'on-first-retry',
-  },
+  baseURL: 'https://www.saucedemo.com/',
+  headless: true,
 
+  // ⭐ Gere artefatos SEMPRE (mesmo quando passa)
+  screenshot: 'on',
+  video: 'on',
+  trace: 'on',
+
+  // Diretório onde serão salvos
+  outputDir: 'test-results/',
+},
   projects: [
     {
       name: 'desktop-chrome',
