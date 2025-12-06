@@ -1,152 +1,167 @@
-📊 Allure Report — Execução Completa dos Testes
-
-Veja o relatório público dos testes E2E executados automaticamente via GitHub Actions:
-
-🔗 Link Direto:
-https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/
-
-👉 ✨ Abrir Allure Report
-
-<p align="center"> <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&duration=2600&pause=800&center=true&vCenter=true&width=900&lines=Playwright+E2E+Automation;E-commerce+Testing+Suite;Quality+by+Raquel+Souza;CI%2FCD+%7C+HTML+Reports+%7C+Screenshots+%7C+Videos" alt="Typing SVG" /> </p> <h1 align="center">🎭 Playwright E-commerce Automation — By Raquel 🚀</h1> <p align="center"> Automação avançada de testes E2E para fluxo completo de e-commerce:<br/> <strong>login → navegação → busca → carrinho → remoção → validações → execução CI/CD</strong> </p> 
 <p align="center">
-  <img src="https://github.com/rakellkizz/playwright-ecommerce-automation-raquel/actions/workflows/pages-build-deployment.yml/badge.svg" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=22&duration=2400&pause=900&color=00F0FF&center=true&vCenter=true&width=780&lines=Playwright+E2E+Automation;E-commerce+Testing+Suite;Relatórios+Allure+%7C+HTML;CI%2FCD+Completo+com+GitHub+Actions" />
 </p>
 
-🛒 Sobre o Projeto
+<h1 align="center">🎭 Playwright E-commerce Automation</h1>
 
-Este projeto demonstra na prática uma suíte profissional de testes E2E utilizando Playwright, com o fluxo completo de compra em um e-commerce:
+<p align="center"><strong>Testes E2E completos para fluxo real de compra, com relatórios avançados, arquitetura limpa e execução automatizada.</strong></p>
 
-✔️ Login
-✔️ Busca
-✔️ Navegação
-✔️ Carrinho
-✔️ Remoção
-✔️ Validações
-✔️ Pipelines CI/CD
-✔️ Relatórios profissionais (Allure + HTML)
+---
 
-O objetivo é fornecer um projeto didático, limpo, completo e profissional, ideal para:
+## 🚀 Tecnologias Principais
 
-🧪 Portfólio técnico
+<p align="center">
+  <img src="https://img.shields.io/badge/Playwright-1.45%2B-2ecc71?style=for-the-badge&logo=playwright&logoColor=white" />
+  <img src="https://img.shields.io/badge/Allure-Report-9b59b6?style=for-the-badge&logo=allure&logoColor=white" />
+  <img src="https://img.shields.io/badge/GitHub-Actions-3498db?style=for-the-badge&logo=githubactions&logoColor=white" />
+  <img src="https://img.shields.io/badge/JavaScript-E2E%20Tests-f1c40f?style=for-the-badge&logo=javascript&logoColor=000" />
+</p>
 
-📝 Processos seletivos
+---
 
-👨‍💻 Demonstração real de habilidades
+# 🛒 Visão Geral
 
-🚀 Estudos avançados de automação E2E
+Este projeto valida o fluxo completo de um e-commerce:
+Testes de sites Msites e App Androis e IOS
 
-🚀 Tecnologias Utilizadas
+- Login  
+- Busca dinâmica  
+- Listagem de produtos  
+- Carrinho e remoção  
+- Validações de interface  
+- Execução paralela  
+- Evidências (vídeo, trace, screenshot)  
 
-Playwright Test Runner
+Tudo integrado com **GitHub Actions**, **Allure Report**, **relatório HTML** e arquitetura baseada em **Page Objects**.
 
-JavaScript / Node.js
+---
 
-GitHub Actions (CI/CD)
+# 🌐 Relatórios Online
 
-Allure Framework
+🔍 **Allure Report:**  
+https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/
 
-Relatórios HTML + Screenshots + Vídeos
+📊 **Playwright HTML Report:**  
+https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/playwright-report/
 
-Execução paralela em múltiplos navegadores
+---
 
-🧪 Testes Implementados
-🔹 Smoke Tests (smoke.e2e.spec.js)
+# 🧪 Testes Implementados
 
-Login com sucesso
+## 🔹 Smoke Tests
+- Login com sucesso  
+- Listagem de produtos  
+- Busca → produto → detalhes  
+- Execução rápida para validações essenciais  
 
-Home lista produtos
+## 🔹 Carrinho
+- Adicionar itens  
+- Remover itens  
+- Recalcular valores  
+- Testes mobile + desktop  
 
-Busca de produto → página de detalhes
+## 🔹 Busca
+- Resultados dinâmicos  
+- Recomendações da API  
+- Filtros simultâneos  
 
-🔹 Cart Tests (cart.e2e.spec.js)
-
-Adicionar ao carrinho
-
-Remover item
-
-Validações mobile + desktop
-
-📦 Artifacts Produzidos pelo Pipeline
-
-A pipeline gera automaticamente:
-
-📁 test-results/
-📁 videos/
-📁 screenshots/
-📁 traces/
-📁 playwright-report/ — relatório HTML
-📁 allure-results/ — base do Allure
-🌐 Allure Report Online — publicado via GitHub Pages
-
-Esses artifacts permitem análise completa da execução.
-
-🛠️ Como Rodar Localmente
-npm install
-npx playwright install
-npx playwright test
-
-
-Gerar relatório HTML:
+---
+Gerar relatório HTML local:
+# 🧱 Arquitetura do Projeto
 
 npx playwright show-report
 
-🧱 Arquitetura Visual do Projeto
-✨ Fluxograma da Automação
+🔄 Fluxo da Automação (SVG Técnico)
+<p align="center"> <svg width="780" height="260"> <!-- Login --> <rect x="40" y="40" width="160" height="55" rx="12" fill="#00eaff" opacity="0.90"/> <text x="92" y="75" font-size="18" font-weight="600" fill="#000">Login</text> <!-- Home --> <rect x="260" y="40" width="160" height="55" rx="12" fill="#8a2be2" opacity="0.90"/> <text x="312" y="75" font-size="18" font-weight="600" fill="#fff">Home</text> <!-- Busca --> <rect x="480" y="40" width="160" height="55" rx="12" fill="#ff0099" opacity="0.90"/> <text x="530" y="75" font-size="18" font-weight="600" fill="#fff">Busca</text> <!-- Produto --> <rect x="260" y="150" width="160" height="55" rx="12" fill="#00ff99" opacity="0.90"/> <text x="310" y="185" font-size="18" font-weight="600" fill="#000">Produto</text> <!-- Carrinho --> <rect x="40" y="150" width="160" height="55" rx="12" fill="#ffd700" opacity="0.90"/> <text x="82" y="185" font-size="18" font-weight="600" fill="#000">Carrinho</text> <!-- Checkout --> <rect x="480" y="150" width="160" height="55" rx="12" fill="#ff4444" opacity="0.90"/> <text x="525" y="185" font-size="18" font-weight="600" fill="#fff">Checkout</text> <!-- Arrows --> <defs> <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"> <polygon points="0 0, 10 3, 0 6" fill="#fff" /> </marker> </defs> <line x1="200" y1="67" x2="260" y2="67" stroke="#fff" stroke-width="3" marker-end="url(#arrow)" /> <line x1="420" y1="67" x2="480" y2="67" stroke="#fff" stroke-width="3" marker-end="url(#arrow)" /> <line x1="120" y1="95" x2="120" y2="150" stroke="#fff" stroke-width="3" marker-end="url(#arrow)" /> <line x1="340" y1="95" x2="340" y2="150" stroke="#fff" stroke-width="3" marker-end="url(#arrow)" /> <line x1="560" y1="95" x2="560" y2="150" stroke="#fff" stroke-width="3" marker-end="url(#arrow)" /> </svg> </p>
 
-Representa o fluxo completo:
-login → navegação → busca → carrinho → checkout → relatórios
+## 🔍 Evidências da Automação
 
-(📌 Você pode adicionar uma imagem futuramente.)
+### 📁 Artefatos Gerados
+- 📸 **Screenshots automáticos**  
+  Capturam o estado exato da aplicação no momento da execução.
 
-⚙️ Pipeline CI/CD Completa
+- 🎥 **Vídeos da execução**  
+  Permitem revisar o comportamento real de cada teste.
 
-Inclui:
+- 🧵 **Traces detalhados**  
+  Oferecem depuração passo a passo, incluindo ações, logs e DOM.
 
-Execução automática
+- 📊 **Relatórios HTML**  
+  Visualização estruturada dos resultados dos testes.
 
-Relatórios Allure + HTML
+- 🌈 **Allure Results / History**  
+  Relatórios avançados com timeline, estatísticas e anexos.
 
-Upload de artifacts
+Esses artefatos são produzidos automaticamente em cada execução da suíte E2E, garantindo **auditabilidade, rastreabilidade e análise completa** do comportamento dos testes.
 
-Publicação no GitHub Pages
+## 🛠️ Como Rodar o Projeto Localmente
+📥 1. Instalar dependências
 
-Execução paralela
+npm install
 
-🧪 Templates de Testes
+🌐 2. Instalar navegadores do Playwright
 
-Page Objects
+npx playwright install
 
-Cenarios independentes
+▶️ 3. Executar os testes
 
-Tags (@smoke, @regression)
+npx playwright test
 
-Fixtures reutilizáveis
+📊 4. Gerar relatório HTML local
 
-📊 Dashboards e Relatórios
-🌈 Allure Report
+npx playwright show-report
 
-https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/
 
-🎬 Playwright HTML Report
+## ⚙️ 9. Pipeline CI/CD
 
-https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/playwright-report/
+A pipeline (GitHub Actions) executa automaticamente:
 
-🌟 Página Inicial Estilosa (GitHub Pages)
+🔁 Execução dos testes
 
-Apresentação futurista e profissional com:
+Rodagem paralela
 
-Gradientes modernos
+Ambientes independentes
 
-Cards animados
+Registros completos
 
-Chat IA no layout
+## 📦 Geração e upload de artifacts
 
-Botões neon
+vídeos (videos/)
 
-Logs técnicos com painel visual
+screenshots (screenshots/)
 
-Gerador de PDF e WhatsApp integrado
+traces (traces/)
 
-💜 Feito com muito carinho por Raquel Souza
+relatório HTML (playwright-report/)
 
-Qualidade, automação e amor pela tecnologia.
+base do Allure (allure-results/)
+
+## 🌐 Publicação automática
+
+Publica o Allure Report no GitHub Pages
+
+Atualiza o HTML Reporter
+
+Mantém o histórico das execuções
+
+A pipeline garante rastreabilidade completa da execução E2E.
+
+
+## 💡 Objetivos Técnicos do Projeto
+
+🎯 Modularidade
+Estrutura em Page Objects para fácil manutenção e expansão.
+
+⚡ Escalabilidade
+Preparado para novos cenários, múltiplas suites e paralelismo.
+
+🔍 Observabilidade
+Evidências completas: vídeo, trace, screenshots e logs detalhados.
+
+🧩 Rastreabilidade
+Cada step pode ser auditado via Allure + Reporter HTML.
+
+## 💜 Créditos
+Desenvolvido com cuidado, precisão técnica e foco total em qualidade por Raquel Souza.
+Automação moderna, arquitetura limpa e entrega consistente.
+
