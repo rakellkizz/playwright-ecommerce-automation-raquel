@@ -1,0 +1,2343 @@
+/* =============================================================================
+   RESET GLOBAL
+============================================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* =============================================================================
+   FUNDO GERAL DO SITE
+============================================================================= */
+body {
+  background: radial-gradient(circle at top, #071427 0%, #020817 60%, #00040a 100%);
+  color: #e7efff;
+  font-family: "Inter", Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* =============================================================================
+   WRAPPER CENTRAL
+============================================================================= */
+.page-wrapper {
+  max-width: 1150px;
+  margin: 40px auto;
+  padding: 0 20px 80px 20px;
+}
+
+/* =============================================================================
+   TAGS DO TOPO
+============================================================================= */
+.top-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tag-pill {
+  padding: 4px 12px;
+  border-radius: 30px;
+  font-size: 13px;
+  background: rgba(13, 23, 42, 0.8);
+  border: 1px solid rgba(63, 131, 248, 0.4);
+  color: #9cc9ff;
+}
+
+.tag-pill-secondary {
+  border-color: rgba(148, 163, 184, 0.5);
+  color: #c3d4ff;
+}
+
+/* =============================================================================
+   SEÇÃO HERO
+============================================================================= */
+.hero {
+  background: radial-gradient(circle at top left, #0f172a 0%, #091020 70%);
+  border-radius: 20px;
+  border: 1px solid rgba(65, 131, 196, 0.4);
+  padding: 30px 25px;
+  margin-bottom: 40px;
+  box-shadow: 0 0 25px rgba(0, 100, 255, 0.12);
+}
+
+.hero-badge {
+  background: #0b1225;
+  border: 1px solid rgba(58, 176, 255, 0.5);
+  padding: 6px 14px;
+  border-radius: 30px;
+  color: #80d4ff;
+  display: inline-flex;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.hero-title {
+  font-size: 38px;
+  font-weight: 700;
+  color: white;
+}
+
+.hero-title span {
+  color: #48c7ff;
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  color: #b7c7ff;
+  margin-top: 4px;
+}
+
+.hero-description {
+  margin-top: 14px;
+  max-width: 650px;
+  color: #d0dcff;
+  font-size: 15px;
+}
+
+/* =============================================================================
+   BOTÕES
+============================================================================= */
+.hero-actions {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn {
+  padding: 10px 18px;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #10b5ff, #20e07c);
+  color: #0a0f17;
+  font-weight: 600;
+  box-shadow: 0 4px 25px rgba(0, 150, 255, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(0, 255, 180, 0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  color: #e1eaff;
+}
+
+.btn-outline:hover {
+  background: rgba(30, 64, 175, 0.35);
+  border-color: rgba(94, 234, 212, 0.7);
+}
+
+.btn-ghost {
+  background: rgba(13, 19, 33, 0.85);
+  border: 1px solid rgba(37, 99, 235, 0.5);
+  color: #c5d7ff;
+}
+
+.btn-ghost:hover {
+  background: rgba(30, 64, 175, 0.55);
+  border-color: rgba(148, 163, 248, 0.7);
+}
+
+/* =============================================================================
+   SEÇÕES E TÍTULOS
+============================================================================= */
+.section {
+  margin-top: 40px;
+}
+
+.section-title {
+  font-size: 22px;
+  margin-bottom: 16px;
+  color: #e7f0ff;
+}
+
+/* =============================================================================
+   GRID
+============================================================================= */
+.grid {
+  display: grid;
+  gap: 18px;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 900px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =============================================================================
+   CARDS
+============================================================================= */
+.card {
+  background: rgba(10, 17, 32, 0.65);
+  border-radius: 16px;
+  padding: 22px;
+  border: 1px solid rgba(60, 130, 200, 0.45);
+  box-shadow: 0 0 22px rgba(0, 150, 255, 0.12);
+}
+
+.card-outline {
+  border-color: rgba(60, 150, 255, 0.6);
+}
+
+.card-small {
+  min-height: 160px;
+}
+
+.card-large {
+  min-height: 210px;
+}
+
+.card-title {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #a7d6ff;
+}
+
+.card-text {
+  font-size: 14px;
+  color: #d0dcff;
+}
+
+/* Card lists */
+.card-list {
+  list-style: none;
+  margin-top: 8px;
+}
+
+.card-list li {
+  padding-left: 18px;
+  position: relative;
+  font-size: 14px;
+  color: #d7e3ff;
+}
+
+.card-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #48c7ff;
+}
+
+.card-list-check li::before {
+  content: "✔";
+  font-size: 12px;
+  color: #4fff8c;
+}
+
+/* =============================================================================
+   PROFILE CARD
+============================================================================= */
+.profile-card {
+  background: rgba(10, 17, 32, 0.7);
+  border-radius: 16px;
+  padding: 22px;
+  border: 1px solid rgba(60, 130, 255, 0.35);
+  display: flex;
+  gap: 18px;
+}
+
+.profile-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #52a8ff, #1c2d48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 22px;
+  color: white;
+}
+
+.profile-text {
+  font-size: 14px;
+  color: #dce7ff;
+}
+
+/* =============================================================================
+   FOOTER
+============================================================================= */
+.footer {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.footer-text {
+  color: #7d8cb2;
+  font-size: 13px;
+}
+
+/* ============================================================
+   ASSISTENTE DE IA · BOTÃO FLUTUANTE (visual)
+============================================================ */
+.ia-launcher {
+  position: fixed;
+  right: 1.8rem;
+  bottom: 1.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(168, 85, 247, 0.7);
+  background: radial-gradient(circle at 0 0, rgba(168, 85, 247, 0.3), #050816);
+  color: #f9f5ff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 0 18px rgba(168, 85, 247, 0.55);
+  z-index: 999;
+  transition:
+    transform 0.18s ease-out,
+    box-shadow 0.18s ease-out,
+    background 0.18s ease-out;
+}
+
+.ia-launcher__dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, #a855f7, #6366f1);
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.9);
+  animation: ia-pulse 1.4s infinite alternate;
+}
+
+.ia-launcher__label {
+  letter-spacing: 0.04em;
+}
+
+.ia-launcher:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.8);
+  background: radial-gradient(circle at 0 0, rgba(168, 85, 247, 0.45), #020617);
+}
+
+/* ============================================================
+   JANELA DO CHAT (visual base)
+============================================================ */
+
+.ia-chat {
+  position: fixed;
+  right: 1.8rem;
+  bottom: 5.2rem;
+  width: min(360px, 92vw);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.3rem;
+  background: linear-gradient(145deg, #020617, #020617, #0b1120);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.85),
+    0 0 32px rgba(129, 140, 248, 0.55);
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.98);
+  transition:
+    opacity 0.18s ease-out,
+    transform 0.18s ease-out;
+  z-index: 998;
+}
+
+.ia-chat--open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+/* ============================================================
+   Cabeçalho do Chat (visual)
+============================================================ */
+
+.ia-chat__header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(30, 64, 175, 0.6);
+  background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.09), transparent);
+  cursor: grab;        /* área de arraste */
+  touch-action: none;  /* impede scroll durante arraste */
+}
+
+.ia-chat__avatar {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: conic-gradient(from 180deg, #22d3ee, #a855f7, #4f46e5, #22d3ee);
+  box-shadow: 0 0 18px rgba(59, 130, 246, 0.9);
+  position: relative;
+  overflow: hidden;
+}
+
+.ia-chat__avatar::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: inherit;
+  background: #020617;
+}
+
+.ia-chat__avatar-letter {
+  position: relative;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #e5e7eb;
+}
+
+.ia-chat__title-group {
+  flex: 1;
+}
+
+.ia-chat__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.ia-chat__subtitle {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.ia-chat__close {
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.15rem 0.3rem;
+  border-radius: 999px;
+  transition:
+    background 0.16s ease-out,
+    color 0.16s ease-out;
+}
+
+.ia-chat__close:hover {
+  background: rgba(248, 250, 252, 0.05);
+  color: #e5e7eb;
+}
+
+/* ============================================================
+   Área de mensagens
+============================================================ */
+
+.ia-chat__messages {
+  padding: 0.75rem 0.8rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.7) transparent;
+  -webkit-overflow-scrolling: touch; /* scroll suave mobile */
+}
+
+.ia-chat__messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ia-chat__messages::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.75);
+  border-radius: 999px;
+}
+
+/* ============================================================
+   Mensagens
+============================================================ */
+
+.ia-msg {
+  display: flex;
+  gap: 0.45rem;
+  align-items: flex-start;
+  font-size: 0.8rem;
+}
+
+.ia-msg--user {
+  justify-content: flex-end;
+}
+
+.ia-msg__avatar {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ia-msg__avatar--ia {
+  background: radial-gradient(circle at 0 0, #4f46e5, #0f172a);
+  color: #e5e7eb;
+}
+
+.ia-msg__avatar--user {
+  background: radial-gradient(circle at 0 0, #22c55e, #064e3b);
+  color: #ecfdf5;
+}
+
+.ia-msg__bubble {
+  max-width: 82%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.9rem;
+  border-bottom-left-radius: 0.2rem;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  color: #e5e7eb;
+  word-break: break-word; /* proteção contra textos grandes */
+}
+
+.ia-msg--user .ia-msg__bubble {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border-color: transparent;
+  color: #f9fafb;
+  border-bottom-right-radius: 0.2rem;
+  border-bottom-left-radius: 0.9rem;
+}
+
+/* ============================================================
+   Digitação
+============================================================ */
+
+.ia-msg--typing .ia-msg__bubble {
+  display: inline-flex;
+  gap: 0.2rem;
+}
+
+.ia-dot {
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 999px;
+  background: #e5e7eb;
+  opacity: 0.5;
+  animation: ia-typing 1s infinite ease-in-out;
+}
+
+.ia-dot:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.ia-dot:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+/* ============================================================
+   Formulário de entrada
+============================================================ */
+
+.ia-chat__form {
+  display: flex;
+  gap: 0.45rem;
+  padding: 0.65rem 0.8rem 0.7rem;
+  border-top: 1px solid rgba(31, 41, 55, 0.9);
+  background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.09), transparent);
+}
+
+.ia-chat__input {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid rgba(51, 65, 85, 0.95);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  padding: 0.45rem 0.8rem;
+  outline: none;
+}
+
+.ia-chat__input::placeholder {
+  color: #6b7280;
+  font-size: 0.78rem;
+}
+
+.ia-chat__input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.7);
+}
+
+.ia-chat__send {
+  border-radius: 999px;
+  border: none;
+  padding: 0.45rem 0.75rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #f9fafb;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.12s ease-out,
+    box-shadow 0.12s ease-out,
+    filter 0.12s ease-out;
+}
+
+.ia-chat__send:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 14px rgba(129, 140, 248, 0.9);
+  filter: brightness(1.08);
+}
+
+/* ============================================================
+   Animações
+============================================================ */
+
+@keyframes ia-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+@keyframes ia-typing {
+  0% {
+    transform: translateY(0px);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-2px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 0.4;
+  }
+}
+
+/* Ajuste para telas pequenas */
+@media (max-height: 600px) {
+  .ia-chat {
+    bottom: 4rem;
+    max-height: 60vh;
+  }
+}
+
+/* =========================================================
+   BADGE CORPORATIVO DE TIMER (canto superior direito)
+========================================================= */
+.timer-badge {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(168, 85, 247, 0.6);
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.35);
+  z-index: 900;
+}
+
+/* =========================================================
+   PROGRESS WRAP — Barra de progresso fixa (lado superior)
+========================================================= */
+.progress-wrap {
+  position: fixed;
+  top: 55px;
+  right: 12px;
+  width: 260px;
+  height: 12px;
+  background: rgba(15, 23, 42, 0.48);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 8px;
+  overflow: hidden;
+  display: none; /* só aparece quando timer inicia */
+  z-index: 900;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #a855f7, #6366f1);
+  box-shadow: 0 0 12px rgba(129, 140, 248, 0.6);
+  transition: width 0.25s ease-out;
+}
+
+/* ============================================================
+   ALERTA DE INCIDENTE EM CENÁRIOS · Pulsação
+============================================================ */
+
+.cenario-alerta {
+  border-color: #fb7185 !important;
+  box-shadow:
+    0 0 25px rgba(248, 113, 113, 0.55),
+    0 0 12px rgba(244, 63, 94, 0.8);
+  position: relative;
+  animation: cenario-siren 0.8s infinite alternate;
+}
+
+.cenario-alerta::before {
+  content: "🚨 Anomalia detectada";
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.7);
+  color: #fecaca;
+}
+
+@keyframes cenario-siren {
+  from {
+    transform: translateY(0);
+    box-shadow:
+      0 0 10px rgba(248, 113, 113, 0.4),
+      0 0 5px rgba(244, 63, 94, 0.4);
+  }
+  to {
+    transform: translateY(-1px);
+    box-shadow:
+      0 0 25px rgba(248, 113, 113, 0.9),
+      0 0 12px rgba(244, 63, 94, 1);
+  }
+}
+
+/* Badge auxiliar em cards de teste */
+.test-timer-badge {
+  margin: 0 auto 16px auto;
+  max-width: 420px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(168, 85, 247, 0.8);
+  background: radial-gradient(circle at 0 0, rgba(168, 85, 247, 0.35), #020617);
+  color: #e5e7eb;
+  font-size: 0.82rem;
+  text-align: center;
+  box-shadow: 0 0 22px rgba(168, 85, 247, 0.6);
+}
+
+/* ===========================
+   ALERTA ORGANIZADO NO TOPO
+   =========================== */
+.cenario-alerta-msg {
+  background: rgba(255, 87, 87, 0.15);
+  border: 1px solid rgba(255, 87, 87, 0.4);
+  color: #ffaaaa;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin: 10px 0 14px;
+  font-size: 0.92rem;
+  backdrop-filter: blur(6px);
+  animation: alertaPulse 1.6s infinite ease-in-out;
+  display: none;           /* padrão: escondido */
+  width: fit-content;
+}
+
+.cenario-alerta .cenario-alerta-msg {
+  display: block !important;  /* aparece só quando há alerta */
+}
+
+@keyframes alertaPulse {
+  0% { box-shadow: 0 0 4px rgba(255, 50, 50, 0.4); }
+  50% { box-shadow: 0 0 14px rgba(255, 80, 80, 0.9); }
+  100% { box-shadow: 0 0 4px rgba(255, 50, 50, 0.4); }
+}
+
+/* ============================================================
+   HUD GLOBAL DO TEMPORIZADOR (visual)
+============================================================ */
+.timer-hud {
+  position: fixed;
+  top: 1.8rem;
+  right: 1.8rem;
+  width: 260px;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  background: radial-gradient(circle at 0 0, rgba(168, 85, 247, 0.35), #020617);
+  border: 1px solid rgba(168, 85, 247, 0.8);
+  box-shadow:
+    0 16px 35px rgba(15, 23, 42, 0.9),
+    0 0 24px rgba(168, 85, 247, 0.8);
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  backdrop-filter: blur(16px);
+  z-index: 900;
+}
+
+/* Head */
+.timer-hud__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.5rem;
+}
+
+.timer-hud__label {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: #f9f5ff;
+}
+
+.timer-hud__status {
+  font-size: 0.72rem;
+  color: #a5b4fc;
+}
+
+/* Body */
+.timer-hud__body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.timer-hud__time {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f9f5ff;
+}
+
+/* Controls */
+.timer-hud__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.timer-hud__btn {
+  border-radius: 999px;
+  border: 1px solid transparent;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.7rem;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.15s ease-out,
+    filter 0.15s ease-out,
+    border-color 0.15s ease-out;
+}
+
+.timer-hud__btn--start {
+  background: linear-gradient(135deg, #4f46e5, #a855f7);
+  color: #f9fafb;
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.8);
+}
+
+.timer-hud__btn--start:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.timer-hud__btn--stop {
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  border-color: rgba(148, 163, 184, 0.7);
+}
+
+.timer-hud__btn--stop:hover {
+  transform: translateY(-1px);
+  border-color: rgba(248, 250, 252, 0.9);
+}
+
+/* ============================================================
+   BARRA GLOBAL NO RODAPÉ
+============================================================ */
+.timer-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.35rem 1.6rem 0.6rem;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent);
+  z-index: 850;
+}
+
+.timer-bar__track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  overflow: hidden;
+  border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+.timer-bar__fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #22d3ee, #a855f7, #ec4899);
+  box-shadow: 0 0 18px rgba(236, 72, 153, 0.9);
+  transition: width 0.3s ease-out;
+}
+
+.timer-bar__label {
+  margin-top: 0.25rem;
+  font-size: 0.72rem;
+  color: #c7d2fe;
+}
+
+@media (max-height: 600px) {
+  .timer-hud {
+    top: 3.2rem;
+  }
+}
+
+/* =======================================================================
+   MODAL DE LOGS / WORKLOG
+   — Overlay, modal principal, cabeçalho e layout interno
+======================================================================= */
+
+/* Fundo escurecido atrás do modal */
+.log-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+}
+
+.log-overlay[hidden] {
+  display: none;
+}
+
+/* Caixa principal do modal */
+.log-modal {
+  width: min(900px, 96vw);
+  max-height: 80vh;
+  background: radial-gradient(circle at 0 0, #020617, #020617, #020617);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow:
+    0 25px 60px rgba(15, 23, 42, 0.95),
+    0 0 30px rgba(129, 140, 248, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1300;
+}
+
+/* ===================================================================
+   AÇÕES DENTRO DO CARD DE CENÁRIO (PDF / WhatsApp / Email)
+   =================================================================== */
+
+.log-card-actions {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(148, 163, 184, 0.4);
+  font-size: 0.78rem;
+}
+
+.log-card-actions__title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: baseline;
+  margin: 0 0 6px 0;
+  color: #e5e7eb;
+}
+
+.log-card-actions__hint {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.log-card-actions__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.log-card-actions__btn {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition:
+    transform 0.12s ease-out,
+    box-shadow 0.12s ease-out,
+    border-color 0.12s ease-out,
+    background 0.12s ease-out;
+}
+
+.log-card-actions__btn--pdf {
+  border-color: rgba(59, 130, 246, 0.8);
+}
+
+.log-card-actions__btn--whats {
+  border-color: rgba(34, 197, 94, 0.9);
+}
+
+.log-card-actions__btn--email {
+  border-color: rgba(249, 115, 22, 0.9);
+}
+
+.log-card-actions__btn:hover {
+  transform: translateY(-1px);
+  background: rgba(15, 23, 42, 1);
+  box-shadow: 0 0 12px rgba(129, 140, 248, 0.7);
+}
+
+/* =======================================================================
+   Cabeçalho do modal
+======================================================================= */
+
+.log-modal__header {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.log-modal__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.log-modal__subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.log-modal__close {
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 999px;
+}
+
+.log-modal__close:hover {
+  background: rgba(148, 163, 184, 0.15);
+  color: #e5e7eb;
+}
+
+/* =======================================================================
+   CONTEÚDO — DUAS COLUNAS (Timeline e Formulário)
+======================================================================= */
+
+.log-modal__content {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 0;
+  padding: 0;
+  min-height: 260px;
+}
+
+@media (max-width: 900px) {
+  .log-modal__content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =======================================================================
+   TIMELINE — Lado Esquerdo
+======================================================================= */
+
+.log-timeline {
+  padding: 14px 18px;
+  border-right: 1px solid rgba(31, 41, 55, 0.9);
+  overflow-y: auto;
+}
+
+.log-timeline__title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.log-timeline__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 12px;
+}
+
+/* Item da timeline */
+.log-item {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+.log-item__meta {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.log-item__acao {
+  color: #e5e7eb;
+  margin-bottom: 2px;
+}
+
+.log-item__justificativa {
+  color: #cbd5f5;
+}
+
+/* =======================================================================
+   FORMULÁRIO — Lado Direito
+======================================================================= */
+
+.log-form {
+  padding: 14px 18px;
+  background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.06), #020617);
+}
+
+.log-form__title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+/* Campos */
+.log-form__label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #cbd5f5;
+  margin-bottom: 8px;
+}
+
+.log-form__input,
+.log-form__textarea {
+  border-radius: 10px;
+  border: 1px solid rgba(55, 65, 81, 0.95);
+  background: rgba(15, 23, 42, 0.95);
+  color: #e5e7eb;
+  font-size: 12px;
+  padding: 6px 8px;
+  outline: none;
+}
+
+.log-form__input::placeholder,
+.log-form__textarea::placeholder {
+  color: #6b7280;
+}
+
+.log-form__input:focus,
+.log-form__textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.7);
+}
+
+.log-form__submit {
+  margin-top: 4px;
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  padding: 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #4f46e5, #a855f7);
+  color: #f9fafb;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.8);
+}
+
+.log-form__submit:hover {
+  filter: brightness(1.06);
+}
+
+/* =======================================================================
+   DOCK FLUTUANTE — Compartilhar relatório (PDF / WhatsApp / Email)
+======================================================================= */
+
+.log-dock {
+  position: fixed;
+  right: 1.8rem;
+  bottom: 5.4rem;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: radial-gradient(circle at 0 0, rgba(168, 85, 247, 0.35), #020617);
+  border: 1px solid rgba(168, 85, 247, 0.7);
+  box-shadow:
+    0 14px 30px rgba(15, 23, 42, 0.9),
+    0 0 20px rgba(168, 85, 247, 0.8);
+  color: #e5e7eb;
+  font-size: 11px;
+  z-index: 1100;
+}
+
+.log-dock__label {
+  margin: 0 0 6px;
+}
+
+.log-dock__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.log-dock__btn {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 248, 0.9);
+  background: rgba(15, 23, 42, 0.95);
+  color: #e5e7eb;
+  font-size: 11px;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.log-dock__btn:hover {
+  background: rgba(55, 65, 81, 0.9);
+}
+
+/* =======================================================================
+   CORREÇÃO DEFINITIVA — Modal não bloqueia overlay etc.
+======================================================================= */
+
+/* OVERLAY — cobre a tela inteira e respeita hidden */
+.log-overlay {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 99998 !important;
+  pointer-events: auto;
+}
+
+.log-overlay[hidden] {
+  display: none !important;
+}
+
+/* MODAL — sempre acima de tudo */
+.log-modal {
+  position: relative;
+  z-index: 99999 !important;
+  pointer-events: auto;
+}
+
+/* =======================================================================
+   IMPEDIR ROLAGEM DO FUNDO QUANDO MODAL ESTÁ ABERTO
+======================================================================= */
+body.modal-aberto {
+  overflow: hidden !important;
+}
+
+/* =======================================================================
+   BOTÕES INLINE (PDF / WHATSAPP / EMAIL) – MODELO B
+======================================================================= */
+.log-actions-inline {
+  margin-top: 22px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+/* Botão base */
+.log-inline-btn {
+  padding: 10px 18px;
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  transition: transform 0.18s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Efeitos ao passar o mouse */
+.log-inline-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0 18px rgba(120, 60, 255, 0.5);
+}
+
+/* PDF — azul */
+.log-inline-btn--pdf {
+  background: linear-gradient(135deg, #2b71ff, #4eb9ff);
+}
+
+/* WhatsApp — verde */
+.log-inline-btn--whats {
+  background: linear-gradient(135deg, #1fbf4b, #4dfc79);
+}
+
+/* Email — roxo */
+.log-inline-btn--email {
+  background: linear-gradient(135deg, #8c48ff, #c67aff);
+}
+
+/* ============================================================
+   STATUS DOS CENÁRIOS — NEON PROFISSIONAL
+============================================================ */
+
+/* RESET — remove status antes */
+.cenario-card {
+  position: relative;
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+  border: 2px solid transparent;
+}
+
+/* 🟥 ERRO / ANOMALIA */
+.cenario-card.cenario-erro {
+  border-color: #ff4b4b;
+  box-shadow:
+    0 0 12px rgba(255, 76, 76, 0.6),
+    0 0 28px rgba(255, 76, 76, 0.25);
+}
+
+.cenario-card.cenario-erro::before {
+  content: "🚨 Anomalia detectada";
+  position: absolute;
+  top: -14px;
+  right: 16px;
+  background: #ff4b4b;
+  padding: 2px 10px;
+  border-radius: 7px;
+  font-size: 11px;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(255, 76, 76, 0.8);
+}
+
+/* 🟡 MANUTENÇÃO */
+.cenario-card.cenario-manutencao {
+  border-color: #ffd84d;
+  box-shadow:
+    0 0 12px rgba(255, 223, 79, 0.65),
+    0 0 28px rgba(255, 223, 79, 0.25);
+}
+
+.cenario-card.cenario-manutencao::before {
+  content: "🛠️ Em manutenção";
+  position: absolute;
+  top: -14px;
+  right: 16px;
+  background: #ffd84d;
+  padding: 2px 10px;
+  border-radius: 7px;
+  font-size: 11px;
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 0 8px rgba(255, 223, 79, 0.8);
+}
+
+/* 🟢 OK / RESOLVIDO */
+.cenario-card.cenario-ok {
+  border-color: #4dff88;
+  box-shadow:
+    0 0 12px rgba(77, 255, 136, 0.55),
+    0 0 28px rgba(77, 255, 136, 0.2);
+}
+
+.cenario-card.cenario-ok::before {
+  content: "✅ Cenário OK";
+  position: absolute;
+  top: -14px;
+  right: 16px;
+  background: #4dff88;
+  padding: 2px 10px;
+  border-radius: 7px;
+  font-size: 11px;
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 8px rgba(77, 255, 136, 0.8);
+}
+
+/* =======================================================
+   BOTÕES DE STATUS NO MODAL
+======================================================= */
+
+.log-status-buttons {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.status-btn {
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  transition: transform 0.25s, box-shadow 0.25s;
+  color: #fff;
+}
+
+/* 🟢 RESOLVIDO */
+.status-ok {
+  background: linear-gradient(90deg, #2aff66, #14d96a);
+  box-shadow: 0 0 12px rgba(50, 255, 110, 0.6);
+}
+
+.status-ok:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(50, 255, 110, 0.85);
+}
+
+/* 🟡 MANUTENÇÃO */
+.status-manutencao {
+  background: linear-gradient(90deg, #ffd84d, #ffbf00);
+  color: #000;
+  box-shadow: 0 0 12px rgba(255, 230, 120, 0.6);
+}
+
+.status-manutencao:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(255, 230, 120, 0.85);
+}
+
+/* 🔴 ERRO */
+.status-erro {
+  background: linear-gradient(90deg, #ff5f5f, #ff1c1c);
+  box-shadow: 0 0 12px rgba(255, 95, 95, 0.6);
+}
+
+.status-erro:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(255, 95, 95, 0.85);
+}
+
+/* =====================================================================
+   FIX OFICIAL — CHAT + LAUNCHER + TIMER FLUTUANTES E ARRASTÁVEIS
+   (POSIÇÃO INICIAL IGUAL AO SEU LAYOUT · COMPORTAMENTO LIBERADO)
+===================================================================== */
+
+/* 1) Todos flutuantes, sempre clicáveis e com z-index alto */
+#iaChat,
+#iaLauncher,
+#timerHud {
+  position: fixed;
+  pointer-events: auto;
+  z-index: 9999;
+  will-change: transform, top, left, bottom, right;
+}
+/* =====================================================================
+   HUD SOC — IA Monitoramento dentro do timerHud
+   ===================================================================== */
+
+.hud-soc {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+  font-size: 11px;
+  color: #e5e7eb;
+}
+
+.hud-soc__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 6px;
+}
+
+.hud-soc__title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a5b4fc;
+}
+
+.hud-soc__risk-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  white-space: nowrap;
+}
+
+/* Cores do risco */
+.hud-soc__risk--desconhecido {
+  background: rgba(15, 23, 42, 0.8);
+  color: #9ca3af;
+}
+
+.hud-soc__risk--baixo {
+  background: rgba(22, 163, 74, 0.16);
+  color: #bbf7d0;
+  border-color: rgba(34, 197, 94, 0.7);
+}
+
+.hud-soc__risk--medio {
+  background: rgba(234, 179, 8, 0.16);
+  color: #fef9c3;
+  border-color: rgba(234, 179, 8, 0.7);
+}
+
+.hud-soc__risk--alto {
+  background: rgba(249, 115, 22, 0.16);
+  color: #fed7aa;
+  border-color: rgba(249, 115, 22, 0.8);
+}
+
+.hud-soc__risk--critico {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.9);
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.6);
+}
+
+.hud-soc__body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.hud-soc__metric {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hud-soc__metric--small {
+  grid-column: span 2;
+}
+
+.hud-soc__metric-label {
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.hud-soc__metric-value {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.hud-soc__metric-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+/* Tendência: chips */
+.hud-soc__chip--up {
+  border-color: rgba(34, 197, 94, 0.7);
+  color: #bbf7d0;
+}
+
+.hud-soc__chip--down {
+  border-color: rgba(59, 130, 246, 0.7);
+  color: #bfdbfe;
+}
+
+.hud-soc__chip--stable {
+  border-color: rgba(148, 163, 184, 0.7);
+  color: #e5e7eb;
+}
+
+/* Heatmap simples de severidade */
+.hud-soc__heatmap {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.hud-soc__heat-block {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(30, 64, 175, 0.7);
+  opacity: 0.4;
+  transition: background 0.18s ease, opacity 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hud-soc__heat-block[data-level="0"] {
+  background: rgba(15, 23, 42, 0.9);
+  opacity: 0.4;
+}
+
+.hud-soc__heat-block[data-level="1"] {
+  background: rgba(37, 99, 235, 0.4);
+  opacity: 0.7;
+}
+
+.hud-soc__heat-block[data-level="2"] {
+  background: rgba(59, 130, 246, 0.7);
+  opacity: 0.9;
+}
+
+.hud-soc__heat-block[data-level="3"] {
+  background: rgba(249, 115, 22, 0.85);
+  opacity: 1;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.8);
+}
+
+.hud-soc__heat-block[data-level="4"] {
+  background: rgba(239, 68, 68, 0.95);
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.9);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .hud-soc {
+    font-size: 10px;
+  }
+
+  .hud-soc__title {
+    font-size: 10px;
+  }
+
+  .hud-soc__metric-value {
+    font-size: 12px;
+  }
+}
+
+/* 2) CHAT FECHADO — posição inicial (como no print) */
+#iaChat {
+  right: 30px;
+  bottom: 120px;        /* fica acima do botão de IA */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  touch-action: none;   /* permite arraste sem scroll */
+}
+
+/* 3) CHAT ABERTO */
+#iaChat.ia-chat--open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* 4) BOTÃO FLUTUANTE (launcher) — posição inicial */
+#iaLauncher {
+  right: 30px;
+  bottom: 30px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+/* 5) TEMPORIZADOR — posição inicial (como está hoje) */
+#timerHud {
+  right: 30px;
+  bottom: 200px;    /* acima do chat */
+  top: auto;
+  left: auto;
+  touch-action: none;
+}
+
+/* 6) EFEITO VISUAL DE ARRASTE (ativado pelo JS com .dragging) */
+#iaChat.dragging,
+#timerHud.dragging,
+#iaLauncher.dragging {
+  transform: scale(1.03);
+  transition: none !important;
+  box-shadow:
+    0 0 16px rgba(255, 0, 255, 0.9),
+    0 0 28px rgba(255, 0, 255, 0.6);
+}
+
+/* 7) MOBILE — posições seguras sem sumir da tela */
+@media (max-width: 480px) {
+  #iaChat {
+    right: 12px;
+    bottom: 110px;
+    max-width: 92vw;
+  }
+
+  #iaLauncher {
+    right: 12px;
+    bottom: 20px;
+  }
+
+  #timerHud {
+    right: 12px;
+    top: 20px;
+  }
+}
+
+/* 8) Proteção para não sair da tela (chat e HUD) */
+#iaChat,
+#timerHud {
+  max-width: calc(100vw - 20px);
+  max-height: calc(100vh - 20px);
+}
+
+/* 9) Overlay NÃO bloqueia chat / timer / launcher */
+.log-overlay:not([hidden]) ~ #iaChat,
+.log-overlay:not([hidden]) ~ #iaLauncher,
+.log-overlay:not([hidden]) ~ #timerHud {
+  pointer-events: auto !important;
+}
+
+/* =====================================================================
+   AJUSTES GERAIS DE EXPERIÊNCIA NO MOBILE
+===================================================================== */
+
+html,
+body {
+  overscroll-behavior: contain;
+}
+
+body {
+  -webkit-touch-callout: none; /* evita seleção acidental de texto */
+}
+/* =======================================================================
+   LED verde dos cenários — Indica que testes estão rodando
+   Não afeta o layout, é apenas um ícone inserido via JS
+======================================================================= */
+.cenario-led {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22ff66;
+  box-shadow: 0 0 8px #22ff66;
+  animation: ledPulse 1.4s infinite ease-in-out;
+}
+
+@keyframes ledPulse {
+  0% { opacity: .4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: .4; transform: scale(0.9); }
+}
+/* ======================================================================
+   PAINEL ALLURE — Estilo limpo, futurista, elegante
+   ====================================================================== */
+.allure-panel {
+  margin-top: 40px;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 0, 255, 0.3);
+  backdrop-filter: blur(6px);
+}
+
+.allure-panel h2 {
+  margin-bottom: 16px;
+  font-size: 1.4rem;
+  color: #fff;
+}
+
+.allure-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.allure-grid div {
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  color: #eee;
+}
+
+.allure-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: linear-gradient(90deg, #8a2be2, #ff00ff);
+  color: white;
+  transition: 0.2s;
+}
+
+.allure-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 12px #ff00ff;
+}
+/* ============================================================
+   HUD – Campos de configuração do técnico
+   Integração 100% suave com o design atual
+============================================================ */
+.timer-hud__config {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timer-hud__label {
+  font-size: 0.85rem;
+  color: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timer-hud__input {
+  width: 60px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  border: 1px solid #a64bf4;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  text-align: center;
+}
+
+.timer-hud__btn--auto {
+  background: #4b2bb3;
+  border: 1px solid #a64bf4;
+  color: white;
+}
+
+.timer-hud__btn--auto.active {
+  background: #a64bf4;
+  border-color: #d4a8ff;
+}
+/* ============================================================
+   Ajuste de cursor para elementos ARRÁSTAVEIS
+============================================================ */
+
+/* Antes de arrastar */
+#iaChat,
+#timerHud,
+#iaLauncher {
+  cursor: grab;
+}
+
+/* Durante o arraste */
+#iaChat.dragging,
+#timerHud.dragging,
+#iaLauncher.dragging {
+  cursor: grabbing !important;
+}
+/* ======================================================
+   ESTADOS ESPECIAIS DOS CARDS — RESTAURAÇÃO OFICIAL
+   ====================================================== */
+
+/* 🔶 FALSO POSITIVO — amarelo suave */
+.cenario-falso-positivo {
+  box-shadow: 0 0 12px 4px rgba(255, 230, 0, 0.6);
+  animation: falsoPositivoAnim 3s ease-out forwards;
+}
+
+/* 🔴 ERRO CRÍTICO */
+.cenario-erro {
+  box-shadow: 0 0 14px 4px rgba(255, 60, 60, 0.75);
+  animation: erroAnim 0.7s ease-out;
+}
+
+/* 🟢 SUCESSO */
+.cenario-sucesso {
+  box-shadow: 0 0 14px 4px rgba(60, 255, 130, 0.75);
+  animation: sucessoAnim 0.7s ease-out;
+}
+
+/* 🟣 EM EXECUÇÃO */
+.cenario-execucao {
+  box-shadow: 0 0 14px 4px rgba(120, 90, 255, 0.75);
+  animation: execucaoAnim 1s ease-in-out infinite alternate;
+}
+
+/* ⚠️ AVISO / DEGRADED */
+.cenario-alerta {
+  box-shadow: 0 0 12px 4px rgba(255, 170, 50, 0.65);
+  animation: alertaAnim 1.2s ease-in-out infinite alternate;
+}
+
+/* ======================================================
+   ANIMAÇÕES
+   ====================================================== */
+
+/* Falso positivo — não repete */
+@keyframes falsoPositivoAnim {
+  0% { opacity: 1; }
+  60% { box-shadow: 0 0 18px 6px rgba(255, 230, 0, 0.9); }
+  100% { opacity: 1; box-shadow: none; }
+}
+
+/* Erro crítico */
+@keyframes erroAnim {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Sucesso */
+@keyframes sucessoAnim {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Execução / ativo */
+@keyframes execucaoAnim {
+  0% { transform: scale(1); opacity: 0.85; }
+  100% { transform: scale(1.03); opacity: 1; }
+}
+
+/* Alerta */
+@keyframes alertaAnim {
+  0% { transform: scale(1); opacity: 0.75; }
+  100% { transform: scale(1.04); opacity: 1; }
+}
+/* ======================================================
+   FALSO POSITIVO — destaque amarelo suave por 3 segundos
+   ====================================================== */
+.cenario-falso-positivo {
+  box-shadow: 0 0 14px 6px rgba(255, 220, 0, 0.75);
+  animation: falsoPositivoAnim 3s ease-out forwards;
+}
+
+@keyframes falsoPositivoAnim {
+  0% { opacity: 1; }
+  100% { opacity: 1; box-shadow: none; }
+}
+/* =====================================================================
+   BOTÕES DE ESTADO (Resolvido / Manutenção / Erro) — formato pílula neon
+   ===================================================================== */
+
+.log-estado-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* base de todos os botões de estado */
+.btn-estado-pill {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+
+  width: 100%;
+  padding: 10px 18px;
+
+  border-radius: 999px;                /* formato pílula */
+  border: 1px solid transparent;
+  background: rgba(15, 23, 42, 0.95);  /* fundo escuro (night mode) */
+
+  font-size: 14px;
+  font-weight: 600;
+  color: #e5e7eb;
+
+  cursor: pointer;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.12s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-estado-pill:hover {
+  transform: translateY(-1px);
+}
+
+.btn-estado-pill:active {
+  transform: translateY(0);
+}
+
+/* bolinha luminosa (igual ao botão do chat) */
+.btn-estado-indicador {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* texto do botão */
+.btn-estado-label {
+  white-space: nowrap;
+}
+
+/* ---------------- CORES ESPECÍFICAS ---------------- */
+
+/* 🟢 Resolvido */
+.btn-estado-pill--resolvido {
+  color: #bbf7d0;
+  border-color: #22c55e;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.7);
+}
+
+.btn-estado-pill--resolvido:hover {
+  box-shadow: 0 0 18px rgba(34, 197, 94, 1);
+  background: rgba(22, 163, 74, 0.18);
+}
+
+/* 🟡 Manutenção */
+.btn-estado-pill--manutencao {
+  color: #fef9c3;
+  border-color: #facc15;
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.8);
+}
+
+.btn-estado-pill--manutencao:hover {
+  box-shadow: 0 0 18px rgba(250, 204, 21, 1);
+  background: rgba(202, 138, 4, 0.22);
+}
+
+/* 🔴 Erro */
+.btn-estado-pill--erro {
+  color: #fecaca;
+  border-color: #ef4444;
+  box-shadow: 0 0 12px rgba(248, 113, 113, 0.9);
+}
+
+.btn-estado-pill--erro:hover {
+  box-shadow: 0 0 18px rgba(248, 113, 113, 1);
+  background: rgba(185, 28, 28, 0.24);
+}
+
+/* Estado "ativo" — quando foi clicado recentemente */
+.btn-estado-pill--ativo {
+  box-shadow: 0 0 22px currentColor;
+}
+/* ---------------------- MODAL DE AÇÃO DO TÉCNICO ---------------------- */
+.acao-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.acao-modal.hidden {
+  display: none;
+}
+
+.acao-modal-box {
+  width: 420px;
+  background: #0b0e1a;
+  border: 1px solid rgba(180, 120, 255, 0.3);
+  box-shadow: 0 0 22px rgba(155, 90, 255, 0.4);
+  border-radius: 20px;
+  padding: 24px;
+  animation: fadeInScale .25s ease;
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+#acaoModalTitulo {
+  color: #c7a7ff;
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+#acaoModalTexto {
+  width: 100%;
+  background: #1a1d29;
+  border: 1px solid rgba(195,145,255,0.3);
+  padding: 12px;
+  font-size: .95rem;
+  color: #eee;
+  border-radius: 12px;
+  resize: none;
+  outline: none;
+}
+
+.acao-modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+#acaoModalCancelar,
+#acaoModalConfirmar {
+  flex: 1;
+  margin: 0 6px;
+  padding: 10px 0;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: .2s;
+  font-size: .95rem;
+}
+
+#acaoModalCancelar {
+  background: #3a3a4d;
+  color: #ccc;
+}
+
+#acaoModalCancelar:hover {
+  background: #505063;
+}
+
+#acaoModalConfirmar {
+  background: #8e4bff;
+  color: white;
+  box-shadow: 0 0 12px #8e4bff;
+}
+
+#acaoModalConfirmar:hover {
+  background: #a56cff;
+  box-shadow: 0 0 18px #a56cff;
+}
+.modal-estado {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.modal-estado.hidden { display: none; }
+
+.modal-estado__content {
+  background: #111526;
+  padding: 24px;
+  border-radius: 12px;
+  width: 380px;
+  box-shadow: 0 0 20px rgba(154, 86, 255, 0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  animation: fadeIn .25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.modal-estado textarea {
+  width: 100%;
+  padding: 12px;
+  background: #1b1f35;
+  border: 1px solid #333a5c;
+  border-radius: 8px;
+  color: white;
+}
+
+.modal-estado__botoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.btn-ok {
+  background: #7b2cff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-cancelar {
+  background: #3a3f5c;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+/* ============================================================
+   MODAL DE CONFIRMAÇÃO DE ENVIO (WhatsApp / Email)
+   Mantém o mesmo clima neon do restante do sistema
+   ============================================================ */
+
+.envio-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.85); /* overlay escuro */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.envio-modal.hidden {
+  display: none;
+}
+
+.envio-modal-box {
+  width: min(640px, 90vw);
+  background: #020617;
+  border-radius: 18px;
+  padding: 24px 24px 20px;
+  box-shadow: 0 0 40px rgba(129, 140, 248, 0.7);
+  border: 1px solid rgba(129, 140, 248, 0.6);
+}
+
+.envio-modal-box h2 {
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+  color: #e5e7eb;
+}
+
+.envio-modal-box p {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin-bottom: 12px;
+}
+
+#envioModalPreview {
+  width: 100%;
+  min-height: 190px;
+  resize: vertical;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  color: #e5e7eb;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin-bottom: 16px;
+}
+
+.envio-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.envio-modal-buttons button {
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#envioModalCancelar {
+  background: #111827;
+  color: #e5e7eb;
+}
+
+#envioModalCancelar:hover {
+  background: #020617;
+}
+
+#envioModalConfirmar {
+  background: linear-gradient(90deg, #22c55e, #a3e635);
+  color: #022c22;
+  box-shadow: 0 0 18px rgba(34, 197, 94, 0.7);
+}
+
+#envioModalConfirmar:hover {
+  transform: translateY(-1px);
+}
+/* ===========================================
+   ESTADOS DOS CARDS — crítico, manutenção, ok
+   =========================================== */
+
+.cenario-card.card-critico {
+  box-shadow: 0 0 18px #ff4d4d;
+  border-color: #ff4d4d !important;
+}
+
+.cenario-card.card-manutencao {
+  box-shadow: 0 0 18px #ffd84d;
+  border-color: #ffd84d !important;
+}
+
+.cenario-card.card-ok {
+  box-shadow: 0 0 12px #4dff88;
+  border-color: #4dff88 !important;
+}
+/* CENÁRIO EM MANUTENÇÃO (AMARELO) */
+.cenario-manutencao {
+  box-shadow: 0 0 20px 4px #ffeb3b;
+  border-color: #ffeb3b !important;
+}
+
+/* CENÁRIO RESOLVIDO (VERDE) */
+.cenario-resolvido {
+  box-shadow: 0 0 20px 4px #00ff9c;
+  border-color: #00ff9c !important;
+}
+/* O já existente .cenario-alerta = vermelho */
+.cenario-critico {
+  border: 2px solid #ff4d4d !important;
+  box-shadow: 0 0 12px rgba(255, 60, 60, 0.8);
+  animation: pulsarCritico 1.8s infinite ease-in-out;
+}
+
+@keyframes pulsarCritico {
+  0% { box-shadow: 0 0 6px rgba(255, 60, 60, 0.4); }
+  50% { box-shadow: 0 0 16px rgba(255, 0, 0, 0.85); }
+  100% { box-shadow: 0 0 6px rgba(255, 60, 60, 0.4); }
+}

@@ -1,0 +1,1 @@
+{"total":2,"items":[{"uid":"58cc243f0aaf036966d365a061902770","name":"desktop-chrome","statistic":{"failed":6,"broken":0,"skipped":0,"passed":6,"unknown":0,"total":12}},{"uid":"77e8e8d86348f0544cd7806ccca773cf","name":"mobile-chrome","statistic":{"failed":6,"broken":0,"skipped":0,"passed":6,"unknown":0,"total":12}}]}
