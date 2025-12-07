@@ -1,7 +1,9 @@
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=22&duration=2400&pause=900&color=00F0FF&center=true&vCenter=true&width=780&lines=Playwright+E2E+Automation;E-commerce+Testing+Suite;Relatórios+Allure+%7C+HTML;CI%2FCD+Completo+com+GitHub+Actions" />
+  <img
+    src="https://readme-typing-svg.demolab.com?font=Fira+Code&amp;weight=500&amp;size=22&amp;duration=2400&amp;pause=900&amp;color=00F0FF&amp;center=true&amp;vCenter=true&amp;width=780&amp;lines=Playwright+E2E+Automation;E-commerce+Testing+Suite;Relat%C3%B3rios+Allure+%7C+HTML;CI%2FCD+Completo+com+GitHub+Actions"
+    alt="Playwright E2E Automation banner"
+  />
 </p>
-
 <h1 align="center">🎭 Playwright E-commerce Automation</h1>
 
 <p align="center"><strong>Testes E2E completos para fluxo real de compra, com relatórios avançados, arquitetura limpa e execução automatizada.</strong></p>
