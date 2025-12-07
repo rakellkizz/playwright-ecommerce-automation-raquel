@@ -25,8 +25,6 @@ const NOMES_CENARIOS = {
   perfil: "Perfil",
 };
 
-
-
 // ======================================================================
 // 1) montarTextoRelatorio(cenarioId, logs)
 // ----------------------------------------------------------------------
@@ -62,7 +60,7 @@ export function montarTextoRelatorio(cenarioId, logs) {
   // Nada disso muda o texto do relatório por enquanto, é só análise
   // paralela. O resultado fica disponível para:
   //   - Console do navegador (para você inspecionar)
-  //   - Futuro C3 (relatório IA)
+  //   - C3 (relatório IA anexado no final — abaixo 👇)
   //   - Futuro: avisos automáticos no chat/HUD
   // ==================================================================
   let resultadoIA = null;
@@ -87,6 +85,24 @@ export function montarTextoRelatorio(cenarioId, logs) {
   // Caso não existam logs
   if (!logs || !logs.length) {
     saida += "Nenhum evento registrado para este cenário.\n";
+
+    // 🔁 Mesmo sem logs, se a IA tiver algo, podemos anexar rascunho
+    if (
+      resultadoIA &&
+      window.IAMonitor &&
+      typeof window.IAMonitor.gerarRelatorioInteligente === "function"
+    ) {
+      try {
+        const textoIA = window.IAMonitor.gerarRelatorioInteligente(resultadoIA);
+        saida += `\n========================================\n`;
+        saida += ` BLOCO GERADO PELA IA DE MONITORIA\n`;
+        saida += `========================================\n\n`;
+        saida += textoIA + "\n";
+      } catch (e) {
+        console.warn("Falha ao gerar bloco IA sem logs:", e);
+      }
+    }
+
     return saida;
   }
 
@@ -141,6 +157,33 @@ export function montarTextoRelatorio(cenarioId, logs) {
 
       saida += `----------------------------------------\n\n`;
     });
+
+  // ==================================================================
+  // 🧠 C3 — ANEXANDO O RELATÓRIO INTELIGENTE DA IA NO FINAL
+  // ------------------------------------------------------------------
+  // Aqui usamos o mesmo resultadoIA calculado lá em cima.
+  // Se o módulo ia-monitor.js estiver carregado, ele gera um texto
+  // com:
+  //   - Risco atual
+  //   - Variação de incidentes
+  //   - Janela anterior x recente
+  // ==================================================================
+  if (
+    resultadoIA &&
+    window.IAMonitor &&
+    typeof window.IAMonitor.gerarRelatorioInteligente === "function"
+  ) {
+    try {
+      const textoIA = window.IAMonitor.gerarRelatorioInteligente(resultadoIA);
+
+      saida += `\n========================================\n`;
+      saida += ` BLOCO GERADO PELA IA DE MONITORIA\n`;
+      saida += `========================================\n\n`;
+      saida += textoIA + "\n";
+    } catch (e) {
+      console.warn("Falha ao anexar bloco IA no relatório:", e);
+    }
+  }
 
   // 🔥 ESSA LINHA É FUNDAMENTAL — SEM ELA TUDO QUEBRA!
   return saida;

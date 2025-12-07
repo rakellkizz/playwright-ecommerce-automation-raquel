@@ -5,9 +5,8 @@
 //   ✔ Exibir mensagens do usuário e da IA
 //   ✔ Animação "digitando"
 //   ✔ Scroll automático
-//   ✔ Chat ARRastável (mouse + touch)
+//   ✔ Chat arrastável (mouse + touch)
 //   ✔ Botão flutuante acompanha o chat ao arrastar
-//   ✔ Não some no mobile
 //   ✔ Sem treta com aria-hidden / foco
 // ======================================================================
 
@@ -20,6 +19,7 @@ import {
   compartilharWhatsApp,
   compartilharEmail,
 } from "./relatorio.js";
+
 // ======================================================================
 // 2) CAPTURA DOS ELEMENTOS DO CHAT
 // ======================================================================
@@ -45,44 +45,46 @@ const input = document.getElementById("iaInput");
 // ======================================================================
 // 3) ABRIR CHAT (sem brigar com aria-hidden / foco)
 // ======================================================================
-if (launcher && chat && input) {
-  launcher.onclick = () => {
-    // garante que não tem foco "velho" preso
-    input.blur();
-
-    // abre visualmente
+if (launcher && chat) {
+  launcher.addEventListener("click", () => {
     chat.classList.add("ia-chat--open");
     chat.style.pointerEvents = "auto";
     chat.setAttribute("aria-hidden", "false");
 
-    // depois da animação (0.18s) foca no input
-    setTimeout(() => {
+    if (input) {
       input.focus();
-    }, 180);
-  };
+    }
+  });
 }
+launcher.addEventListener("click", () => {
+  chat.classList.add("ia-chat--open");
 
+  // gruda no botão AO ABRIR
+  const rect = launcher.getBoundingClientRect();
+  chat.style.left = `${rect.left}px`;
+  chat.style.top = `${rect.top - chat.offsetHeight - 12}px`;
+
+  chat.style.right = "auto";
+  chat.style.bottom = "auto";
+});
 // ======================================================================
 // 4) FECHAR CHAT (remove foco ANTES de esconder)
 // ======================================================================
-if (closeBtn && chat && input) {
+if (closeBtn && chat) {
   closeBtn.addEventListener("click", () => {
-    // tira o foco dos campos do chat
-    input.blur();
+    if (input) {
+      input.blur();
+    }
 
-    // fecha visualmente
     chat.classList.remove("ia-chat--open");
 
-    // depois da animação, desabilita interação
     setTimeout(() => {
       chat.style.pointerEvents = "none";
       chat.setAttribute("aria-hidden", "true");
     }, 120);
   });
 }
-
-// ⚠️ IMPORTANTE: SEM “fechar ao clicar fora” para não dar conflito
-// Aquele window.addEventListener("click", ...) foi removido de propósito.
+// ⚠️ SEM "fechar ao clicar fora" para não dar conflito com o arraste.
 
 // ======================================================================
 // 5) addMessage() — Cria mensagens na interface do chat
@@ -106,7 +108,7 @@ function addMessage(texto, sender = "ia") {
 
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
-  }
+}
 
 // ======================================================================
 // 6) ENVIO DA MENSAGEM (submit do formulário)
@@ -174,7 +176,7 @@ export function chatAviso(msg) {
   area.appendChild(bloco);
   area.scrollTop = area.scrollHeight;
 }
-// ⬇ AQUI SIM! FORA DA FUNÇÃO!  
+
 // Torna a função acessível globalmente para alertas automáticos
 window.chatAviso = chatAviso;
 
@@ -310,6 +312,58 @@ window.addEventListener("DOMContentLoaded", () => {
     finalizarArraste();
   });
 });
+// ======================================================================
+// 9) BOTÃO IA DRAGGABLE — se move sozinho e puxa o chat se estiver aberto
+// ======================================================================
+(function () {
+  const launcher = document.getElementById("iaLauncher");
+  const chat = document.getElementById("iaChat");
+  if (!launcher) return;
+
+  let dragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  // cursor igual ao temporizador
+  launcher.style.cursor = "grab";
+
+  launcher.addEventListener("mousedown", (ev) => {
+    dragging = true;
+    launcher.style.cursor = "grabbing";
+
+    const rect = launcher.getBoundingClientRect();
+    offsetX = ev.clientX - rect.left;
+    offsetY = ev.clientY - rect.top;
+
+    // deixar o botão livre para mover
+    launcher.style.right = "auto";
+    launcher.style.bottom = "auto";
+  });
+
+  window.addEventListener("mousemove", (ev) => {
+    if (!dragging) return;
+
+    const x = ev.clientX - offsetX;
+    const y = ev.clientY - offsetY;
+
+    launcher.style.left = `${x}px`;
+    launcher.style.top = `${y}px`;
+
+    // se o chat estiver aberto, acompanha
+    if (chat && chat.classList.contains("ia-chat--open")) {
+      const h = launcher.offsetHeight + 12; // distância entre eles
+      chat.style.left = `${x}px`;
+      chat.style.top = `${y + h}px`;
+      chat.style.right = "auto";
+      chat.style.bottom = "auto";
+    }
+  });
+
+  window.addEventListener("mouseup", () => {
+    dragging = false;
+    launcher.style.cursor = "grab";
+  });
+})();
 
 // ======================================================================
 // FIM DO ARQUIVO — Chat flutuante, arrastável, botão acompanha
