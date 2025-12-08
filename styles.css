@@ -1,5 +1,6 @@
-/* =============================================================================
-   RESET GLOBAL
+/*========================================================================
+   1. RESET GLOBAL
+   - Zera margens e paddings padrão e ajusta o box-sizing
 ============================================================================= */
 *,
 *::before,
@@ -10,7 +11,8 @@
 }
 
 /* =============================================================================
-   FUNDO GERAL DO SITE
+   2. FUNDO GERAL DO SITE
+   - Define o background neon escuro e tipografia padrão
 ============================================================================= */
 body {
   background: radial-gradient(circle at top, #071427 0%, #020817 60%, #00040a 100%);
@@ -20,7 +22,8 @@ body {
 }
 
 /* =============================================================================
-   WRAPPER CENTRAL
+   3. WRAPPER CENTRAL
+   - Limita largura e centraliza todo o conteúdo da página
 ============================================================================= */
 .page-wrapper {
   max-width: 1150px;
@@ -29,7 +32,8 @@ body {
 }
 
 /* =============================================================================
-   TAGS DO TOPO
+   4. TAGS DO TOPO
+   - Pills com contexto do projeto (Playwright, IA, etc.)
 ============================================================================= */
 .top-tags {
   display: flex;
@@ -52,7 +56,8 @@ body {
 }
 
 /* =============================================================================
-   SEÇÃO HERO
+   5. SEÇÃO HERO (cabeçalho principal da página)
+   - Bloco principal com título, subtítulo e descrição
 ============================================================================= */
 .hero {
   background: radial-gradient(circle at top left, #0f172a 0%, #091020 70%);
@@ -98,7 +103,8 @@ body {
 }
 
 /* =============================================================================
-   BOTÕES
+   6. BOTÕES GERAIS (Hero, ações, etc.)
+   - Estilos base e variações (primary, outline, ghost)
 ============================================================================= */
 .hero-actions {
   margin-top: 22px;
@@ -154,7 +160,8 @@ body {
 }
 
 /* =============================================================================
-   SEÇÕES E TÍTULOS
+   7. SEÇÕES E TÍTULOS
+   - Títulos das seções principais (Resultados, Cenários, etc.)
 ============================================================================= */
 .section {
   margin-top: 40px;
@@ -167,7 +174,8 @@ body {
 }
 
 /* =============================================================================
-   GRID
+   8. GRID BASE
+   - Layout em colunas para cards e painéis
 ============================================================================= */
 .grid {
   display: grid;
@@ -190,7 +198,8 @@ body {
 }
 
 /* =============================================================================
-   CARDS
+   9. CARDS PADRÃO
+   - Cartões usados em cenários, métricas, explicações, etc.
 ============================================================================= */
 .card {
   background: rgba(10, 17, 32, 0.65);
@@ -223,7 +232,7 @@ body {
   color: #d0dcff;
 }
 
-/* Card lists */
+/* Listas dentro dos cards */
 .card-list {
   list-style: none;
   margin-top: 8px;
@@ -244,6 +253,7 @@ body {
   color: #48c7ff;
 }
 
+/* Lista com check verde */
 .card-list-check li::before {
   content: "✔";
   font-size: 12px;
@@ -251,7 +261,8 @@ body {
 }
 
 /* =============================================================================
-   PROFILE CARD
+   10. PROFILE CARD
+   - Bloco de apresentação da Kell (avatar + texto)
 ============================================================================= */
 .profile-card {
   background: rgba(10, 17, 32, 0.7);
@@ -281,7 +292,8 @@ body {
 }
 
 /* =============================================================================
-   FOOTER
+   11. FOOTER
+   - Rodapé discreto com crédito do projeto
 ============================================================================= */
 .footer {
   margin-top: 50px;
@@ -294,16 +306,17 @@ body {
 }
 
 /* ============================================================
-   ASSISTENTE DE IA · BOTÃO FLUTUANTE (visual)
+   12. ASSISTENTE DE IA – BOTÃO FLUTUANTE (visual)
+   - Botão redondo que abre o chat, arrastável
 ============================================================ */
 .ia-launcher {
   position: fixed;
 
-  /* 🟣 POSIÇÃO INICIAL - continua exatamente como já estava */
+  /* Posição inicial */
   right: 1.8rem;
   bottom: 1.8rem;
 
-  /* 🤖 PERMISSÃO PARA MOVIMENTAR VIA JS */
+  /* Permite movimentação via JS */
   left: auto;
   top: auto;
 
@@ -320,7 +333,7 @@ body {
   font-size: 0.85rem;
   font-weight: 500;
 
-  /* ✨ Aqui trocamos cursor normal pelo cursor igual ao temporizador */
+  /* Cursor igual ao timer (arrastável) */
   cursor: grab;
 
   backdrop-filter: blur(12px);
@@ -330,12 +343,12 @@ body {
   z-index: 999;
 
   transition:
-  transform 0.18s ease-out,
-  box-shadow 0.18s ease-out,
-  background 0.18s ease-out
+    transform 0.18s ease-out,
+    box-shadow 0.18s ease-out,
+    background 0.18s ease-out;
 }
 
-/* 🟣 CORRIGE O BUG DO BOTÃO CRESCER QUANDO CLICADO */
+/* Corrige bug do botão crescer ao clicar */
 .ia-launcher:active {
   transform: scale(1) !important;
   cursor: grabbing;
@@ -361,19 +374,17 @@ body {
 }
 
 /* ============================================================
-   JANELA DO CHAT (visual base)
+   13. JANELA DO CHAT (caixa flutuante)
 ============================================================ */
-
 .ia-chat {
   position: fixed;
 
-  /* POSIÇÃO INICIAL SOMENTE QUANDO ABERTO */
+  /* Posição inicial quando aberto */
   left: auto;
   top: auto;
   right: 1.8rem;
   bottom: 5.2rem;
 
-  /* resto igual */
   width: min(360px, 92vw);
   max-height: 70vh;
   display: flex;
@@ -401,9 +412,8 @@ body {
 }
 
 /* ============================================================
-   Cabeçalho do Chat (visual)
+   14. Cabeçalho do Chat (avatar, título, fechar)
 ============================================================ */
-
 .ia-chat__header {
   display: flex;
   align-items: center;
@@ -414,6 +424,7 @@ body {
   cursor: grab;        /* área de arraste */
   touch-action: none;  /* impede scroll durante arraste */
 }
+
 .ia-chat__header:active {
   cursor: grabbing;
 }
@@ -482,9 +493,8 @@ body {
 }
 
 /* ============================================================
-   Área de mensagens
+   15. Área de mensagens do Chat
 ============================================================ */
-
 .ia-chat__messages {
   padding: 0.75rem 0.8rem;
   flex: 1;
@@ -507,9 +517,8 @@ body {
 }
 
 /* ============================================================
-   Mensagens
+   16. Bolhas de mensagem (usuário x IA)
 ============================================================ */
-
 .ia-msg {
   display: flex;
   gap: 0.45rem;
@@ -563,9 +572,8 @@ body {
 }
 
 /* ============================================================
-   Digitação
+   17. Estado "digitando..." (três pontinhos)
 ============================================================ */
-
 .ia-msg--typing .ia-msg__bubble {
   display: inline-flex;
   gap: 0.2rem;
@@ -589,9 +597,8 @@ body {
 }
 
 /* ============================================================
-   Formulário de entrada
+   18. Formulário de entrada do Chat
 ============================================================ */
-
 .ia-chat__form {
   display: flex;
   gap: 0.45rem;
@@ -645,9 +652,8 @@ body {
 }
 
 /* ============================================================
-   Animações
+   19. Animações do Chat (pulse + typing)
 ============================================================ */
-
 @keyframes ia-pulse {
   from {
     transform: scale(1);
@@ -674,7 +680,7 @@ body {
   }
 }
 
-/* Ajuste para telas pequenas */
+/* Ajuste para telas muito baixas */
 @media (max-height: 600px) {
   .ia-chat {
     bottom: 4rem;
@@ -683,7 +689,7 @@ body {
 }
 
 /* =========================================================
-   BADGE CORPORATIVO DE TIMER (canto superior direito)
+   20. BADGE CORPORATIVO DO TIMER (canto superior direito)
 ========================================================= */
 .timer-badge {
   position: fixed;
@@ -702,7 +708,7 @@ body {
 }
 
 /* =========================================================
-   PROGRESS WRAP — Barra de progresso fixa (lado superior)
+   21. PROGRESS WRAP – Barra de progresso fixa do timer
 ========================================================= */
 .progress-wrap {
   position: fixed;
@@ -727,9 +733,8 @@ body {
 }
 
 /* ============================================================
-   ALERTA DE INCIDENTE EM CENÁRIOS · Pulsação
+   22. ALERTA DE INCIDENTE EM CENÁRIOS (badge + pulsação)
 ============================================================ */
-
 .cenario-alerta {
   border-color: #fb7185 !important;
   box-shadow:
@@ -782,8 +787,9 @@ body {
 }
 
 /* ===========================
-   ALERTA ORGANIZADO NO TOPO
-   =========================== */
+   23. ALERTA ORGANIZADO NO TOPO
+   - Bloco extra de alerta dentro do card
+=========================== */
 .cenario-alerta-msg {
   background: rgba(255, 87, 87, 0.15);
   border: 1px solid rgba(255, 87, 87, 0.4);
@@ -809,7 +815,7 @@ body {
 }
 
 /* ============================================================
-   HUD GLOBAL DO TEMPORIZADOR (visual)
+   24. HUD GLOBAL DO TEMPORIZADOR (painel SOC no topo)
 ============================================================ */
 .timer-hud {
   position: fixed;
@@ -829,7 +835,7 @@ body {
   z-index: 900;
 }
 
-/* Head */
+/* Cabeçalho do HUD */
 .timer-hud__header {
   display: flex;
   flex-direction: column;
@@ -850,7 +856,7 @@ body {
   color: #a5b4fc;
 }
 
-/* Body */
+/* Corpo do HUD */
 .timer-hud__body {
   display: flex;
   align-items: center;
@@ -866,7 +872,7 @@ body {
   color: #f9f5ff;
 }
 
-/* Controls */
+/* Controles do HUD */
 .timer-hud__controls {
   display: flex;
   flex-direction: column;
@@ -914,7 +920,7 @@ body {
 }
 
 /* ============================================================
-   BARRA GLOBAL NO RODAPÉ
+   25. BARRA GLOBAL NO RODAPÉ – Progresso do timer
 ============================================================ */
 .timer-bar {
   position: fixed;
@@ -957,11 +963,10 @@ body {
 }
 
 /* =======================================================================
-   MODAL DE LOGS / WORKLOG
-   — Overlay, modal principal, cabeçalho e layout interno
+   26. MODAL DE LOGS / WORKLOG – Overlay e caixa principal
 ======================================================================= */
 
-/* Fundo escurecido atrás do modal */
+/* Fundo escurecido atrás do modal (versão base) */
 .log-overlay {
   position: fixed;
   inset: 0;
@@ -994,9 +999,8 @@ body {
 }
 
 /* ===================================================================
-   AÇÕES DENTRO DO CARD DE CENÁRIO (PDF / WhatsApp / Email)
-   =================================================================== */
-
+   27. AÇÕES DENTRO DO CARD DE CENÁRIO (PDF / WhatsApp / Email)
+=================================================================== */
 .log-card-actions {
   margin-top: 10px;
   padding-top: 8px;
@@ -1061,9 +1065,8 @@ body {
 }
 
 /* =======================================================================
-   Cabeçalho do modal
+   28. Cabeçalho do modal de logs (título + fechar)
 ======================================================================= */
-
 .log-modal__header {
   padding: 14px 18px;
   border-bottom: 1px solid rgba(31, 41, 55, 0.9);
@@ -1102,9 +1105,8 @@ body {
 }
 
 /* =======================================================================
-   CONTEÚDO — DUAS COLUNAS (Timeline e Formulário)
+   29. Conteúdo do modal – duas colunas (timeline + formulário)
 ======================================================================= */
-
 .log-modal__content {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
@@ -1120,9 +1122,8 @@ body {
 }
 
 /* =======================================================================
-   TIMELINE — Lado Esquerdo
+   30. TIMELINE – Lado esquerdo (histórico de ações)
 ======================================================================= */
-
 .log-timeline {
   padding: 14px 18px;
   border-right: 1px solid rgba(31, 41, 55, 0.9);
@@ -1167,9 +1168,8 @@ body {
 }
 
 /* =======================================================================
-   FORMULÁRIO — Lado Direito
+   31. FORMULÁRIO – Lado direito (registro de nova ação)
 ======================================================================= */
-
 .log-form {
   padding: 14px 18px;
   background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.06), #020617);
@@ -1233,9 +1233,8 @@ body {
 }
 
 /* =======================================================================
-   DOCK FLUTUANTE — Compartilhar relatório (PDF / WhatsApp / Email)
+   32. DOCK FLUTUANTE – Compartilhar relatório (PDF / Whats / Email)
 ======================================================================= */
-
 .log-dock {
   position: fixed;
   right: 1.8rem;
@@ -1277,10 +1276,9 @@ body {
 }
 
 /* =======================================================================
-   CORREÇÃO DEFINITIVA — Modal não bloqueia overlay etc.
+   33. Correção definitiva – overlay e modal sempre acima
+   - Garante que overlay cobre a tela e que modal está no topo
 ======================================================================= */
-
-/* OVERLAY — cobre a tela inteira e respeita hidden */
 .log-overlay {
   position: fixed !important;
   top: 0;
@@ -1300,7 +1298,6 @@ body {
   display: none !important;
 }
 
-/* MODAL — sempre acima de tudo */
 .log-modal {
   position: relative;
   z-index: 99999 !important;
@@ -1308,14 +1305,15 @@ body {
 }
 
 /* =======================================================================
-   IMPEDIR ROLAGEM DO FUNDO QUANDO MODAL ESTÁ ABERTO
+   34. IMPEDIR ROLAGEM DO FUNDO QUANDO O MODAL ESTÁ ABERTO
 ======================================================================= */
 body.modal-aberto {
   overflow: hidden !important;
 }
 
 /* =======================================================================
-   BOTÕES INLINE (PDF / WHATSAPP / EMAIL) – MODELO B
+   35. BOTÕES INLINE (PDF / WhatsApp / Email) – Modelo B
+   - Versão extra centralizada na própria página
 ======================================================================= */
 .log-actions-inline {
   margin-top: 22px;
@@ -1325,7 +1323,7 @@ body.modal-aberto {
   gap: 14px;
 }
 
-/* Botão base */
+/* Botão base inline */
 .log-inline-btn {
   padding: 10px 18px;
   border-radius: 40px;
@@ -1339,7 +1337,6 @@ body.modal-aberto {
   -webkit-backdrop-filter: blur(8px);
 }
 
-/* Efeitos ao passar o mouse */
 .log-inline-btn:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 0 18px rgba(120, 60, 255, 0.5);
@@ -1361,10 +1358,11 @@ body.modal-aberto {
 }
 
 /* ============================================================
-   STATUS DOS CENÁRIOS — NEON PROFISSIONAL
+   36. STATUS DOS CENÁRIOS – NEON PROFISSIONAL
+   - Usa classes combinadas .cenario-card + estado
 ============================================================ */
 
-/* RESET — remove status antes */
+/* Reset de base dos cards de cenário */
 .cenario-card {
   position: relative;
   transition:
@@ -1439,9 +1437,8 @@ body.modal-aberto {
 }
 
 /* =======================================================
-   BOTÕES DE STATUS NO MODAL
+   37. BOTÕES DE STATUS NO MODAL (cards de ação)
 ======================================================= */
-
 .log-status-buttons {
   margin-top: 22px;
   display: flex;
@@ -1495,12 +1492,15 @@ body.modal-aberto {
   box-shadow: 0 0 16px rgba(255, 95, 95, 0.85);
 }
 
-/* =====================================================================
-   FIX OFICIAL — CHAT + LAUNCHER + TIMER FLUTUANTES E ARRASTÁVEIS
-   (POSIÇÃO INICIAL IGUAL AO SEU LAYOUT · COMPORTAMENTO LIBERADO)
-===================================================================== */
+/* Estado "ativo" – quando o botão foi clicado recentemente */
+.btn-estado-pill--ativo {
+  box-shadow: 0 0 22px currentColor;
+}
 
-/* 1) Todos flutuantes, sempre clicáveis e com z-index alto */
+/* =====================================================================
+   38. FIX OFICIAL – CHAT + LAUNCHER + TIMER flutuantes e arrastáveis
+   - Garante que continuam acima do layout normal e arrastáveis
+===================================================================== */
 #iaChat,
 #iaLauncher,
 #timerHud {
@@ -1509,10 +1509,10 @@ body.modal-aberto {
   z-index: 9999;
   will-change: transform, top, left, bottom, right;
 }
-/* =====================================================================
-   HUD SOC — IA Monitoramento dentro do timerHud
-   ===================================================================== */
 
+/* =====================================================================
+   39. HUD SOC – IA Monitoramento dentro do timerHud
+===================================================================== */
 .hud-soc {
   margin-top: 8px;
   padding: 8px 10px;
@@ -1675,7 +1675,7 @@ body.modal-aberto {
   box-shadow: 0 0 10px rgba(239, 68, 68, 0.9);
 }
 
-/* Mobile */
+/* Ajustes para telas muito pequenas */
 @media (max-width: 480px) {
   .hud-soc {
     font-size: 10px;
@@ -1690,7 +1690,7 @@ body.modal-aberto {
   }
 }
 
-/* 2) CHAT FECHADO — posição inicial (como no print) */
+/* 40. CHAT – estados base com IDs (posição inicial/aberto) */
 #iaChat {
   right: 30px;
   bottom: 120px;        /* fica acima do botão de IA */
@@ -1701,14 +1701,13 @@ body.modal-aberto {
   touch-action: none;   /* permite arraste sem scroll */
 }
 
-/* 3) CHAT ABERTO */
 #iaChat.ia-chat--open {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
 }
 
-/* 4) BOTÃO FLUTUANTE (launcher) — posição inicial */
+/* 41. BOTÃO FLUTUANTE (launcher) – posição inicial com ID */
 #iaLauncher {
   right: 30px;
   bottom: 30px;
@@ -1716,7 +1715,7 @@ body.modal-aberto {
   touch-action: none;
 }
 
-/* 5) TEMPORIZADOR — posição inicial (como está hoje) */
+/* 42. TEMPORIZADOR – posição inicial (HUD) */
 #timerHud {
   right: 30px;
   bottom: 200px;    /* acima do chat */
@@ -1725,7 +1724,7 @@ body.modal-aberto {
   touch-action: none;
 }
 
-/* 6) EFEITO VISUAL DE ARRASTE (ativado pelo JS com .dragging) */
+/* 43. Efeito visual de arraste (ativado pelo JS com .dragging) */
 #iaChat.dragging,
 #timerHud.dragging,
 #iaLauncher.dragging {
@@ -1736,7 +1735,7 @@ body.modal-aberto {
     0 0 28px rgba(255, 0, 255, 0.6);
 }
 
-/* 7) MOBILE — posições seguras sem sumir da tela */
+/* 44. Posições seguras no mobile para não sumir da tela */
 @media (max-width: 480px) {
   #iaChat {
     right: 12px;
@@ -1755,14 +1754,14 @@ body.modal-aberto {
   }
 }
 
-/* 8) Proteção para não sair da tela (chat e HUD) */
+/* 45. Proteção para não sair da tela (chat e HUD) */
 #iaChat,
 #timerHud {
   max-width: calc(100vw - 20px);
   max-height: calc(100vh - 20px);
 }
 
-/* 9) Overlay NÃO bloqueia chat / timer / launcher */
+/* 46. Overlay NÃO bloqueia chat / timer / launcher */
 .log-overlay:not([hidden]) ~ #iaChat,
 .log-overlay:not([hidden]) ~ #iaLauncher,
 .log-overlay:not([hidden]) ~ #timerHud {
@@ -1770,9 +1769,9 @@ body.modal-aberto {
 }
 
 /* =====================================================================
-   AJUSTES GERAIS DE EXPERIÊNCIA NO MOBILE
+   47. AJUSTES GERAIS DE EXPERIÊNCIA NO MOBILE
+   - Evita overscroll, seleção acidental, etc.
 ===================================================================== */
-
 html,
 body {
   overscroll-behavior: contain;
@@ -1781,9 +1780,10 @@ body {
 body {
   -webkit-touch-callout: none; /* evita seleção acidental de texto */
 }
+
 /* =======================================================================
-   LED verde dos cenários — Indica que testes estão rodando
-   Não afeta o layout, é apenas um ícone inserido via JS
+   48. LED verde dos cenários – indica testes rodando
+   - Pequeno círculo animado inserido via JS
 ======================================================================= */
 .cenario-led {
   width: 10px;
@@ -1799,9 +1799,10 @@ body {
   50% { opacity: 1; transform: scale(1.1); }
   100% { opacity: .4; transform: scale(0.9); }
 }
+
 /* ======================================================================
-   PAINEL ALLURE — Estilo limpo, futurista, elegante
-   ====================================================================== */
+   49. PAINEL ALLURE – Painel de KPIs de testes
+====================================================================== */
 .allure-panel {
   margin-top: 40px;
   padding: 20px;
@@ -1846,9 +1847,9 @@ body {
   transform: scale(1.04);
   box-shadow: 0 0 12px #ff00ff;
 }
+
 /* ============================================================
-   HUD – Campos de configuração do técnico
-   Integração 100% suave com o design atual
+   50. HUD – Campos de configuração do técnico (timer)
 ============================================================ */
 .timer-hud__config {
   margin-top: 12px;
@@ -1887,8 +1888,9 @@ body {
   background: #a64bf4;
   border-color: #d4a8ff;
 }
+
 /* ============================================================
-   Ajuste de cursor para elementos ARRÁSTAVEIS
+   51. Ajuste de cursor para elementos arrastáveis
 ============================================================ */
 
 /* Antes de arrastar */
@@ -1904,15 +1906,10 @@ body {
 #iaLauncher.dragging {
   cursor: grabbing !important;
 }
-/* ======================================================
-   ESTADOS ESPECIAIS DOS CARDS — RESTAURAÇÃO OFICIAL
-   ====================================================== */
 
-/* 🔶 FALSO POSITIVO — amarelo suave */
-.cenario-falso-positivo {
-  box-shadow: 0 0 12px 4px rgba(255, 230, 0, 0.6);
-  animation: falsoPositivoAnim 3s ease-out forwards;
-}
+/* ======================================================
+   52. ESTADOS ESPECIAIS DOS CARDS – Animações extras
+====================================================== */
 
 /* 🔴 ERRO CRÍTICO */
 .cenario-erro {
@@ -1938,45 +1935,33 @@ body {
   animation: alertaAnim 1.2s ease-in-out infinite alternate;
 }
 
-/* ======================================================
-   ANIMAÇÕES
-   ====================================================== */
-
-/* Falso positivo — não repete */
-@keyframes falsoPositivoAnim {
-  0% { opacity: 1; }
-  60% { box-shadow: 0 0 18px 6px rgba(255, 230, 0, 0.9); }
-  100% { opacity: 1; box-shadow: none; }
-}
-
-/* Erro crítico */
+/* Animações */
 @keyframes erroAnim {
   0% { transform: scale(1); }
   40% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
-/* Sucesso */
 @keyframes sucessoAnim {
   0% { transform: scale(1); }
   40% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
-/* Execução / ativo */
 @keyframes execucaoAnim {
   0% { transform: scale(1); opacity: 0.85; }
   100% { transform: scale(1.03); opacity: 1; }
 }
 
-/* Alerta */
 @keyframes alertaAnim {
   0% { transform: scale(1); opacity: 0.75; }
   100% { transform: scale(1.04); opacity: 1; }
 }
+
 /* ======================================================
-   FALSO POSITIVO — destaque amarelo suave por 3 segundos
-   ====================================================== */
+   53. FALSO POSITIVO – Destaque amarelo suave (versão final)
+   - Esta é a versão que já estava valendo: mantida como oficial
+====================================================== */
 .cenario-falso-positivo {
   box-shadow: 0 0 14px 6px rgba(255, 220, 0, 0.75);
   animation: falsoPositivoAnim 3s ease-out forwards;
@@ -1986,10 +1971,11 @@ body {
   0% { opacity: 1; }
   100% { opacity: 1; box-shadow: none; }
 }
-/* =====================================================================
-   BOTÕES DE ESTADO (Resolvido / Manutenção / Erro) — formato pílula neon
-   ===================================================================== */
 
+/* =====================================================================
+   54. BOTÕES DE ESTADO – formato pílula neon (Resolvido/Manutenção/Erro)
+   - Usados no modal de logs (com indicador luminoso)
+===================================================================== */
 .log-estado-actions {
   display: flex;
   flex-direction: column;
@@ -2007,9 +1993,9 @@ body {
   width: 100%;
   padding: 10px 18px;
 
-  border-radius: 999px;                /* formato pílula */
+  border-radius: 999px;
   border: 1px solid transparent;
-  background: rgba(15, 23, 42, 0.95);  /* fundo escuro (night mode) */
+  background: rgba(15, 23, 42, 0.95);
 
   font-size: 14px;
   font-weight: 600;
@@ -2048,8 +2034,6 @@ body {
   white-space: nowrap;
 }
 
-/* ---------------- CORES ESPECÍFICAS ---------------- */
-
 /* 🟢 Resolvido */
 .btn-estado-pill--resolvido {
   color: #bbf7d0;
@@ -2086,11 +2070,9 @@ body {
   background: rgba(185, 28, 28, 0.24);
 }
 
-/* Estado "ativo" — quando foi clicado recentemente */
-.btn-estado-pill--ativo {
-  box-shadow: 0 0 22px currentColor;
-}
-/* ---------------------- MODAL DE AÇÃO DO TÉCNICO ---------------------- */
+/* =====================================================================
+   55. MODAL DE AÇÃO DO TÉCNICO – confirmação de texto
+===================================================================== */
 .acao-modal {
   position: fixed;
   inset: 0;
@@ -2178,6 +2160,10 @@ body {
   background: #a56cff;
   box-shadow: 0 0 18px #a56cff;
 }
+
+/* =====================================================================
+   56. MODAL DE ESTADO – justificativa de alteração de card
+===================================================================== */
 .modal-estado {
   position: fixed;
   inset: 0;
@@ -2240,15 +2226,15 @@ body {
   color: white;
   cursor: pointer;
 }
-/* ============================================================
-   MODAL DE CONFIRMAÇÃO DE ENVIO (WhatsApp / Email)
-   Mantém o mesmo clima neon do restante do sistema
-   ============================================================ */
 
+/* ============================================================
+   57. MODAL DE CONFIRMAÇÃO DE ENVIO (WhatsApp / Email)
+   - Pré-visualização do texto gerado pela IA
+============================================================ */
 .envio-modal {
   position: fixed;
   inset: 0;
-  background: rgba(3, 7, 18, 0.85); /* overlay escuro */
+  background: rgba(3, 7, 18, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2329,10 +2315,11 @@ body {
 #envioModalConfirmar:hover {
   transform: translateY(-1px);
 }
-/* ===========================================
-   ESTADOS DOS CARDS — crítico, manutenção, ok
-   =========================================== */
 
+/* ===========================================
+   58. ESTADOS DOS CARDS – versões alternativas
+   - Classes extras (card-critico, card-manutencao, etc.)
+=========================================== */
 .cenario-card.card-critico {
   box-shadow: 0 0 18px #ff4d4d;
   border-color: #ff4d4d !important;
@@ -2347,18 +2334,20 @@ body {
   box-shadow: 0 0 12px #4dff88;
   border-color: #4dff88 !important;
 }
-/* CENÁRIO EM MANUTENÇÃO (AMARELO) */
+
+/* CENÁRIO EM MANUTENÇÃO (amarelo) */
 .cenario-manutencao {
   box-shadow: 0 0 20px 4px #ffeb3b;
   border-color: #ffeb3b !important;
 }
 
-/* CENÁRIO RESOLVIDO (VERDE) */
+/* CENÁRIO RESOLVIDO (verde) */
 .cenario-resolvido {
   box-shadow: 0 0 20px 4px #00ff9c;
   border-color: #00ff9c !important;
 }
-/* O já existente .cenario-alerta = vermelho */
+
+/* CENÁRIO CRÍTICO (vermelho pulsante) */
 .cenario-critico {
   border: 2px solid #ff4d4d !important;
   box-shadow: 0 0 12px rgba(255, 60, 60, 0.8);
@@ -2370,6 +2359,7 @@ body {
   50% { box-shadow: 0 0 16px rgba(255, 0, 0, 0.85); }
   100% { box-shadow: 0 0 6px rgba(255, 60, 60, 0.4); }
 }
+
 /* 🛑 Correção final contra o botão inflar ao clicar/arrastar */
 .ia-launcher,
 .ia-launcher:hover,

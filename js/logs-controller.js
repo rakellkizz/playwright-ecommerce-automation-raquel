@@ -1,15 +1,5 @@
 // ======================================================================
-// logs-controller.js  —  VERSÃO 100% CORRIGIDA
-// ======================================================================
-// RESPONSÁVEL POR:
-//
-// ✔ Registrar logs por cenário em localStorage
-// ✔ Abrir/fechar modal de logs
-// ✔ Renderizar timeline
-// ✔ Detectar incidentes (evento da IA)
-// ✔ Acionar neon + alerta no card (cenario-alerta)
-// ✔ Exibir botões PDF / WhatsApp / Email nos cards
-// ✔ Dock flutuante de compartilhamento (padrão antigo)
+// 1. IMPORTAÇÕES
 // ======================================================================
 
 import {
@@ -20,9 +10,15 @@ import {
   gerarTextoUltimoEvento, // ⭐ ADICIONAR ESTA LINHA
 } from "./relatorio.js";
 
+
+// ======================================================================
+// 2. LOCALSTORAGE — CARREGAR, SALVAR E GERENCIAR LOGS
+// ======================================================================
+
+// 2.1 — Chave usada no localStorage
 const STORAGE_KEY = "rk_playwright_logs_por_cenario";
 
-// Carrega logs do localStorage
+// 2.2 — Carrega logs do localStorage
 function carregarLogs() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -31,14 +27,14 @@ function carregarLogs() {
   }
 }
 
-// Salva logs
+// 2.3 — Salva logs
 function salvarLogs(data) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch {}
 }
 
-// Adiciona um log
+// 2.4 — Adiciona um log
 function adicionarLog(cenario, log) {
   const todos = carregarLogs();
   if (!todos[cenario]) todos[cenario] = [];
@@ -47,47 +43,54 @@ function adicionarLog(cenario, log) {
   return todos[cenario];
 }
 
-// Obtém logs de um cenário
+// 2.5 — Obtém logs de um cenário
 function obterLogs(cenarioId) {
   const todos = carregarLogs();
   return todos[cenarioId] || [];
 }
+
+
 // ======================================================================
-// ELEMENTOS DO MODAL + DOCK
+// 3. ELEMENTOS DO MODAL + DOCK
 // ======================================================================
+
+// 3.1 — Elementos principais do modal
 const overlay = document.getElementById("logOverlay");
 const modalFecharBtn = document.getElementById("logModalFechar");
 const timelineContainer = document.getElementById("logTimelineLista");
 const form = document.getElementById("logForm");
 
+// 3.2 — Campos do formulário
 const campoCenarioId = document.getElementById("logCenarioId");
 const campoTecnico = document.getElementById("logTecnico");
 const campoAcao = document.getElementById("logAcao");
 const campoJustificativa = document.getElementById("logJustificativa");
 
+// 3.3 — Títulos do modal
 const tituloEl = document.getElementById("logModalTitulo");
 const subtituloEl = document.getElementById("logModalSubtitulo");
 
+// 3.4 — Dock flutuante (antigo)
 const dock = document.getElementById("logDock");
 const dockPdfBtn = document.getElementById("logDockPdf");
 const dockWhatsappBtn = document.getElementById("logDockWhatsapp");
 const dockEmailBtn = document.getElementById("logDockEmail");
 
+// 3.5 — Controle do cenário atual
 let cenarioAtual = null;
 
-// ----------------------------------------------------------------------
-// Modal de confirmação de envio (WhatsApp / Email)
-// ----------------------------------------------------------------------
+// 3.6 — Modal de confirmação de envio
 const envioModal = document.getElementById("envioConfirmModal");
 const envioModalTitulo = document.getElementById("envioModalTitulo");
 const envioModalSubtitulo = document.getElementById("envioModalSubtitulo");
 const envioModalPreview = document.getElementById("envioModalPreview");
 const envioModalCancelar = document.getElementById("envioModalCancelar");
 const envioModalConfirmar = document.getElementById("envioModalConfirmar");
+// ======================================================================
+// 4. MODAL — ABRIR E FECHAR
+// ======================================================================
 
-// ======================================================================
-// MODAL
-// ======================================================================
+// 4.1 — Abre o modal de logs
 function abrirModalLogs(cenarioId) {
   cenarioAtual = cenarioId;
   campoCenarioId.value = cenarioId;
@@ -103,15 +106,20 @@ function abrirModalLogs(cenarioId) {
   overlay.hidden = false;
 }
 
+// 4.2 — Fecha o modal
 function fecharModalLogs() {
   overlay.hidden = true;
   document.body.classList.remove("modal-aberto");
   cenarioAtual = null;
 }
 
+
+
 // ======================================================================
-// RENDERIZA TIMELINE
+// 5. TIMELINE — RENDERIZAÇÃO DOS EVENTOS
 // ======================================================================
+
+// 5.1 — Renderiza lista de eventos no modal
 function renderizarTimeline(cenarioId) {
   const logs = obterLogs(cenarioId);
   timelineContainer.innerHTML = "";
@@ -159,26 +167,34 @@ function renderizarTimeline(cenarioId) {
     });
 }
 
+
+
 // ======================================================================
-// LISTENERS DO MODAL
+// 6. LISTENERS — ABERTURA, FECHAMENTO E ESCAPE
 // ======================================================================
+
+// 6.1 — Botões que abrem o modal
 document.querySelectorAll("[data-open-log]").forEach((btn) => {
   btn.addEventListener("click", () => abrirModalLogs(btn.dataset.openLog));
 });
 
+// 6.2 — Botão "X" fecha o modal
 modalFecharBtn?.addEventListener("click", fecharModalLogs);
 
+// 6.3 — Clique fora do modal fecha também
 overlay?.addEventListener("click", (ev) => {
   if (ev.target === overlay) fecharModalLogs();
 });
 
+// 6.4 — ESC fecha o modal
 window.addEventListener("keydown", (ev) => {
   if (ev.key === "Escape" && !overlay.hidden) fecharModalLogs();
 });
+// ======================================================================
+// 7. FORMULÁRIO — REGISTRO DE AÇÃO TÉCNICA
+// ======================================================================
 
-// ======================================================================
-// FORMULÁRIO DE REGISTRO DE AÇÃO
-// ======================================================================
+// 7.1 — Listener do formulário de nova ação
 form?.addEventListener("submit", (ev) => {
   ev.preventDefault();
 
@@ -200,9 +216,13 @@ form?.addEventListener("submit", (ev) => {
   mostrarDock(cenarioId, logsAtualizados);
 });
 
+
+
 // ======================================================================
-// INTEGRAÇÃO COM A IA — INCIDENTES
+// 8. INTEGRAÇÃO COM A IA — INCIDENTES AUTOMÁTICOS
 // ======================================================================
+
+// 8.1 — Recebe evento "cenario:diagnostico" disparado pela IA
 window.addEventListener("cenario:diagnostico", (ev) => {
   const d = ev.detail;
   if (!d?.id) return;
@@ -212,7 +232,7 @@ window.addEventListener("cenario:diagnostico", (ev) => {
   // Marca visual no card (NEON VOLTA AQUI)
   marcarCenarioComoCritico(cid);
 
-  // Log automático
+  // 8.2 — Log automático da IA
   const log = {
     tipo: "incidente",
     timestamp: d.timestamp || Date.now(),
@@ -227,14 +247,19 @@ window.addEventListener("cenario:diagnostico", (ev) => {
   };
 
   const logsAtualizados = adicionarLog(cid, log);
+
   mostrarDock(cid, logsAtualizados);
 
   if (cenarioAtual === cid) renderizarTimeline(cid);
 });
 
+
+
 // ======================================================================
-// NOVO — Deixar card em AMARELO quando o técnico marcar "manutenção"
+// 9. ESTADOS VISUAIS — MANUTENÇÃO / RESOLVIDO / CRÍTICO
 // ======================================================================
+
+// 9.1 — Estado: Manutenção (cor amarela)
 function marcarCenarioComoManutencao(cenarioId) {
   const card = document.querySelector(
     `.cenario-card[data-cenario="${cenarioId}"]`
@@ -253,9 +278,8 @@ function marcarCenarioComoManutencao(cenarioId) {
     alerta.textContent = "🟡 Em manutenção";
   }
 }
-// ======================================================================
-// NOVO — Deixar card em VERDE quando for resolvido
-// ======================================================================
+
+// 9.2 — Estado: Resolvido (verde)
 function marcarCenarioComoResolvido(cenarioId) {
   const card = document.querySelector(
     `.cenario-card[data-cenario="${cenarioId}"]`
@@ -265,7 +289,7 @@ function marcarCenarioComoResolvido(cenarioId) {
   // apaga estados anteriores
   card.classList.remove("cenario-alerta", "cenario-manutencao");
 
-  // coloca o verde
+  // verde
   card.classList.add("cenario-resolvido");
 
   const alerta = document.getElementById(`alert-${cenarioId}`);
@@ -275,17 +299,15 @@ function marcarCenarioComoResolvido(cenarioId) {
   }
 }
 
-// ======================================================================
-// 🔥 Controle VISUAL dos cartões de cenário
-// ======================================================================
+// 9.3 — Controle visual genérico dos cartões via "estado"
 function atualizarEstadoVisualDoCard(cenarioId, estado) {
   const card = document.querySelector(`.cenario-card[data-cenario="${cenarioId}"]`);
   if (!card) return;
 
   // Remove estados anteriores
-  card.classList.remove("cenario-alerta");   // vermelho crítico
-  card.classList.remove("cenario-manutencao"); // amarelo manutenção
-  card.classList.remove("cenario-ok");      // verde
+  card.classList.remove("cenario-alerta");
+  card.classList.remove("cenario-manutencao");
+  card.classList.remove("cenario-ok");
 
   // Aplica o estado atual
   switch (estado) {
@@ -307,57 +329,17 @@ function atualizarEstadoVisualDoCard(cenarioId, estado) {
   }
 }
 // ======================================================================
-// BOTÕES DE AÇÕES DENTRO DOS CARDS (PDF / Whats / Email)
-// Desativei pois essa funcão adiciona os botões PDF, WhatSap e E-mail
-// na frente dos cards, mas se precisar no futuro usaremos. Kell
+// 10. DOCK + BOTÕES INLINE DE RELATÓRIO (PDF / WhatsApp / Email)
 // ======================================================================
-// anexarAcoesNoCard(cenarioId);  // 🚫 Desativado — botões agora só aparecem no modal
 
-/*function anexarAcoesNoCard(cenarioId) {
-  if (!cenarioId) return;
-
-  const card = document.querySelector(
-    `.cenario-card[data-cenario="${cenarioId}"]`
-  );
-  if (!card) return;
-
-  // evita duplicação
-  if (card.querySelector('[data-relatorio-bar="card"]')) return;
-
-  const barra = document.createElement("div");
-  barra.classList.add("log-card-actions");
-  barra.dataset.relatorioBar = "card";
-
-  barra.innerHTML = `
-    <p class="log-card-actions__title">
-      <strong>[Alerta crítico detectado]</strong>
-      <span class="log-card-actions__hint">Compartilhar este incidente:</span>
-    </p>
-
-    <div class="log-card-actions__buttons">
-      <button data-relatorio-acao="pdf" data-relatorio-cenario="${cenarioId}">
-        📄 PDF
-      </button>
-      <button data-relatorio-acao="whatsapp" data-relatorio-cenario="${cenarioId}">
-        💬 WhatsApp
-      </button>
-      <button data-relatorio-acao="email" data-relatorio-cenario="${cenarioId}">
-        ✉️ Email
-      </button>
-    </div>
-  `;
-
-  card.appendChild(barra);
-}*/
-// ======================================================================
-// DOCK FLUTUANTE (DESATIVADO — CONTINUA FUNCIONANDO SE ATIVAR)
-// ======================================================================
+// 10.1 — Mostra o dock flutuante antigo (mantido, mas desativado visualmente)
 function mostrarDock(cenarioId, logs) {
   if (!dock || !logs.length) return;
   dock.dataset.cenarioId = cenarioId;
   dock.hidden = false;
 }
-// Mostra os botões inline dentro do formulário
+
+// 10.2 — Mostra os botões inline dentro do formulário
 function mostrarInline(cenarioId, logs) {
   const box = document.getElementById("logActionsInline");
   if (!box) return;
@@ -370,9 +352,8 @@ function mostrarInline(cenarioId, logs) {
   box.dataset.cenarioId = cenarioId;
   box.hidden = false;
 }
-// ======================================================================
-// CLIQUES NOS BOTÕES — POR DELEGAÇÃO
-// ======================================================================
+
+// 10.3 — Clique nos botões PDF / Whats / Email (via data-relatorio-acao)
 document.addEventListener("click", (ev) => {
   const btn = ev.target.closest("[data-relatorio-acao]");
   if (!btn) return;
@@ -386,14 +367,16 @@ document.addEventListener("click", (ev) => {
   const texto = montarTextoRelatorio(cenarioId, logs);
 
   if (acao === "pdf") gerarPDF(cenarioId, logs, texto);
+
   if (acao === "whatsapp") {
     const ultimo = gerarTextoUltimoEvento(cenarioId, logs);
     compartilharWhatsApp(ultimo);
-}
+  }
+
   if (acao === "email") compartilharEmail(texto);
 });
 
-// Expor debug opcional
+// 10.4 — Debug opcional
 window.__logsDebug = {
   carregarLogs,
   salvarLogs,
@@ -401,20 +384,18 @@ window.__logsDebug = {
   obterLogs,
 };
 
+
+
 // ======================================================================
-// BOTÕES DE ESTADO (Resolvido / Manutenção / Erro)
-// Disparam logs automáticos com justificativa do técnico
+// 11. BOTÕES DE ESTADO (Resolvido / Manutenção / Erro)
 // ======================================================================
 
-// capturados pelo atributo data-estado-btn no HTML
+// 11.1 — Seletores dos botões de estado
 const btnResolvido = document.querySelector("[data-estado-btn='resolvido']");
 const btnManutencao = document.querySelector("[data-estado-btn='manutencao']");
 const btnErro = document.querySelector("[data-estado-btn='erro']");
 
-/**
- * Registra uma ação especial de estado (resolvido / manutencao / erro)
- * e, se for resolvido, já abre o PDF com o relatório atualizado.
- */
+// 11.2 — Registrar ação especial de estado
 async function registrarAcaoDeEstado(tipoEstado) {
   if (!cenarioAtual) {
     alert("Abra os logs de um cenário antes de registrar o estado.");
@@ -446,7 +427,7 @@ async function registrarAcaoDeEstado(tipoEstado) {
       return;
   }
 
-  // Abre o modal bonito para o técnico escrever
+  // 11.3 — Abre modal estilizado para inserir descrição
   const descricao = await abrirModalEstado(tipoEstado, pergunta);
   if (!descricao) return;
 
@@ -464,7 +445,7 @@ async function registrarAcaoDeEstado(tipoEstado) {
   const logsAtualizados = adicionarLog(cenarioAtual, log);
   renderizarTimeline(cenarioAtual);
 
-  // Efeito visual: só o botão atual fica com glow
+  // 11.4 — Efeito visual exclusivo no botão selecionado
   document
     .querySelectorAll(".btn-estado-pill")
     .forEach((b) => b.classList.remove("btn-estado-pill--ativo"));
@@ -473,14 +454,14 @@ async function registrarAcaoDeEstado(tipoEstado) {
     .querySelector(`[data-estado-btn="${tipoEstado}"]`)
     ?.classList.add("btn-estado-pill--ativo");
 
-  // Se marcou como resolvido, já gera o PDF com relatório completo
+  // 11.5 — Se resolveu, já gera o PDF automaticamente
   if (tipoEstado === "resolvido") {
     const textoRel = montarTextoRelatorio(cenarioAtual, logsAtualizados);
     gerarPDF(cenarioAtual, logsAtualizados, textoRel);
   }
 }
 
-// listeners dos botões de estado
+// 11.6 — Listeners dos botões
 btnResolvido?.addEventListener("click", () =>
   registrarAcaoDeEstado("resolvido")
 );
@@ -490,20 +471,21 @@ btnManutencao?.addEventListener("click", () =>
 btnErro?.addEventListener("click", () =>
   registrarAcaoDeEstado("erro")
 );
-// ================================================================
-// DESATIVAR DOCK FLUTUANTE (porque agora usamos apenas botões inline)
-// ================================================================
+
+// 11.7 — Desativar dock antigo visualmente
 if (dock) {
-  dock.style.display = "none"; // totalmente invisível
+  dock.style.display = "none";
 }
 
+
+
 // ======================================================================
-// MODAL BONITO DE CONFIRMAÇÃO DE ENVIO
-// Retorna uma Promise<boolean> → true = pode enviar
-// (MESMO CÓDIGO QUE VOCÊ JÁ TINHA)
+// 12. MODAL DE CONFIRMAÇÃO DE ENVIO (PDF / WhatsApp / Email)
 // ======================================================================
+
+// 12.1 — Abre modal de confirmação antes do envio
 function abrirModalConfirmacaoEnvio(tipo, texto) {
-  // Se, por algum motivo, o modal não existir, cai no confirm nativo
+  // fallback se modal não existir
   if (!envioModal || !envioModalPreview) {
     const msgBase =
       tipo === "whatsapp"
@@ -540,23 +522,23 @@ function abrirModalConfirmacaoEnvio(tipo, texto) {
     envioModalConfirmar.addEventListener("click", onConfirmar);
   });
 }
+// ======================================================================
+// 13. BOTÕES INLINE DO MODAL (PDF · WhatsApp · Email)
+// ======================================================================
 
-// ======================================================================
-// ⭐ ATIVAÇÃO DOS BOTÕES INLINE DO MODAL
-// PDF · WhatsApp · Email
-// ======================================================================
 document.addEventListener("DOMContentLoaded", () => {
   const inlinePdf = document.querySelector("[data-inline-acao='pdf']");
   const inlineWhats = document.querySelector("[data-inline-acao='whatsapp']");
   const inlineEmail = document.querySelector("[data-inline-acao='email']");
 
+  // 13.1 — Captura logs do cenário atual dentro do modal
   function obterLogsDoModal() {
     if (!cenarioAtual) return null;
     const logs = obterLogs(cenarioAtual);
     return logs && logs.length ? logs : null;
   }
 
-  // PDF
+  // 13.2 — PDF
   if (inlinePdf) {
     inlinePdf.addEventListener("click", () => {
       const logs = obterLogsDoModal();
@@ -566,7 +548,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // WhatsApp — com confirmação bonitinha
+  // 13.3 — WhatsApp (com modal de confirmação)
   if (inlineWhats) {
     inlineWhats.addEventListener("click", async () => {
       const logs = obterLogsDoModal();
@@ -586,7 +568,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Email — idem
+  // 13.4 — Email (com confirmação também)
   if (inlineEmail) {
     inlineEmail.addEventListener("click", async () => {
       const logs = obterLogsDoModal();
@@ -607,10 +589,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+
+
 // ======================================================================
-// SISTEMA DE ARRASTE — Chat (#iaChat) e Temporizador (#timerHud)
-// (MESMO CÓDIGO QUE JÁ ESTAVA FUNCIONANDO)
+// 14. SISTEMA DE ARRASTE — CHAT (#iaChat) E TEMPORIZADOR (#timerHud)
 // ======================================================================
+// (Mesmo código original, apenas numerado)
+
+// 14.1 — Função genérica para tornar elementos arrastáveis
 (function () {
   function makeDraggable(element, handle) {
     let offsetX = 0;
@@ -665,6 +651,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("touchend", stopDrag);
   }
 
+  // 14.2 — Aplicação do sistema de arraste
   window.addEventListener("DOMContentLoaded", () => {
     const chat = document.getElementById("iaChat");
     const chatHeader = document.querySelector(".ia-chat__header");
@@ -675,10 +662,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 })();
 
+
+
 // ======================================================================
-// MODAL PERSONALIZADO PARA AÇÕES DE ESTADO
-// (usado por registrarAcaoDeEstado acima)
+// 15. MODAL PERSONALIZADO PARA AÇÕES DE ESTADO
 // ======================================================================
+
+// 15.1 — Modal para registrar justificativa de estado (manutenção, erro, resolvido)
 function abrirModalEstado(estado, pergunta) {
   return new Promise((resolve) => {
     const modal = document.getElementById("modalEstado");
@@ -704,8 +694,8 @@ function abrirModalEstado(estado, pergunta) {
   });
 }
 // ======================================================================
-// 🔮 SINCRONIZAÇÃO AUTOMÁTICA DOS CARDS COM OS LOGS
-// Define cor, alerta, neon e estado visual com base no último evento.
+// 16. 🔄 SINCRONIZAÇÃO AUTOMÁTICA DOS CARDS COM OS LOGS
+//     - Define cor, alerta, neon e estado visual com base no último evento
 // ======================================================================
 
 function atualizarEstadoDosCards() {
@@ -718,10 +708,11 @@ function atualizarEstadoDosCards() {
 
     if (!card) return;
 
-    // limpa classes antigas
+    // 16.1 — Limpa estados antigos
     card.classList.remove("cenario-alerta", "cenario-ok", "cenario-manutencao");
     if (alerta) alerta.hidden = true;
 
+    // 16.2 — Se não tem logs → OK
     if (!logs.length) {
       card.classList.add("cenario-ok");
       return;
@@ -729,88 +720,70 @@ function atualizarEstadoDosCards() {
 
     const ultimo = logs[logs.length - 1];
 
-    // ------------------------------
-    // Estado: ERRO / INCIDENTE
-    // ------------------------------
+    // 16.3 — ERRO / INCIDENTE → vermelho
     if (ultimo.tipo === "incidente") {
       card.classList.add("cenario-alerta");
       if (alerta) alerta.hidden = false;
       return;
     }
 
-    // ------------------------------
-    // Estado: MANUTENÇÃO
-    // ------------------------------
+    // 16.4 — MANUTENÇÃO → amarelo
     if (ultimo.estadoFinal === "manutencao") {
       card.classList.add("cenario-manutencao");
       return;
     }
 
-    // ------------------------------
-    // Estado: RESOLVIDO
-    // ------------------------------
+    // 16.5 — RESOLVIDO → verde
     if (ultimo.estadoFinal === "resolvido") {
       card.classList.add("cenario-ok");
       return;
     }
 
-    // Ações comuns → OK
+    // 16.6 — Ações comuns → OK
     card.classList.add("cenario-ok");
   });
 }
 
 // ======================================================================
-// Chamado automaticamente ao carregar a página
+// 16.7 — Chamado automaticamente ao carregar a página
 // ======================================================================
 window.addEventListener("DOMContentLoaded", atualizarEstadoDosCards);
 
+
+
 // ======================================================================
-// Atualiza estado dos cards SEMPRE que salvar log
+// 17. 🔁 INTERCEPTAÇÃO DO adicionarLog PARA SINCRONIZAR AUTOMATICAMENTE
 // ======================================================================
+
 function syncDepoisDoLog() {
   atualizarEstadoDosCards();
   if (cenarioAtual) renderizarTimeline(cenarioAtual);
 }
 
-// substitui chamadas antigas
+// guarda função original
 const _adicionarLogOriginal = adicionarLog;
+
+// 17.1 — Substitui a função, mantendo tudo igual, apenas adicionando sync
 adicionarLog = function (cenario, log) {
-  const resp = _adicionarLogOriginal(cenario, log);
-  syncDepoisDoLog();
-  return resp;
+  const resp = _adicionarLogOriginal(cenario, log); // executa original
+  syncDepoisDoLog();                                 // sincroniza UI
+  return resp;                                       // retorna igual
 };
-/*
 // ======================================================================
-// Marca visualmente um cenário como CRÍTICO nos cards
-// ======================================================================
-function marcarCenarioComoCritico(id) {
-  const card =
-    document.querySelector(`[data-cenario="${id}"]`) ||
-    document.getElementById(id);
-
-  if (!card) {
-    console.warn("⚠️ marcarCenarioComoCritico: card não encontrado:", id);
-    return;
-  }
-
-  card.classList.remove("cenario-ok", "cenario-instavel");
-  card.classList.add("cenario-critico");
-
-  console.log(`🔥 Cenário crítico marcado: ${id}`);
-}
-*/
-// ======================================================================
-// CONTROLE VISUAL COMPLETO DOS CARDS (OK / ALERTA / CRÍTICO / INSTÁVEL)
+// 18. CONTROLE VISUAL COMPLETO DOS CARDS
+//     Estados: OK / ALERTA / CRÍTICO / INSTÁVEL
+//     + Exposição global para IA e engine
 // ======================================================================
 
+// 18.1 — Tabela de classes CSS usadas pelos estados
 const ESTADOS = {
   ok: "cenario-ok",
   alerta: "cenario-alerta",
   critico: "cenario-critico",
-  instavel: "cenario-instavel"
+  instavel: "cenario-instavel",
 };
 
-// Remove qualquer estado antigo
+// 18.2 — Remove qualquer estado antigo antes de aplicar um novo
 function limparEstados(card) {
   card.classList.remove(
     ESTADOS.ok,
@@ -820,7 +793,11 @@ function limparEstados(card) {
   );
 }
 
-// 🟩 OK
+
+
+// ======================================================================
+// 18.3 — Estado OK (🟩)
+// ======================================================================
 function marcarCenarioComoOk(id) {
   const card = document.querySelector(`[data-cenario="${id}"]`);
   if (!card) return;
@@ -829,7 +806,11 @@ function marcarCenarioComoOk(id) {
   card.classList.add(ESTADOS.ok);
 }
 
-// 🟧 ALERTA
+
+
+// ======================================================================
+// 18.4 — Estado ALERTA (🟧) — nível moderado
+// ======================================================================
 function marcarCenarioComoAlerta(id) {
   const card = document.querySelector(`[data-cenario="${id}"]`);
   if (!card) return;
@@ -838,7 +819,11 @@ function marcarCenarioComoAlerta(id) {
   card.classList.add(ESTADOS.alerta);
 }
 
-// 🟥 CRÍTICO — ESTA ERA A FUNÇÃO QUE ESTAVA FALTANDO PADRONIZAR
+
+
+// ======================================================================
+// 18.5 — Estado CRÍTICO (🟥) — nível mais grave
+// ======================================================================
 function marcarCenarioComoCritico(id) {
   const card = document.querySelector(`[data-cenario="${id}"]`);
   if (!card) return;
@@ -849,7 +834,11 @@ function marcarCenarioComoCritico(id) {
   console.log(`🔥 Cenário crítico marcado: ${id}`);
 }
 
-// 🟦 INSTÁVEL
+
+
+// ======================================================================
+// 18.6 — Estado INSTÁVEL (🟦) — oscila entre ok/alerta
+// ======================================================================
 function marcarCenarioComoInstavel(id) {
   const card = document.querySelector(`[data-cenario="${id}"]`);
   if (!card) return;
@@ -858,11 +847,17 @@ function marcarCenarioComoInstavel(id) {
   card.classList.add(ESTADOS.instavel);
 }
 
-// Expor globalmente (IA + engine precisam disso)
+
+
+// ======================================================================
+// 18.7 — Exposição Global — IA e Tests Engine precisam disso
+// ======================================================================
 window.marcarCenarioComoOk = marcarCenarioComoOk;
 window.marcarCenarioComoAlerta = marcarCenarioComoAlerta;
 window.marcarCenarioComoCritico = marcarCenarioComoCritico;
 window.marcarCenarioComoInstavel = marcarCenarioComoInstavel;
+
+/// ======================================================================
+//   FIM DO ARQUIVO — Controle completo de logs, modal, estados visuais
 // ======================================================================
-// FIM DO ARQUIVO — Controle de logs, modal e integração com IA
-// ======================================================================
+

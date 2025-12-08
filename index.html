@@ -7,74 +7,76 @@
   <title>Resultados da Automação — Playwright</title>
 
   <!-- =========================================================
-       CSS PRINCIPAL DO PROJETO (SEU styles.css ORIGINAL)
+       1. CSS PRINCIPAL DO PROJETO
+       (seu styles.css original)
   ========================================================== -->
   <link rel="stylesheet" href="styles.css" />
 
   <!-- =========================================================
-       🔮 BIBLIOTECAS DE IA 100% GRÁTIS VIA CDN
-       (aqui só carregamos, uso real pode vir depois)
+       2. BIBLIOTECAS DE IA VIA CDN
   ========================================================== -->
 
-  <!-- TensorFlow.js (futuro reconhecimento/imagens) -->
+  <!-- 2.1 TensorFlow.js -->
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0/dist/tf.min.js"></script>
 
-  <!-- SentimentJS — análise de sentimento local -->
+  <!-- 2.2 SentimentJS -->
   <script src="https://cdn.jsdelivr.net/npm/sentiment@5.0.2/sentiment.min.js"></script>
 
-  <!-- face-api.js — futura visão computacional local -->
+  <!-- 2.3 face-api.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
   <!-- =========================================================
-       🔮 SEUS MÓDULOS DE IA
-       (mantidos como você estruturou)
+       3. MÓDULOS DE IA DO PROJETO
   ========================================================== -->
-  <!-- 🔮 IA Monitor (não é module) -->
-<script src="js/ia-monitor.js"></script>
 
-<!-- 🧠 Módulos da IA -->
-<script type="module" src="js/ai-local.js"></script>
-<script type="module" src="js/ai-hibrida.js"></script>
+  <!-- 3.1 IA Monitor -->
+  <script src="js/ia-monitor.js"></script>
 
-<!-- 💬 Chat (precisa ser module) -->
-<script type="module" src="js/chat-ui.js"></script>
+  <!-- 3.2 IA Local -->
+  <script type="module" src="js/ai-local.js"></script>
 
-<!-- ⚙ Config -->
-<script type="module" src="js/config.js"></script>
+  <!-- 3.3 IA Híbrida -->
+  <script type="module" src="js/ai-hibrida.js"></script>
 
-<!-- 🛑 ADICIONAR ESTE AQUI (NOVO) -->
-<script type="module" src="js/c-alerts.js"></script>
+  <!-- 3.4 Chat -->
+  <script type="module" src="js/chat-ui.js"></script>
 
-<!-- HUD SOC Inteligente (painel de risco da IA) -->
-<script type="module" src="js/hud-soc.js"></script>
+  <!-- 3.5 Config -->
+  <script type="module" src="js/config.js"></script>
 
-<!-- logs-controller.js foi movido para o final do <body>
-       para garantir que todo o HTML exista antes de adicionar
-       os listeners -->
+  <!-- 3.6 Alerts -->
+  <script type="module" src="js/c-alerts.js"></script>
+
+  <!-- 3.7 HUD SOC -->
+  <script type="module" src="js/hud-soc.js"></script>
+
 </head>
 
 <body>
 
-  <!-- ===================================================================
-       ⭐ TEMPORIZADOR — MODELO A + ÍCONE ⚠️ (modelo B)
-       Badge fixo no topo, leve, sem atrapalhar o layout
-  ==================================================================== -->
+  <!-- =========================================================
+       4. TEMPORIZADOR — BADGE NO TOPO
+  ========================================================== -->
   <div id="timerBadge" class="timer-badge" aria-live="polite">
     ⚠️ Aguardando início dos testes…
   </div>
 
   <!-- =========================================================
-       WRAPPER PRINCIPAL — SEU LAYOUT ORIGINAL 100% PRESERVADO
+       5. WRAPPER PRINCIPAL
   ========================================================== -->
   <div class="page-wrapper">
 
-    <!-- TAGS DO TOPO -->
+    <!-- =========================================================
+         5.1 TAGS DO TOPO
+    ========================================================== -->
     <div class="top-tags">
       <span class="tag-pill">⚙️ Automação E2E · Playwright E2E</span>
       <span class="tag-pill tag-pill-secondary">QA • E2E • Web</span>
     </div>
 
-    <!-- HERO PRINCIPAL -->
+    <!-- =========================================================
+         6. HERO PRINCIPAL
+    ========================================================== -->
     <header class="hero">
       <div class="hero-badge">QA • E2E</div>
 
@@ -83,13 +85,10 @@
       <p class="hero-subtitle">Analista de TI & QA Automation</p>
 
       <p class="hero-description">
-        Este repositório mostra uma suite completa de testes E2E usando
-        <strong>Playwright</strong> para o e-commerce de demonstração:
-        simulando login, carrinho, compras, busca, perfil e testes
-        técnicos de saúde do sistema e relatórios.
+        Este repositório mostra uma suite completa de testes...
       </p>
 
-      <!-- BOTÕES da hero (iguais aos originais) -->
+      <!-- 6.1 Botões da Hero -->
       <div class="hero-actions">
         <a
           href="https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/playwright-report/"
@@ -120,14 +119,15 @@
       </div>
     </header>
 
-    <!-- =========================================================
-         SEÇÃO: Sobre o projeto (igual ao original)
+        <!-- =========================================================
+         7. SEÇÃO — SOBRE O PROJETO
     ========================================================== -->
     <section class="section">
       <h2 class="section-title">Sobre o projeto</h2>
+
       <div class="grid grid-2">
 
-        <!-- Objetivos -->
+        <!-- 7.1 Objetivos -->
         <article class="card card-outline">
           <h3 class="card-title">🎯 Objetivos</h3>
           <ul class="card-list">
@@ -142,7 +142,7 @@
           </ul>
         </article>
 
-        <!-- Stack técnica -->
+        <!-- 7.2 Stack técnica -->
         <article class="card card-outline">
           <h3 class="card-title">🧠 Stack técnica</h3>
           <ul class="card-list card-list-check">
@@ -159,190 +159,202 @@
       </div>
     </section>
 
-    <!-- ===================================================================
-         SEÇÃO: Cenários Cobertos — Versão Inteligente com Alertas e Logs
-         Combinação:
-           • Modelo A: alerta piscante
-           • Ícone modelo B: ⚠️
-           • Modelo C: painel expansível com detalhes técnicos
-           • Botão para abrir o modal de logs
-    ==================================================================== -->
-    <section class="section">
-  <h2 class="section-title">Cenários cobertos</h2>
-
-  <div class="grid grid-3">
-
-    <!-- LOGIN -->
-    <article class="card card-small cenario-card" data-cenario="login">
-      <h3 class="card-title">🔐 Login</h3>
-
-      <!-- ALERTA ORGANIZADO -->
-      <div id="alert-login" class="cenario-alerta-msg" hidden></div>
-
-      <p class="card-text">
-        Fluxo de login completo, erros visíveis e bloqueio progressivo.
-      </p>
-
-      <details class="cenario-details">
-        <summary>📄 Detalhes técnicos do cenário</summary>
-        <ul class="cenario-details__lista">
-          <li>Validação de credenciais incorretas.</li>
-          <li>Mensagens de erro visíveis e acessíveis.</li>
-          <li>Tempo de resposta da API de autenticação.</li>
-          <li>Bloqueio progressivo após tentativas inválidas.</li>
-        </ul>
-
-        <button class="btn-log" data-open-log="login">
-          📝 Ver logs e registrar ação técnica
-        </button>
-      </details>
-    </article>
-
-    <!-- CARRINHO -->
-    <article class="card card-small cenario-card" data-cenario="carrinho">
-      <h3 class="card-title">🛒 Carrinho</h3>
-
-      <div id="alert-carrinho" class="cenario-alerta-msg" hidden></div>
-
-      <p class="card-text">
-        Adicionar, remover, manter estado e validar total do carrinho.
-      </p>
-
-      <details class="cenario-details">
-        <summary>📄 Detalhes técnicos do cenário</summary>
-        <ul class="cenario-details__lista">
-          <li>Persistência dos itens no localStorage.</li>
-          <li>Cálculo de totais, descontos e frete.</li>
-          <li>Sincronização entre desktop e mobile.</li>
-        </ul>
-
-        <button class="btn-log" data-open-log="carrinho">
-          📝 Ver logs e registrar ação técnica
-        </button>
-      </details>
-    </article>
-
-    <!-- CHECKOUT -->
-    <article class="card card-small cenario-card" data-cenario="checkout">
-      <h3 class="card-title">📦 Checkout</h3>
-
-      <div id="alert-checkout" class="cenario-alerta-msg" hidden></div>
-
-      <p class="card-text">
-        Endereço, pagamento, revisão e confirmação final.
-      </p>
-
-      <details class="cenario-details">
-        <summary>📄 Detalhes técnicos do cenário</summary>
-        <ul class="cenario-details__lista">
-          <li>Validação de endereço e CEP.</li>
-          <li>Integração com gateway de pagamento.</li>
-          <li>Retentativas automáticas em falhas temporárias.</li>
-        </ul>
-
-        <button class="btn-log" data-open-log="checkout">
-          📝 Ver logs e registrar ação técnica
-        </button>
-      </details>
-    </article>
-
-    <!-- BUSCA -->
-    <article class="card card-small cenario-card" data-cenario="busca">
-      <h3 class="card-title">🔎 Busca</h3>
-
-      <div id="alert-busca" class="cenario-alerta-msg" hidden></div>
-
-      <p class="card-text">
-        Pesquisa gradual, filtros e ordenação.
-      </p>
-
-      <details class="cenario-details">
-        <summary>📄 Detalhes técnicos do cenário</summary>
-        <ul class="cenario-details__lista">
-          <li>Busca dinâmica enquanto digita.</li>
-          <li>Sugestões vindas da API.</li>
-          <li>Aplicação simultânea de filtros.</li>
-        </ul>
-
-        <button class="btn-log" data-open-log="busca">
-          📝 Ver logs e registrar ação técnica
-        </button>
-      </details>
-    </article>
-
-    <!-- SMOKE -->
-    <article class="card card-small cenario-card" data-cenario="smoke">
-      <h3 class="card-title">🧪 Smoke Tests</h3>
-
-      <div id="alert-smoke" class="cenario-alerta-msg" hidden></div>
-
-      <p class="card-text">
-        Fluxo principal em poucos passos.
-      </p>
-
-      <details class="cenario-details">
-        <summary>📄 Detalhes técnicos do cenário</summary>
-        <ul class="cenario-details__lista">
-          <li>Autenticação.</li>
-          <li>Adicionar item e finalizar compra.</li>
-          <li>Confirmação de pedido.</li>
-        </ul>
-
-        <button class="btn-log" data-open-log="smoke">
-          📝 Ver logs e registrar ação técnica
-        </button>
-      </details>
-    </article>
-
-    <!-- PERFIL -->
-    <article class="card card-small cenario-card" data-cenario="perfil">
-      <h3 class="card-title">👤 Perfil</h3>
-
-      <div id="alert-perfil" class="cenario-alerta-msg" hidden></div>
-
-      <p class="card-text">
-        Edição de dados e validações de sucesso.
-      </p>
-
-      <details class="cenario-details">
-        <summary>📄 Detalhes técnicos do cenário</summary>
-        <ul class="cenario-details__lista">
-          <li>Validação de campos obrigatórios.</li>
-          <li>Integração com API de perfil.</li>
-          <li>Sincronização com sessão autenticada.</li>
-        </ul>
-
-        <button class="btn-log" data-open-log="perfil">
-          📝 Ver logs e registrar ação técnica
-        </button>
-      </details>
-    </article>
-  </div>
-</section>
-<!-- ===================================================================
-     PAINEL ALLURE — STATUS DOS TESTES REAIS
-     =================================================================== -->
-<section id="allurePanel" class="allure-panel">
-  <h2>📊 Status dos Testes — Allure</h2>
-
-  <div class="allure-grid">
-    <div><strong>Total:</strong> <span id="allureTotal">--</span></div>
-    <div><strong>Aprovados:</strong> <span id="allurePassed">--</span></div>
-    <div><strong>Falharam:</strong> <span id="allureFailed">--</span></div>
-    <div><strong>Última execução:</strong> <span id="allureLastRun">--</span></div>
-  </div>
-
-  <button id="btnAbrirAllure" class="allure-btn">
-    🔎 Abrir relatório completo
-  </button>
-</section>
     <!-- =========================================================
-         SEÇÃO: Relatórios & artefatos (restaurada)
+         8. SEÇÃO — CENÁRIOS COBERTOS (IA + Alertas + Logs)
+    ========================================================== -->
+    <section class="section">
+      <h2 class="section-title">Cenários cobertos</h2>
+
+      <div class="grid grid-3">
+
+        <!-- =============================
+             8.1 Cenário: LOGIN
+        ============================== -->
+        <article class="card card-small cenario-card" data-cenario="login">
+          <h3 class="card-title">🔐 Login</h3>
+
+          <!-- alerta -->
+          <div id="alert-login" class="cenario-alerta-msg" hidden></div>
+
+          <p class="card-text">
+            Fluxo de login completo, erros visíveis e bloqueio progressivo.
+          </p>
+
+          <details class="cenario-details">
+            <summary>📄 Detalhes técnicos do cenário</summary>
+            <ul class="cenario-details__lista">
+              <li>Validação de credenciais incorretas.</li>
+              <li>Mensagens de erro visíveis e acessíveis.</li>
+              <li>Tempo de resposta da API de autenticação.</li>
+              <li>Bloqueio progressivo após tentativas inválidas.</li>
+            </ul>
+
+            <button class="btn-log" data-open-log="login">
+              📝 Ver logs e registrar ação técnica
+            </button>
+          </details>
+        </article>
+
+        <!-- =============================
+             8.2 Cenário: CARRINHO
+        ============================== -->
+        <article class="card card-small cenario-card" data-cenario="carrinho">
+          <h3 class="card-title">🛒 Carrinho</h3>
+
+          <div id="alert-carrinho" class="cenario-alerta-msg" hidden></div>
+
+          <p class="card-text">
+            Adicionar, remover, manter estado e validar total do carrinho.
+          </p>
+
+          <details class="cenario-details">
+            <summary>📄 Detalhes técnicos do cenário</summary>
+            <ul class="cenario-details__lista">
+              <li>Persistência dos itens no localStorage.</li>
+              <li>Cálculo de totais, descontos e frete.</li>
+              <li>Sincronização entre desktop e mobile.</li>
+            </ul>
+
+            <button class="btn-log" data-open-log="carrinho">
+              📝 Ver logs e registrar ação técnica
+            </button>
+          </details>
+        </article>
+
+        <!-- =============================
+             8.3 Cenário: CHECKOUT
+        ============================== -->
+        <article class="card card-small cenario-card" data-cenario="checkout">
+          <h3 class="card-title">📦 Checkout</h3>
+
+          <div id="alert-checkout" class="cenario-alerta-msg" hidden></div>
+
+          <p class="card-text">
+            Endereço, pagamento, revisão e confirmação final.
+          </p>
+
+          <details class="cenario-details">
+            <summary>📄 Detalhes técnicos</summary>
+            <ul class="cenario-details__lista">
+              <li>Validação de endereço e CEP.</li>
+              <li>Integração com gateway de pagamento.</li>
+              <li>Retentativas automáticas em falhas temporárias.</li>
+            </ul>
+
+            <button class="btn-log" data-open-log="checkout">
+              📝 Ver logs e registrar ação técnica
+            </button>
+          </details>
+        </article>
+
+        <!-- =============================
+             8.4 Cenário: BUSCA
+        ============================== -->
+        <article class="card card-small cenario-card" data-cenario="busca">
+          <h3 class="card-title">🔎 Busca</h3>
+
+          <div id="alert-busca" class="cenario-alerta-msg" hidden></div>
+
+          <p class="card-text">
+            Pesquisa gradual, filtros e ordenação.
+          </p>
+
+          <details class="cenario-details">
+            <summary>📄 Detalhes técnicos</summary>
+            <ul class="cenario-details__lista">
+              <li>Busca dinâmica enquanto digita.</li>
+              <li>Sugestões vindas da API.</li>
+              <li>Aplicação simultânea de filtros.</li>
+            </ul>
+
+            <button class="btn-log" data-open-log="busca">
+              📝 Ver logs e registrar ação técnica
+            </button>
+          </details>
+        </article>
+
+        <!-- =============================
+             8.5 Cenário: SMOKE
+        ============================== -->
+        <article class="card card-small cenario-card" data-cenario="smoke">
+          <h3 class="card-title">🧪 Smoke Tests</h3>
+
+          <div id="alert-smoke" class="cenario-alerta-msg" hidden></div>
+
+          <p class="card-text">
+            Fluxo principal em poucos passos.
+          </p>
+
+          <details class="cenario-details">
+            <summary>📄 Detalhes técnicos</summary>
+            <ul class="cenario-details__lista">
+              <li>Autenticação.</li>
+              <li>Adicionar item e finalizar compra.</li>
+              <li>Confirmação de pedido.</li>
+            </ul>
+
+            <button class="btn-log" data-open-log="smoke">
+              📝 Ver logs e registrar ação técnica
+            </button>
+          </details>
+        </article>
+
+        <!-- =============================
+             8.6 Cenário: PERFIL
+        ============================== -->
+        <article class="card card-small cenario-card" data-cenario="perfil">
+          <h3 class="card-title">👤 Perfil</h3>
+
+          <div id="alert-perfil" class="cenario-alerta-msg" hidden></div>
+
+          <p class="card-text">
+            Edição de dados e validações de sucesso.
+          </p>
+
+          <details class="cenario-details">
+            <summary>📄 Detalhes técnicos</summary>
+            <ul class="cenario-details__lista">
+              <li>Validação de campos obrigatórios.</li>
+              <li>Integração com API de perfil.</li>
+              <li>Sincronização com sessão autenticada.</li>
+            </ul>
+
+            <button class="btn-log" data-open-log="perfil">
+              📝 Ver logs e registrar ação técnica
+            </button>
+          </details>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- =========================================================
+         9. PAINEL ALLURE — STATUS DOS TESTES
+    ========================================================== -->
+    <section id="allurePanel" class="allure-panel">
+      <h2>📊 Status dos Testes — Allure</h2>
+
+      <div class="allure-grid">
+        <div><strong>Total:</strong> <span id="allureTotal">--</span></div>
+        <div><strong>Aprovados:</strong> <span id="allurePassed">--</span></div>
+        <div><strong>Falharam:</strong> <span id="allureFailed">--</span></div>
+        <div><strong>Última execução:</strong> <span id="allureLastRun">--</span></div>
+      </div>
+
+      <button id="btnAbrirAllure" class="allure-btn">
+        🔎 Abrir relatório completo
+      </button>
+    </section>
+
+    <!-- =========================================================
+         10. SEÇÃO — RELATÓRIOS E ARTEFATOS
     ========================================================== -->
     <section class="section">
       <h2 class="section-title">Relatórios & Artefatos</h2>
 
       <div class="grid grid-2">
+
+        <!-- 10.1 Relatório Playwright -->
         <article class="card card-large">
           <h3 class="card-title">📑 Relatório Playwright</h3>
           <p class="card-text">
@@ -358,6 +370,7 @@
           </a>
         </article>
 
+        <!-- 10.2 Trace Viewer -->
         <article class="card card-large">
           <h3 class="card-title">🎥 Trace Viewer</h3>
           <p class="card-text">
@@ -372,8 +385,10 @@
             Abrir Trace Viewer
           </a>
         </article>
+
       </div>
 
+      <!-- 10.3 Relatório Allure -->
       <div class="grid grid-1" style="margin-top: 20px;">
         <article class="card card-large">
           <h3 class="card-title">🌈 Relatório Allure</h3>
@@ -391,18 +406,20 @@
         </article>
       </div>
     </section>
-
     <!-- =========================================================
-         SEÇÃO: Sobre a profissional (restaurada)
+         11. SEÇÃO — SOBRE A PROFISSIONAL
     ========================================================== -->
     <section class="section">
       <h2 class="section-title">Sobre a profissional</h2>
+
       <div class="profile-card">
         <div class="profile-avatar">R</div>
+
         <div class="profile-content">
           <p class="profile-text">
             <strong>Raquel Souza</strong> é Analista de TI com foco em qualidade de software…
           </p>
+
           <a
             href="https://github.com/rakellkizz"
             target="_blank"
@@ -415,7 +432,9 @@
       </div>
     </section>
 
-    <!-- RODAPÉ -->
+    <!-- =========================================================
+         12. RODAPÉ
+    ========================================================== -->
     <footer class="footer">
       <p class="footer-text">
         Feito com 💜 por <strong>Raquel Souza</strong> — Playwright E2E · GitHub Pages
@@ -425,128 +444,90 @@
   </div>
   <!-- /page-wrapper -->
 
-  <!-- ===================================================================
-       HUD FLUTUANTE DO TEMPORIZADOR (topo direito) + BARRA GLOBAL
-       Estes elementos são usados pelo timer-controller.js
-  ==================================================================== -->
+  <!-- =========================================================
+       13. TEMPORIZADOR — HUD FLUTUANTE COMPLETO
+  ========================================================== -->
+  <div class="timer-hud" id="timerHud" aria-live="polite">
 
-  <!-- HUD do temporizador -->
-  <!-- ===================================================================
-     HUD FLUTUANTE DO TEMPORIZADOR — VERSÃO CERTA, LIMPA, SEM DUPLICAÇÃO
-     ✔ Mantém seu design
-     ✔ Mantém posição
-     ✔ Inclui configurações do técnico
-     ✔ Automático ON/OFF funcionando
-=================================================================== -->
-<div class="timer-hud" id="timerHud" aria-live="polite">
+    <!-- 13.1 Cabeçalho -->
+    <div class="timer-hud__header">
+      <span class="timer-hud__label">⏱️ Temporizador de Testes</span>
+      <span class="timer-hud__status" id="timerHudStatus">Pronto para iniciar</span>
+    </div>
 
-  <!-- Cabeçalho -->
-  <div class="timer-hud__header">
-    <span class="timer-hud__label">⏱️ Temporizador de Testes</span>
-    <span class="timer-hud__status" id="timerHudStatus">Pronto para iniciar</span>
-  </div>
+    <!-- 13.2 Corpo principal -->
+    <div class="timer-hud__body">
 
-  <!-- Corpo principal -->
-  <div class="timer-hud__body">
+      <!-- 13.2.1 Tempo atual -->
+      <div class="timer-hud__time" id="timerHudTime">00:00</div>
 
-    <!-- Tempo atual -->
-    <div class="timer-hud__time" id="timerHudTime">00:00</div>
+      <!-- 13.2.2 Botões -->
+      <div class="timer-hud__controls">
+        <button type="button" class="timer-hud__btn timer-hud__btn--start" id="timerHudStart">
+          ▶ Iniciar
+        </button>
 
-    <!-- Botões: iniciar e parar -->
-    <div class="timer-hud__controls">
-      <button
-        type="button"
-        class="timer-hud__btn timer-hud__btn--start"
-        id="timerHudStart"
-      >
-        ▶ Iniciar
+        <button type="button" class="timer-hud__btn timer-hud__btn--stop" id="timerHudStop">
+          ⏹ Parar
+        </button>
+      </div>
+    </div>
+
+    <!-- 13.3 Configurações -->
+    <div class="timer-hud__config">
+
+      <!-- duração -->
+      <label class="timer-hud__label">
+        Duração do ciclo:
+        <input type="number" id="timerDuracao" class="timer-hud__input" min="5" value="60" /> seg
+      </label>
+
+      <!-- intervalo automático -->
+      <label class="timer-hud__label">
+        Intervalo automático:
+        <input type="number" id="timerAutoIntervalo" class="timer-hud__input" min="1" value="30" /> min
+      </label>
+
+      <!-- toggle -->
+      <button type="button" id="timerAutoToggle" class="timer-hud__btn timer-hud__btn--auto">
+        🔄 Automático: OFF
       </button>
 
-      <button
-        type="button"
-        class="timer-hud__btn timer-hud__btn--stop"
-        id="timerHudStop"
-      >
-        ⏹ Parar
-      </button>
     </div>
   </div>
 
-  <!-- ============================================
-       CONFIGURAÇÕES DO TÉCNICO
-       Não altera o design — só adiciona funcionalidade
-  ============================================= -->
-  <div class="timer-hud__config">
+  <!-- =========================================================
+       14. MODO AUTOMÁTICO — HUD AUXILIAR
+  ========================================================== -->
+  <div id="autoNextWrapper" class="auto-next-wrapper" hidden>
 
-    <!-- Campo: duração do ciclo -->
-    <label class="timer-hud__label">
-      Duração do ciclo:
-      <input
-        type="number"
-        id="timerDuracao"
-        class="timer-hud__input"
-        min="5"
-        value="60"
-      /> seg
-    </label>
+    <span class="auto-next-label">Próxima rodada automática:</span>
 
-    <!-- Campo: intervalo entre execuções automáticas -->
-    <label class="timer-hud__label">
-      Intervalo automático:
-      <input
-        type="number"
-        id="timerAutoIntervalo"
-        class="timer-hud__input"
-        min="1"
-        value="30"
-      /> min
-    </label>
+    <div class="auto-next-bar">
+      <div id="autoNextFill" class="auto-next-fill"></div>
+    </div>
 
-    <!-- Botão: Automático ON/OFF -->
-    <button
-      type="button"
-      id="timerAutoToggle"
-      class="timer-hud__btn timer-hud__btn--auto"
-    >
-      🔄 Automático: OFF
-    </button>
-
-  </div>
-</div>
-<!-- ============================================================
-     ⏱️ BLOCO DO MODO AUTOMÁTICO (NÃO EXISTIA NO SEU HTML)
-     Mostra contagem até próximo ciclo automático
-     Compatível com SEU CSS atual
-=============================================================== -->
-<div id="autoNextWrapper" class="auto-next-wrapper" hidden>
-
-  <span class="auto-next-label">Próxima rodada automática:</span>
-
-  <!-- Barra animada -->
-  <div class="auto-next-bar">
-    <div id="autoNextFill" class="auto-next-fill"></div>
+    <span id="autoNextTime" class="auto-next-time">--:--</span>
   </div>
 
-  <!-- Tempo restante para a próxima rodada -->
-  <span id="autoNextTime" class="auto-next-time">--:--</span>
+  <!-- =========================================================
+       15. BARRA GLOBAL DO TEMPORIZADOR
+  ========================================================== -->
+  <div class="timer-bar" id="timerBar" aria-hidden="false">
+    <div class="timer-bar__track">
+      <div class="timer-bar__fill" id="timerBarFill"></div>
+    </div>
 
-</div>
-
-<!-- Barra de progresso inferior (SEM MUDAR NADA DO QUE VOCÊ JÁ TEM) -->
-<div class="timer-bar" id="timerBar" aria-hidden="false">
-  <div class="timer-bar__track">
-    <div class="timer-bar__fill" id="timerBarFill"></div>
+    <div class="timer-bar__label" id="timerBarLabel">
+      Aguardando início do próximo ciclo de testes…
+    </div>
   </div>
-  <div class="timer-bar__label" id="timerBarLabel">
-    Aguardando início do próximo ciclo de testes…
-  </div>
-</div>
-  <!-- ===================================================================
-       ASSISTENTE DE IA · BOTÃO FLUTUANTE + JANELA
-       (Markup que o chat-ui.js usa; não mexer nos IDs)
-  ==================================================================== -->
 
-  <!-- Botão flutuante -->
+  <!-- =========================================================
+       16. ASSISTENTE DE IA — BOTÃO + JANELA
+  ========================================================== -->
+
+  <!-- 16.1 Botão flutuante -->
   <button
     id="iaLauncher"
     class="ia-launcher"
@@ -557,13 +538,10 @@
     <span class="ia-launcher__label">IA · Raquel</span>
   </button>
 
-  <!-- Janela do chat -->
-  <div
-    class="ia-chat"
-    id="iaChat"
-    aria-hidden="true"
-    aria-label="Janela do assistente de IA"
-  >
+  <!-- 16.2 Janela do chat -->
+  <div class="ia-chat" id="iaChat" aria-hidden="true" aria-label="Janela do assistente de IA">
+
+    <!-- 16.2.1 Cabeçalho -->
     <header class="ia-chat__header">
       <div class="ia-chat__avatar">
         <span class="ia-chat__avatar-letter">R</span>
@@ -574,18 +552,13 @@
         <p class="ia-chat__subtitle">Diagnóstico · Testes · Suporte</p>
       </div>
 
-      <button
-        id="iaChatClose"
-        class="ia-chat__close"
-        type="button"
-        aria-label="Fechar"
-      >
+      <button id="iaChatClose" class="ia-chat__close" type="button" aria-label="Fechar">
         ✕
       </button>
     </header>
 
+    <!-- 16.2.2 Área de mensagens -->
     <div class="ia-chat__messages" id="iaMessages">
-      <!-- Mensagem inicial -->
       <div class="ia-msg ia-msg--ia">
         <div class="ia-msg__avatar ia-msg__avatar--ia">AI</div>
         <div class="ia-msg__bubble">
@@ -599,6 +572,7 @@
       </div>
     </div>
 
+    <!-- 16.2.3 Formulário -->
     <form class="ia-chat__form" id="iaForm">
       <input
         id="iaInput"
@@ -610,45 +584,39 @@
         ➤
       </button>
     </form>
+
   </div>
 
-  <!-- ===================================================================
-       MODAL COMPLETO DE LOGS / WORKLOG — Fica oculta até abrir
-  ==================================================================== -->
+  <!-- =========================================================
+       17. MODAL DE LOGS / WORKLOG
+  ========================================================== -->
   <div id="logOverlay" class="log-overlay" hidden>
     <div class="log-modal">
 
-      <!-- Cabeçalho -->
+      <!-- 17.1 Cabeçalho -->
       <header class="log-modal__header">
         <div>
-          <h3 id="logModalTitulo" class="log-modal__title">
-            Logs do cenário
-          </h3>
+          <h3 id="logModalTitulo" class="log-modal__title">Logs do cenário</h3>
           <p id="logModalSubtitulo" class="log-modal__subtitle">
             Anomalias registradas, ações técnicas e justificativas.
           </p>
         </div>
 
-        <button
-          type="button"
-          id="logModalFechar"
-          class="log-modal__close"
-          aria-label="Fechar"
-        >
+        <button type="button" id="logModalFechar" class="log-modal__close" aria-label="Fechar">
           ✕
         </button>
       </header>
 
-      <!-- Conteúdo: timeline + formulário -->
+      <!-- 17.2 Conteúdo interno -->
       <div class="log-modal__content">
 
-        <!-- Coluna 1: timeline -->
+        <!-- 17.2.1 Timeline -->
         <section class="log-timeline">
           <h4 class="log-timeline__title">Histórico de eventos</h4>
           <div id="logTimelineLista" class="log-timeline__lista"></div>
         </section>
 
-        <!-- Coluna 2: formulário -->
+        <!-- 17.2.2 Formulário -->
         <section class="log-form">
           <h4 class="log-form__title">Registrar nova ação</h4>
 
@@ -662,183 +630,123 @@
                 class="log-form__input"
                 type="text"
                 value="Raquel Souza"
-                placeholder="Ex: Raquel Souza"
               />
             </label>
 
             <label class="log-form__label">
               Ação realizada
-              <textarea
-                id="logAcao"
-                class="log-form__textarea"
-                rows="3"
-                placeholder="Descreva exatamente o que foi feito…"
-              ></textarea>
+              <textarea id="logAcao" class="log-form__textarea" rows="3"></textarea>
             </label>
 
             <label class="log-form__label">
               Observações / Justificativa
-              <textarea
-                id="logJustificativa"
-                class="log-form__textarea"
-                rows="3"
-                placeholder="Caso não tenha corrigido, explique o motivo…"
-              ></textarea>
+              <textarea id="logJustificativa" class="log-form__textarea" rows="3"></textarea>
             </label>
 
             <button type="submit" class="log-form__submit">
-  💾 Registrar ação
-</button>
-<!-- ==================================================================
-     BOTÕES DE ESTADO — Resolvido / Manutenção / Erro (formato pílula)
-     ================================================================== -->
-<div class="log-estado-actions">
-  <button
-    type="button"
-    class="btn-estado-pill btn-estado-pill--resolvido"
-    data-estado-btn="resolvido"
-  >
-    <span class="btn-estado-indicador"></span>
-    <span class="btn-estado-label">🟢 Marcar como resolvido</span>
-  </button>
+              💾 Registrar ação
+            </button>
 
-  <button
-    type="button"
-    class="btn-estado-pill btn-estado-pill--manutencao"
-    data-estado-btn="manutencao"
-  >
-    <span class="btn-estado-indicador"></span>
-    <span class="btn-estado-label">🟡 Colocar em manutenção</span>
-  </button>
+            <!-- 17.2.3 Botões de estado -->
+            <div class="log-estado-actions">
+              <button type="button" class="btn-estado-pill btn-estado-pill--resolvido" data-estado-btn="resolvido">
+                <span class="btn-estado-indicador"></span>
+                <span class="btn-estado-label">🟢 Marcar como resolvido</span>
+              </button>
 
-  <button
-    type="button"
-    class="btn-estado-pill btn-estado-pill--erro"
-    data-estado-btn="erro"
-  >
-    <span class="btn-estado-indicador"></span>
-    <span class="btn-estado-label">🔴 Forçar estado de erro</span>
-  </button>
-</div>
-<!-- =======================================================
-     AÇÕES DE RELATÓRIO (PDF / WHATSAPP / EMAIL)
-     Ficam no espaço vazio abaixo do botão Registrar ação
-======================================================= -->
-<div class="log-actions-inline" id="logActionsInline" hidden>
-  <button type="button" data-inline-acao="pdf" class="log-inline-btn log-inline-btn--pdf">📄 PDF</button>
-  <button type="button" data-inline-acao="whatsapp" class="log-inline-btn log-inline-btn--whats">💬 WhatsApp</button>
-  <button type="button" data-inline-acao="email" class="log-inline-btn log-inline-btn--email">✉️ Email</button>
-</div>
+              <button type="button" class="btn-estado-pill btn-estado-pill--manutencao" data-estado-btn="manutencao">
+                <span class="btn-estado-indicador"></span>
+                <span class="btn-estado-label">🟡 Colocar em manutenção</span>
+              </button>
 
-</form>
-</section>
-</div>
-</div>
-</div>
-  <!-- ===================================================================
-       DOCK FLUTUANTE — PDF / WHATSAPP / EMAIL
-       Fica oculto até o relatório ser gerado
-  ==================================================================== -->
+              <button type="button" class="btn-estado-pill btn-estado-pill--erro" data-estado-btn="erro">
+                <span class="btn-estado-indicador"></span>
+                <span class="btn-estado-label">🔴 Forçar estado de erro</span>
+              </button>
+            </div>
+
+            <!-- 17.2.4 Botões de exportação -->
+            <div class="log-actions-inline" id="logActionsInline" hidden>
+              <button type="button" data-inline-acao="pdf" class="log-inline-btn log-inline-btn--pdf">📄 PDF</button>
+              <button type="button" data-inline-acao="whatsapp" class="log-inline-btn log-inline-btn--whats">💬 WhatsApp</button>
+              <button type="button" data-inline-acao="email" class="log-inline-btn log-inline-btn--email">✉️ Email</button>
+            </div>
+
+          </form>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       18. DOCK FLUTUANTE — PDF / WHATSAPP / EMAIL
+  ========================================================== -->
   <div id="logDock" class="log-dock" hidden>
     <p class="log-dock__label">Relatório pronto para compartilhar</p>
+
     <div class="log-dock__actions">
-      <button type="button" id="logDockPdf" class="log-dock__btn">
-        📄 PDF
-      </button>
-      <button type="button" id="logDockWhatsapp" class="log-dock__btn">
-        💬 WhatsApp
-      </button>
-      <button type="button" id="logDockEmail" class="log-dock__btn">
-        ✉️ E-mail
-      </button>
+      <button type="button" id="logDockPdf" class="log-dock__btn">📄 PDF</button>
+      <button type="button" id="logDockWhatsapp" class="log-dock__btn">💬 WhatsApp</button>
+      <button type="button" id="logDockEmail" class="log-dock__btn">✉️ E-mail</button>
     </div>
   </div>
 
-  <!-- ===================================================================
-       SCRIPTS FINAIS — temporizador + logs
-       (carregados por último para não travar renderização)
-  ==================================================================== -->
+  <!-- =========================================================
+       19. 🔧 SCRIPTS FINAIS DO PROJETO
+  ========================================================== -->
+
+  <!-- 19.1 Temporizador -->
   <script type="module" src="js/timer-controller.js"></script>
+
+  <!-- 19.2 Logs -->
   <script type="module" src="js/logs-controller.js"></script>
 
-<!-- =========================================================
-     🔮 MÓDULOS DO SISTEMA DE TESTES INTELIGENTES
-========================================================= -->
-<script type="module" src="js/telemetry.js"></script>
-<script type="module" src="js/allure-bridge.js"></script>
-<script type="module" src="js/tests-engine.js"></script>
-<script type="module" src="js/cards-status.js"></script>
-<script type="module" src="js/ia-tests-bridge.js"></script>
+  <!-- 19.3 Telemetria -->
+  <script type="module" src="js/telemetry.js"></script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    // seu script de atualização do Allure mock permanece aqui
-  });
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-  const total = document.getElementById("allureTotal");
-  const passed = document.getElementById("allurePassed");
-  const failed = document.getElementById("allureFailed");
-  const lastRun = document.getElementById("allureLastRun");
+  <!-- 19.4 Allure -->
+  <script type="module" src="js/allure-bridge.js"></script>
 
-  const btn = document.getElementById("btnAbrirAllure");
+  <!-- 19.5 Motor de testes -->
+  <script type="module" src="js/tests-engine.js"></script>
 
-  // abrir Allure real
-  btn.addEventListener("click", () => {
-    window.__allureBridge.abrirAllureReport();
-  });
+  <!-- 19.6 Status dos cards -->
+  <script type="module" src="js/cards-status.js"></script>
 
-  // quando status do allure for atualizado
-  addEventListener("allure:status-atualizado", (ev) => {
-    const st = ev.detail;
+  <!-- 19.7 IA Bridge -->
+  <script type="module" src="js/ia-tests-bridge.js"></script>
 
-    total.textContent = st.total;
-    passed.textContent = st.passed;
-    failed.textContent = st.failed;
-    lastRun.textContent = st.lastRun;
-  });
+  <!-- 19.8 Atualização mock do Allure -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {});
+  </script>
 
-  // solta mock inicial
-  window.__allureBridge.atualizarStatusAllureMock();
-});
-</script>
-<!-- ======================================================
-     MODAL BONITO PARA RELATÓRIOS DO TÉCNICO
-     ====================================================== -->
-<div id="acaoModal" class="acao-modal hidden">
-  <div class="acao-modal-box">
-    <h2 id="acaoModalTitulo">Título</h2>
+  <!-- 19.9 Listener de status do Allure -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const total = document.getElementById("allureTotal");
+      const passed = document.getElementById("allurePassed");
+      const failed = document.getElementById("allureFailed");
+      const lastRun = document.getElementById("allureLastRun");
+      const btn = document.getElementById("btnAbrirAllure");
 
-    <textarea id="acaoModalTexto"
-              placeholder="Descreva o que foi feito ou explique pendências..."
-              rows="5"></textarea>
+      btn.addEventListener("click", () => {
+        window.__allureBridge.abrirAllureReport();
+      });
 
-    <div class="acao-modal-buttons">
-      <button id="acaoModalCancelar">Cancelar</button>
-      <button id="acaoModalConfirmar">Confirmar</button>
-    </div>
-  </div>
-</div>
-<!-- MODAL BONITO PARA ESTADO -->
-<div id="modalEstado" class="modal-estado hidden">
-  <div class="modal-estado__content">
-    <h3 id="modalEstadoTitulo"></h3>
-    <textarea id="modalEstadoTexto" placeholder="Descreva aqui..." rows="4"></textarea>
+      addEventListener("allure:status-atualizado", (ev) => {
+        const st = ev.detail;
 
-    <div class="modal-estado__botoes">
-      <button id="modalEstadoCancelar" class="btn-cancelar">Cancelar</button>
-      <button id="modalEstadoOk" class="btn-ok">Confirmar</button>
-    </div>
-  </div>
-</div>
-<!-- MODAL BONITO PARA RELATÓRIOS DO TÉCNICO -->
-<div id="acaoModal" class="acao-modal hidden">
-  ...
-</div>
-<!-- MODAL BONITO PARA RELATÓRIOS DO TÉCNICO -->
-<div id="acaoModal" class="acao-modal hidden">
-  ...
-</div>
+        total.textContent = st.total;
+        passed.textContent = st.passed;
+        failed.textContent = st.failed;
+        lastRun.textContent = st.lastRun;
+      });
+
+      window.__allureBridge.atualizarStatusAllureMock();
+    });
+  </script>
+
 </body>
 </html>
