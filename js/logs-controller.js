@@ -714,28 +714,32 @@ function abrirModalEstado(estado, pergunta) {
 //      - "manutencao"  → card amarelo (manutenção)
 //      - "erro"        → card vermelho (erro em investigação)
 // ======================================================================
-function atualizarEstadoDosCards() {
+// ======================================================================
+   function atualizarEstadoDosCards() {
   const todos = carregarLogs();
 
   Object.keys(todos).forEach((cenarioId) => {
     const logs = todos[cenarioId];
-    const card = document.querySelector(`.cenario-card[data-cenario="${cenarioId}"]`);
+    const card = document.querySelector(
+      `.cenario-card[data-cenario="${cenarioId}"]`
+    );
     const alerta = document.getElementById(`alert-${cenarioId}`);
 
     if (!card) return;
 
     // ---------------------------------------------------------------
-    // 16.1 — Limpa estados antigos
+    // 16.1 — Limpa estados antigos (card + badge interno)
     // ---------------------------------------------------------------
-    card.classList.remove(
-      "cenario-alerta",
-      "cenario-ok",
-      "cenario-manutencao"
-    );
+    card.classList.remove("cenario-alerta", "cenario-ok", "cenario-manutencao");
 
     if (alerta) {
       alerta.hidden = true;
       alerta.textContent = "";
+      alerta.classList.remove(
+        "alerta--incidente",
+        "alerta--manutencao",
+        "alerta--resolvido"
+      );
     }
 
     // ---------------------------------------------------------------
@@ -746,37 +750,27 @@ function atualizarEstadoDosCards() {
       return;
     }
 
-    // 🆕 NOVO — garantir que estamos usando a ORDEM CRONOLÓGICA
-    //           (pelo timestamp) para decidir o estado atual
-    const ordenados = [...logs].sort(
-      (a, b) => (a.timestamp || 0) - (b.timestamp || 0)
-    );
-
-    const ultimo = ordenados[ordenados.length - 1];
+    // 🆕 Ignorar incidentes muito antigos ao carregar a página
+    const ultimo = logs[logs.length - 1];
     const agora = Date.now();
-
-    // Se o último log tem mais de X minutos → considerar OK
-    // (evita ficar mostrando alerta de incidente antigo)
     const LIMITE = 3 * 60 * 1000; // 3 minutos
 
-    if (ultimo && ultimo.timestamp && agora - ultimo.timestamp > LIMITE) {
+    if (agora - ultimo.timestamp > LIMITE) {
       card.classList.add("cenario-ok");
       return;
     }
 
     // ---------------------------------------------------------------
     // 16.3 — Encontrar o ÚLTIMO log que possui estadoFinal
-    //        (resolvido, manutencao, erro) — usando ordem por timestamp
+    //        (resolvido, manutencao, erro)
     // ---------------------------------------------------------------
-    const ultimoEstado = [...ordenados]
-      .reverse()
-      .find((l) => l.estadoFinal);
+    const ultimoEstado = [...logs].reverse().find((l) => l.estadoFinal);
 
     // ---------------------------------------------------------------
     // 16.4 — Verificar se EXISTE incidente ainda aberto
     //        (ou seja: log.tipo === "incidente")
     // ---------------------------------------------------------------
-    const temIncidenteAberto = ordenados.some((l) => l.tipo === "incidente");
+    const temIncidenteAberto = logs.some((l) => l.tipo === "incidente");
 
     // ---------------------------------------------------------------
     // 16.5 — Se houver estadoFinal → esse valor MANDA no card
@@ -788,6 +782,7 @@ function atualizarEstadoDosCards() {
           alerta.hidden = false;
           alerta.textContent =
             "🟢 Resolvido — Cenário estável após ação técnica.";
+          alerta.classList.add("alerta--resolvido");
         }
         return;
       }
@@ -798,6 +793,7 @@ function atualizarEstadoDosCards() {
           alerta.hidden = false;
           alerta.textContent =
             "🟡 Em manutenção — Acompanhamento em andamento.";
+          alerta.classList.add("alerta--manutencao");
         }
         return;
       }
@@ -806,8 +802,8 @@ function atualizarEstadoDosCards() {
         card.classList.add("cenario-alerta");
         if (alerta) {
           alerta.hidden = false;
-          alerta.textContent =
-            "🔴 Erro em investigação — Incidente ativo.";
+          alerta.textContent = "🔴 Erro em investigação — Incidente ativo.";
+          alerta.classList.add("alerta--incidente");
         }
         return;
       }
@@ -823,6 +819,7 @@ function atualizarEstadoDosCards() {
         alerta.hidden = false;
         alerta.textContent =
           "🔴 Incidente em aberto — registre resolução ou manutenção.";
+        alerta.classList.add("alerta--incidente");
       }
       return;
     }
@@ -833,6 +830,7 @@ function atualizarEstadoDosCards() {
     card.classList.add("cenario-ok");
   });
 }
+
 // ======================================================================
 // 16.8 — Chamado automaticamente ao carregar a página
 // ======================================================================

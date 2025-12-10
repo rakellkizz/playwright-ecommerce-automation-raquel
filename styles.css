@@ -2316,51 +2316,53 @@ body {
   transform: translateY(-1px);
 }
 
-/* ===========================================
-   58. ESTADOS DOS CARDS – versões alternativas
-   - Classes extras (card-critico, card-manutencao, etc.)
-=========================================== */
-.cenario-card.card-critico {
-  box-shadow: 0 0 18px #ff4d4d;
-  border-color: #ff4d4d !important;
+/* =========================================================
+   58. — CARD EM ALERTA (vermelho com pulso)
+   ========================================================= */
+.cenario-card.cenario-alerta {
+  border-color: #ff4b6a;
+  box-shadow:
+    0 0 0 1px rgba(255, 75, 106, 0.65),
+    0 0 22px 6px rgba(255, 75, 106, 0.45);
+  animation: card-alert-pulse 1.8s ease-in-out infinite;
 }
 
-.cenario-card.card-manutencao {
-  box-shadow: 0 0 18px #ffd84d;
-  border-color: #ffd84d !important;
+/* 58.1 — CARD EM MANUTENÇÃO (amarelo estável) */
+.cenario-card.cenario-manutencao {
+  border-color: #ffd65a;
+  box-shadow:
+    0 0 0 1px rgba(255, 214, 90, 0.55),
+    0 0 18px 4px rgba(255, 214, 90, 0.30);
 }
 
-.cenario-card.card-ok {
-  box-shadow: 0 0 12px #4dff88;
-  border-color: #4dff88 !important;
+/* 58.2 — CARD OK (verde estável) */
+.cenario-card.cenario-ok {
+  border-color: #5cf2a8;
+  box-shadow:
+    0 0 0 1px rgba(92, 242, 168, 0.45),
+    0 0 16px 3px rgba(92, 242, 168, 0.25);
 }
 
-/* CENÁRIO EM MANUTENÇÃO (amarelo) */
-.cenario-manutencao {
-  box-shadow: 0 0 20px 4px #ffeb3b;
-  border-color: #ffeb3b !important;
+/* 58.3 — Animação de pulso para estado de ALERTA */
+@keyframes card-alert-pulse {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(255, 75, 106, 0.7),
+      0 0 18px 4px rgba(255, 75, 106, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(255, 75, 106, 0.9),
+      0 0 32px 10px rgba(255, 75, 106, 0.55);
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(255, 75, 106, 0.0),
+      0 0 18px 4px rgba(255, 75, 106, 0.30);
+  }
 }
 
-/* CENÁRIO RESOLVIDO (verde) */
-.cenario-resolvido {
-  box-shadow: 0 0 20px 4px #00ff9c;
-  border-color: #00ff9c !important;
-}
-
-/* CENÁRIO CRÍTICO (vermelho pulsante) */
-.cenario-critico {
-  border: 2px solid #ff4d4d !important;
-  box-shadow: 0 0 12px rgba(255, 60, 60, 0.8);
-  animation: pulsarCritico 1.8s infinite ease-in-out;
-}
-
-@keyframes pulsarCritico {
-  0% { box-shadow: 0 0 6px rgba(255, 60, 60, 0.4); }
-  50% { box-shadow: 0 0 16px rgba(255, 0, 0, 0.85); }
-  100% { box-shadow: 0 0 6px rgba(255, 60, 60, 0.4); }
-}
-
-/* 🛑 Correção final contra o botão inflar ao clicar/arrastar */
+/* 59. 🛑 Correção final contra o botão inflar ao clicar/arrastar */
 .ia-launcher,
 .ia-launcher:hover,
 .ia-launcher:active,

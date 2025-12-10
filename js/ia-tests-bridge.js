@@ -1,35 +1,38 @@
 // ======================================================================
-// 1. IA-TESTS-BRIDGE.JS — Integração entre:
-//    • engine → IA
-//    • IA → logs-controller
-//    • IA → HUD SOC
-//    • Relatórios automáticos
+// 1. ia-tests-bridge.js — Ponte entre ENGINE de testes, IA e LOGS
 // ----------------------------------------------------------------------
-//  ✔ Mantém tudo que você já tinha
-//  ✔ Apenas adiciona capacidades avançadas (C1, C2, C3)
-//  ✔ Não altera logs-controller.js
-//  ✔ Não altera chat-ui.js
+// O QUE ESTE ARQUIVO FAZ:
+//   • 1.1 Quando a engine detecta anomalia → dispara incidente IA (C1).
+//   • 1.2 Quando a engine finaliza ciclo   → gera resumo bonito no chat.
+//   • 1.3 Quando a engine envia "testes:resumo":
+//         - Busca logs do localStorage (logs-controller.js)
+//         - Chama IAMonitor.analisarLote (C1 + C2)
+//         - Gera mensagem inteligente de risco/tendência no chat.
+// ----------------------------------------------------------------------
+// NÃO ALTERA:
+//   ✘ Layout
+//   ✘ CSS
+//   ✘ Estrutura do modal
+//   ✘ Temporizador
 // ======================================================================
 
 
-// **********************************************************************
-// 2. BLOCOS ORIGINAIS DO SEU ARQUIVO (mantidos exatamente como eram)
-// **********************************************************************
-
 // ======================================================================
-// 2.1 — FUNÇÃO ORIGINAL: registrar incidente automaticamente
+// 2. Incident helper — registrar incidente IA automaticamente (C1)
 // ======================================================================
 function registrarIncidenteIA(cenarioId) {
   const payload = {
     id: cenarioId,
     timestamp: Date.now(),
 
+    // 2.1 — Conteúdo simbólico (já compatível com logs-controller.js)
     severidade: "alta",
     impacto: "Automação detectou instabilidade funcional.",
-    causaProvavel: "Componente apresentou comportamento inesperado.",
-    acaoRecomendada: "Revisar passo do teste e validar fluxo."
+    causaProvavel: "Comportamento inesperado no cenário automatizado.",
+    acaoRecomendada: "Revisar passos do teste e validar fluxo de negócio."
   };
 
+  // 2.2 — Evento padrão já entendido pelo logs-controller.js
   window.dispatchEvent(
     new CustomEvent("cenario:diagnostico", { detail: payload })
   );
@@ -37,7 +40,10 @@ function registrarIncidenteIA(cenarioId) {
 
 
 // ======================================================================
-// 2.2 — EVENTO ORIGINAL: tests-engine detectou anomalia
+// 3. Evento: testes:anomalia
+// ----------------------------------------------------------------------
+// Disparado pela engine (tests-engine.js) quando um cenário falha.
+// Aqui a IA registra o incidente automaticamente no sistema de logs.
 // ======================================================================
 addEventListener("testes:anomalia", (ev) => {
   const id = ev.detail?.cenario;
@@ -48,27 +54,21 @@ addEventListener("testes:anomalia", (ev) => {
 
 
 // ======================================================================
-// 2.3 — EVENTO ORIGINAL: ciclo finalizado
+// 4. Evento: testes:finalizar
+// ----------------------------------------------------------------------
+// Apenas log informativo (pode ser usado futuramente).
 // ======================================================================
 addEventListener("testes:finalizar", () => {
-  console.log("📘 [IA] Testes finalizados. IA pronta para relatório futuro.");
+  console.log("📘 [IA] Testes finalizados. IA pronta para análise do resumo.");
 });
 
 
 // ======================================================================
-// 2.4 — DEBUG ORIGINAL
+// 5. Função auxiliar — montar resumo simples no chat
+// ----------------------------------------------------------------------
+// Usa somente os dados do evento testes:resumo (já existia antes).
 // ======================================================================
-window.__iaTests = {
-  registrarIncidenteIA
-};
-
-
-// ======================================================================
-// 2.5 — EVENTO ORIGINAL: resumo dos testes
-// ======================================================================
-addEventListener("testes:resumo", (ev) => {
-  const resumo = ev.detail;
-
+function montarResumoBasico(resumo) {
   let msg = `📊 *Resumo do ciclo de testes*\n`;
   msg += `🕒 Horário: ${resumo.horario}\n`;
   msg += `🔍 Verificações: ${resumo.totalChecks}\n`;
@@ -78,148 +78,133 @@ addEventListener("testes:resumo", (ev) => {
     msg += `• ${c}: ${resumo.errosPorCenario[c]} falhas\n`;
   }
 
-  window.chatAviso(msg);
-});
-
-
-// **********************************************************************
-// 3. NOVOS BLOCOS — C1, C2, C3 + HUD SOC
-// **********************************************************************
-
-import { obterLogs } from "./logs-controller.js";
-
-
-// ======================================================================
-// 3.1 — C1: CLASSIFICADOR INTELIGENTE DE INCIDENTES
-// ======================================================================
-export function iaDetectarIncidente(texto) {
-  const t = texto.toLowerCase();
-
-  const indicadores = [
-    "falha", "erro", "timeout", "não carregou", "travou",
-    "status 500", "status 400", "indisponível", "não respondeu"
-  ];
-
-  const encontrou = indicadores.some((i) => t.includes(i));
-
-  if (!encontrou) {
-    return {
-      incidente: false,
-      severidade: "normal",
-      causaProvavel: "Nenhuma anomalia identificada."
-    };
-  }
-
-  let severidade = "alta";
-  if (t.includes("lento")) severidade = "media";
-  if (t.includes("intermitente")) severidade = "media";
-
-  return {
-    incidente: true,
-    severidade,
-    causaProvavel: "Padrão de falha identificado pela IA.",
-    acaoRecomendada: "Revisar fluxo e dependências."
-  };
+  return msg;
 }
 
 
 // ======================================================================
-// 3.2 — C1: DISPARAR INCIDENTE IA PERSONALIZADO
+// 6. Função auxiliar — coletar LOGS para o IAMonitor (C1 + C2)
+// ----------------------------------------------------------------------
+// Usa a API exposta por logs-controller.js:
+//   window.__logsDebug.carregarLogs()
+// Estrutura esperada:
+//   { login: [logs...], carrinho: [logs...], ... }
 // ======================================================================
-export function dispararIncidenteIA(cenarioId, diagnostico) {
-  const evento = new CustomEvent("cenario:diagnostico", {
-    detail: {
-      id: cenarioId,
-      timestamp: Date.now(),
-      ...diagnostico
-    }
+function coletarLogsParaIA() {
+  if (!window.__logsDebug || typeof window.__logsDebug.carregarLogs !== "function") {
+    return [];
+  }
+
+  const todos = window.__logsDebug.carregarLogs();
+  const resultado = [];
+
+  Object.keys(todos).forEach((cenarioId) => {
+    const lista = todos[cenarioId] || [];
+    lista.forEach((log) => {
+      // 6.1 — Enriquecemos com o ID do cenário para o IAMonitor
+      resultado.push({
+        ...log,
+        cenario: cenarioId
+      });
+    });
   });
 
-  window.dispatchEvent(evento);
+  return resultado;
 }
 
 
 // ======================================================================
-// 3.3 — C2: ANÁLISE DE HISTÓRICO
+// 7. Função auxiliar — montar mensagem inteligente da IA (C2)
+// ----------------------------------------------------------------------
+// Entrada: objeto retornado por window.IAMonitor.analisarLote(lote)
 // ======================================================================
-export function analisarHistorico(cenarioId) {
-  const logs = obterLogs(cenarioId);
-  if (!logs || logs.length === 0) {
-    return {
-      tendencia: "Sem dados",
-      incidentesRecentes: 0,
-      porcentagemFalha: 0,
-    };
+function montarResumoInteligente(resultadoIA) {
+  if (!resultadoIA || !resultadoIA.tendencia) {
+    return "🤖 IA Monitor: ainda não há dados suficientes para análise de tendência.";
   }
 
-  const ultimos = logs.slice(-10);
-  const incidentes = ultimos.filter((l) => l.tipo === "incidente");
-  const pct = Math.round((incidentes.length / ultimos.length) * 100);
+  const t = resultadoIA.tendencia;
 
-  let tendencia = "Estável";
-  if (pct >= 50) tendencia = "Piora acentuada";
-  else if (pct >= 25) tendencia = "Instabilidade moderada";
-  else if (pct === 0) tendencia = "Melhora";
+  const incAnt = t.janelaAnterior?.incidentes ?? 0;
+  const incRec = t.janelaRecente?.incidentes ?? 0;
+  const variacao = Math.round(t.variacaoIncidentes || 0);
 
-  return {
-    tendencia,
-    incidentesRecentes: incidentes.length,
-    porcentagemFalha: pct
-  };
+  let msg = "🤖 *IA Monitor — Análise de Tendência*\n";
+  msg += `⚠️ Nível de risco: *${t.nivelRisco}*\n`;
+  msg += `📈 Incidentes (anterior → recente): ${incAnt} → ${incRec}\n`;
+  msg += `📊 Variação de incidentes: ${variacao}%\n\n`;
+
+  msg += "🔎 Leitura rápida:\n";
+
+  switch (t.nivelRisco) {
+    case "Crítico":
+      msg += "• Muitos incidentes graves em pouco tempo. Priorizar investigação imediata.\n";
+      break;
+    case "Alto":
+      msg += "• Aumento relevante de falhas. Recomenda-se revisão dos cenários instáveis.\n";
+      break;
+    case "Médio":
+      msg += "• Pequena oscilação com alguns incidentes. Manter monitoramento próximo.\n";
+      break;
+    default:
+      msg += "• Cenário estável com poucas falhas recentes.\n";
+      break;
+  }
+
+  return msg;
 }
 
 
 // ======================================================================
-// 3.4 — C2: ATUALIZAR HUD SOC (a telinha que você mostrou no print)
+// 8. Evento: testes:resumo
+// ----------------------------------------------------------------------
+// Disparado pela engine ao final de um ciclo.
+// Aqui unificamos:
+//   • resumo básico dos testes
+//   • análise inteligente da IA (se disponível)
+//   • entrega tudo no chat (chatAviso), sem quebrar nada existente.
 // ======================================================================
-export function atualizarHudSOC(cenarioId) {
-  const dados = analisarHistorico(cenarioId);
+addEventListener("testes:resumo", (ev) => {
+  const resumo = ev.detail;
+  if (!resumo) return;
 
-  const elInc = document.getElementById("socIncidentesRecentes");
-  const elPct = document.getElementById("socPercentFalhas");
-  const elTend = document.getElementById("socTendencia");
+  // 8.1 — Primeiro: resumo padrão do ciclo
+  const msgBasico = montarResumoBasico(resumo);
 
-  if (!elInc || !elPct || !elTend) return;
+  if (window.chatAviso) {
+    window.chatAviso(msgBasico);
+  } else {
+    console.log("[IA Tests Bridge] chatAviso não disponível. Resumo básico:", msgBasico);
+  }
 
-  elInc.textContent = dados.incidentesRecentes;
-  elPct.textContent = dados.porcentagemFalha + "%";
-  elTend.textContent = dados.tendencia;
-}
+  // 8.2 — Depois: se houver IAMonitor + logs, gera análise C1/C2
+  if (window.IAMonitor && typeof window.IAMonitor.analisarLote === "function") {
+    const lote = coletarLogsParaIA();
 
+    if (lote.length) {
+      try {
+        const resultadoIA = window.IAMonitor.analisarLote(lote);
+        const msgIA = montarResumoInteligente(resultadoIA);
 
-// ======================================================================
-// 3.5 — C3: RELATÓRIO AUTOMÁTICO IA
-// ======================================================================
-export function gerarRelatorioIA(cenarioId) {
-  const logs = obterLogs(cenarioId);
-  const hist = analisarHistorico(cenarioId);
-
-  return `
-📌 RELATÓRIO AUTOMÁTICO — IA
-Cenário: ${cenarioId}
-
-📍 Tendência: ${hist.tendencia}
-📍 Incidentes recentes: ${hist.incidentesRecentes}
-📍 % falhas: ${hist.porcentagemFalha}%
-
-📝 Últimos eventos:
-${logs
-  .slice(-5)
-  .map(
-    (l) =>
-      `• ${new Date(l.timestamp).toLocaleString()} — ${
-        l.tipo
-      } — ${l.acao || ""}`
-  )
-  .join("\n")}
-  `;
-}
-
-
-// ======================================================================
-// 3.6 — INTEGRAÇÃO: QUANDO IA detectar incidente → atualizar HUD SOC
-// ======================================================================
-window.addEventListener("cenario:diagnostico", (ev) => {
-  const id = ev.detail.id;
-  atualizarHudSOC(id);
+        if (window.chatAviso) {
+          window.chatAviso(msgIA);
+        } else {
+          console.log("[IA Tests Bridge] Resumo IA:", msgIA);
+        }
+      } catch (e) {
+        console.warn("IA Tests Bridge: falha ao analisar lote no IAMonitor:", e);
+      }
+    }
+  }
 });
+
+
+// ======================================================================
+// 9. Debug opcional para técnicos
+// ----------------------------------------------------------------------
+// Permite testar manualmente no console, ex.:
+//   __iaTests.registrarIncidenteIA("login")
+// ======================================================================
+window.__iaTests = {
+  registrarIncidenteIA
+};
