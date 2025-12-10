@@ -1,14 +1,23 @@
-// ======================================================================
-// ai-local.js — IA 100% local (gratuita, sem API)
-// ======================================================================
+// ===================================================================
+// 1. IA Local — Núcleo 100% Offline
+// -------------------------------------------------------------------
+// Este módulo é responsável por:
+//   ✔ Resposta simples local (fallback)
+//   ✔ Análise de sentimento (via SentimentJS CDN)
+//   ✔ Classificação de intenção (intents básicos)
+//   ✔ Base para C1, C2 e C3 se conectarem sem API externa
+//
+// Ele NÃO altera DOM, NÃO chama APIs, NÃO mexe no chat sozinho.
+// ===================================================================
 
-// ======================================================================
-// OBJETO PRINCIPAL — IA_LOCAL
-// ======================================================================
+
+// ===================================================================
+// 1.1 Objeto Principal — IA_LOCAL
+// ===================================================================
 export const IA_LOCAL = {
 
   // --------------------------------------------------------------
-  // Resposta simples usada como fallback
+  // 1.1.1 Resposta simples — usada quando nenhuma IA avançada está ativa
   // --------------------------------------------------------------
   async respostaSimples(texto) {
     return `🤖 (IA Local): Você escreveu: "${texto}".`;
@@ -17,9 +26,13 @@ export const IA_LOCAL = {
 
 
 
-// ======================================================================
-// ANÁLISE DE SENTIMENTO (via SentimentJS CDN)
-// ======================================================================
+// ===================================================================
+// 2. ANÁLISE DE SENTIMENTO LOCAL
+// -------------------------------------------------------------------
+// Usa SentimentJS (CDN já carregada no index).
+// Retorna sentimento + tokens + score + polaridade.
+// Nenhuma alteração de comportamento foi feita.
+// ===================================================================
 export function analisarSentimentoLocal(texto) {
   const frase = (texto || "").toString();
   const sentiment = new Sentiment();
@@ -43,15 +56,19 @@ export function analisarSentimentoLocal(texto) {
 
 
 
-// ======================================================================
-// CLASSIFICAÇÃO DE INTENÇÃO LOCAL
-// ======================================================================
+// ===================================================================
+// 3. CLASSIFICAÇÃO DE INTENÇÃO LOCAL (INTENTS)
+// -------------------------------------------------------------------
+// Lógica 100% sem API. Apenas regras.
+// Retorna { intent, score, origem }.
+// Bloco está limpo e compatível com C1, C2 e C3.
+// ===================================================================
 export function classificarIntencaoLocal(texto) {
   const frase = (texto || "").toLowerCase();
 
-  // ===============================================================
-  // NOVA INTENÇÃO — DIAGNÓSTICO TÉCNICO
-  // ===============================================================
+  // ---------------------------------------------------------------
+  // 3.1 INTENÇÃO ESPECIAL — DIAGNÓSTICO TÉCNICO
+  // ---------------------------------------------------------------
   if (
     frase.includes("onde está o problema") ||
     frase.includes("qual o erro") ||
@@ -68,9 +85,11 @@ export function classificarIntencaoLocal(texto) {
     };
   }
 
-  // ===============================================================
-  // Dicionário de intenções comuns
-  // ===============================================================
+
+
+  // ---------------------------------------------------------------
+  // 3.2 DICIONÁRIO DE INTENÇÕES COMUNS
+  // ---------------------------------------------------------------
   const regras = [
     {
       intent: "login",
@@ -97,6 +116,9 @@ export function classificarIntencaoLocal(texto) {
   let melhorIntent = "desconhecida";
   let melhorScore = 0;
 
+  // ---------------------------------------------------------------
+  // 3.3 Analisador de match por palavra-chave
+  // ---------------------------------------------------------------
   for (const regra of regras) {
     let score = 0;
 
@@ -117,3 +139,28 @@ export function classificarIntencaoLocal(texto) {
     origem: "regras-locais"
   };
 }
+
+
+
+// ===================================================================
+// 4. PREPARAÇÃO PARA C1 / C2 / C3 (NÃO ALTERA NADA HOJE)
+// -------------------------------------------------------------------
+// Aqui ficam ganchos para:
+//   • IA Monitor (C1 e C2)
+//   • HUD SOC (exibição de severidade/tendência)
+//   • IA híbrida (quando online)
+//   • IA avançada do chat
+//
+// *Esse bloco NÃO modifica nada no comportamento atual.*
+// ===================================================================
+//
+// // Exemplo de interface futura:
+// IA_LOCAL.analisarCenario = async (texto) => {
+//   return {
+//     sentimento: analisarSentimentoLocal(texto),
+//     intencao: classificarIntencaoLocal(texto)
+//   };
+// };
+//
+// // Mantido comentado até ativarmos C1/C2/C3 completos.
+//

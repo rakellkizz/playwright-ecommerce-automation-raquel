@@ -1,36 +1,32 @@
 // ======================================================================
-// 🤖 ia-monitor.js — Inteligência Artificial para Monitoramento E2E
+// 1. IA MONITOR — Núcleo de Inteligência do Sistema
 // ----------------------------------------------------------------------
-// VERSÃO: C1 + C2 PRONTOS · C3 PREPARADO · ALERTAS AUTOMÁTICOS ATIVOS
+// Responsável por:
+//   • C1 → Classificar logs individualmente (tipo, severidade, tags)
+//   • C2 → Detectar tendência e calcular risco
+//   • C3 → Gerar relatório inteligente (usado pelo HUD, Chat e Relatórios)
+//   • Disparar o evento global "ia-monitor:resultado"
+//   • Integrar com IAAlerts (módulo C-alerts)
+// 
+// NÃO ALTERA DOM
+// NÃO TOCA EM CHAT
+// NÃO ALTERA TIMER
 //
-// OBJETIVO:
-//   • Analisar cada log → C1
-//   • Detectar tendências → C2
-//   • Oferecer estrutura para relatórios inteligentes → C3
-//   • Emitir eventos globais e alertas automáticos (módulo C-alerts)
-//
-// ESTE ARQUIVO NÃO:
-//   ✘ Modifica DOM
-//   ✘ Controla chat
-//   ✘ Desenha HUD
-//
-// ELE SÓ ENTREGA:
-//   ✔ Análise bruta
-//   ✔ Insights de tendência
-//   ✔ Severidade inteligente
-//   ✔ Eventos para outros módulos reagirem (chat, HUD, IA avançada)
-//
-// QUALQUER TÉCNICO PODE PLUGAR OUTROS SISTEMAS AQUI.
+// Apenas ANALISA e ENTREGA dados para quem quiser consumir.
 // ======================================================================
 
 (() => {
-  // Mantém qualquer versão existente (segurança)
+
+  // ======================================================================
+  // 2. PRESERVAÇÃO DE QUALQUER VERSÃO EXISTENTE
+  // ----------------------------------------------------------------------
+  // Caso o usuário já tenha IAMonitor carregado, não perde funções antigas.
+  // ======================================================================
   const nsExistente = window.IAMonitor || {};
 
-  // ====================================================================
-  // 🧪 UTILITÁRIO: Normalizar datas
-  // Aceita Date, string ISO, string BR e tenta parsear
-  // ====================================================================
+  // ======================================================================
+  // 3. UTILITÁRIO — Normalizar datas (aceita vários formatos)
+  // ======================================================================
   function normalizarData(valor) {
     if (!valor) return null;
 
@@ -40,7 +36,7 @@
       const iso = new Date(valor);
       if (!isNaN(iso.getTime())) return iso;
 
-      // Formato BR: 05/12/2025 14:20:00
+      // Formato BR: DD/MM/YYYY HH:MM:SS
       const match = valor.match(
         /^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2})(?::(\d{2}))?)?$/
       );
@@ -60,11 +56,13 @@
     return null;
   }
 
-  // ====================================================================
-  // 🧠 C1 — CLASSIFICAÇÃO INTELIGENTE DOS LOGS
-  // ====================================================================
+  // ======================================================================
+  // 4. C1 — CLASSIFICAÇÃO INDIVIDUAL DO LOG
+  // ======================================================================
 
-  // ----------------------- Inferir tipo de evento ----------------------
+  // ---------------------------------------------------------------
+  // 4.1 Inferir tipo do evento (incidente, instabilidade, técnico…)
+  // ---------------------------------------------------------------
   function inferirTipo(log) {
     const txt = (
       log.mensagem ||
@@ -93,7 +91,9 @@
     return "acao-tecnica";
   }
 
-  // ----------------------- Tags automáticas ----------------------------
+  // ---------------------------------------------------------------
+  // 4.2 Extrair TAGs automáticas (auth, timeout, rede, DB…)
+  // ---------------------------------------------------------------
   function extrairTags(log) {
     const texto =
       `${log.mensagem} ${log.descricao} ${log.cenario} ${log.endpoint}`.toLowerCase();
@@ -114,7 +114,9 @@
     return tags;
   }
 
-  // ----------------------- Severidade inteligente -----------------------
+  // ---------------------------------------------------------------
+  // 4.3 Determinar severidade inteligente
+  // ---------------------------------------------------------------
   function inferirSeveridade(log, tipo, tags) {
     const txt = (
       log.mensagem ||
@@ -134,7 +136,9 @@
     return "Baixo";
   }
 
-  // ----------------------- Enriquecer objeto log -----------------------
+  // ---------------------------------------------------------------
+  // 4.4 Enriquecer log com IA
+  // ---------------------------------------------------------------
   function enriquecerLog(log) {
     const data = normalizarData(log.dataHora || log.data || log.timestamp);
     const tipo = inferirTipo(log);
@@ -150,10 +154,13 @@
     };
   }
 
-  // ====================================================================
-  // 📈 C2 — DETECÇÃO DE TENDÊNCIA
-  // ====================================================================
+  // ======================================================================
+  // 5. C2 — Análise de tendência e risco
+  // ======================================================================
 
+  // ---------------------------------------------------------------
+  // 5.1 Separar logs na "janela anterior" e "janela recente"
+  // ---------------------------------------------------------------
   function dividirJanelas(logs) {
     if (!logs.length) return { anterior: [], recente: [] };
 
@@ -170,9 +177,11 @@
     };
   }
 
+  // ---------------------------------------------------------------
+  // 5.2 Contagem de severidade / incidentes
+  // ---------------------------------------------------------------
   function contar(lista) {
     const severidade = { Crítico: 0, Alto: 0, Médio: 0, Baixo: 0 };
-
     let incidentes = 0;
 
     for (const log of lista) {
@@ -183,12 +192,18 @@
     return { incidentes, severidade };
   }
 
+  // ---------------------------------------------------------------
+  // 5.3 Cálculo de variação percentual entre janelas
+  // ---------------------------------------------------------------
   function variacao(a, b) {
     if (a === 0 && b > 0) return 100;
     if (a === 0 && b === 0) return 0;
     return ((b - a) / a) * 100;
   }
 
+  // ---------------------------------------------------------------
+  // 5.4 Determinar risco global
+  // ---------------------------------------------------------------
   function determinarRisco(cont, varInc) {
     if (cont.severidade.Crítico >= 2) return "Crítico";
     if (cont.severidade.Alto >= 3 || varInc > 50) return "Alto";
@@ -196,6 +211,9 @@
     return "Baixo";
   }
 
+  // ---------------------------------------------------------------
+  // 5.5 Função principal da análise de lote
+  // ---------------------------------------------------------------
   function analisarLote(logsBrutos = []) {
     const logs = logsBrutos.map(enriquecerLog);
 
@@ -217,18 +235,21 @@
       },
     };
 
-    // ----------------------------------------------------------------
-    // 🔮 EVENTO GLOBAL PARA CHAT / HUD (IA Monitor Live)
-    // ----------------------------------------------------------------
+    // -------------------------------------------------------------
+    // 5.6 Evento global → usado por:
+    //     - hud-soc.js
+    //     - chat-ui.js
+    //     - cards-status.js
+    // -------------------------------------------------------------
     try {
       window.dispatchEvent(
         new CustomEvent("ia-monitor:resultado", { detail: resultado })
       );
     } catch (e) {}
 
-    // ----------------------------------------------------------------
-    // 🔥 ALERTAS AUTOMÁTICOS DO MÓDULO C (se existir)
-    // ----------------------------------------------------------------
+    // -------------------------------------------------------------
+    // 5.7 Integração com Alertas Inteligentes (C-alerts.js)
+    // -------------------------------------------------------------
     if (window.IAAlerts && typeof window.IAAlerts.analisar === "function") {
       try {
         window.IAAlerts.analisar(resultado);
@@ -240,9 +261,9 @@
     return resultado;
   }
 
-  // ====================================================================
-  // 🔜 C3 — RELATÓRIO INTELIGENTE (RASCUNHO)
-  // ====================================================================
+  // ======================================================================
+  // 6. C3 — GERAR RELATÓRIO INTELIGENTE (rascunho)
+  // ======================================================================
   function gerarRelatorioInteligente(resultado) {
     if (!resultado || !resultado.tendencia)
       return "IA: Sem dados suficientes para gerar relatório inteligente.";
@@ -250,25 +271,26 @@
     const t = resultado.tendencia;
 
     return [
-      "Relatório Inteligente (IA) — Rascunho",
+      "📘 RELATÓRIO INTELIGENTE (IA) — Rascunho",
       "--------------------------------------",
-      `Risco atual: ${t.nivelRisco}`,
-      `Variação de incidentes: ${Math.round(t.variacaoIncidentes)}%`,
+      `• Risco atual: ${t.nivelRisco}`,
+      `• Variação de incidentes: ${Math.round(t.variacaoIncidentes)}%`,
       "",
-      "Insights:",
+      "Histórico:",
       `• Incidentes anteriores: ${t.janelaAnterior.incidentes}`,
       `• Incidentes recentes: ${t.janelaRecente.incidentes}`,
     ].join("\n");
   }
 
-  // ====================================================================
-  // 🌎 Expōr API pública
-  // ====================================================================
+  // ======================================================================
+  // 7. EXPŌR API PÚBLICA
+  // ======================================================================
   window.IAMonitor = {
     ...nsExistente,
     analisarLote,
     gerarRelatorioInteligente,
   };
 
-  console.log("✅ IA Monitor carregado com C1 + C2 + gatilhos automáticos.");
+  console.log("✅ IA Monitor carregado (C1 + C2 + C3 preparados).");
+
 })();

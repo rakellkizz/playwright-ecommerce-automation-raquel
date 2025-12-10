@@ -383,17 +383,17 @@ window.__logsDebug = {
   adicionarLog,
   obterLogs,
 };
-
-
-
-// ======================================================================
+//=================================================================== 
 // 11. BOTÕES DE ESTADO (Resolvido / Manutenção / Erro)
-// ======================================================================
+//     - Confirmam decisão do técnico
+//     - Criam log-resumo com emoji (✅ / 🟡 / 🔴)
+//     - Atualizam cor dos cards via atualizarEstadoDosCards()
+//=================================================================== 
 
 // 11.1 — Seletores dos botões de estado
 const btnResolvido = document.querySelector("[data-estado-btn='resolvido']");
 const btnManutencao = document.querySelector("[data-estado-btn='manutencao']");
-const btnErro = document.querySelector("[data-estado-btn='erro']");
+const btnErro       = document.querySelector("[data-estado-btn='erro']");
 
 // 11.2 — Registrar ação especial de estado
 async function registrarAcaoDeEstado(tipoEstado) {
@@ -402,24 +402,29 @@ async function registrarAcaoDeEstado(tipoEstado) {
     return;
   }
 
-  let pergunta = "";
+  // Dados atuais do formulário
+  const tecnico = (campoTecnico.value || "").trim() || "Raquel Souza";
+  const textoAcao = (campoAcao.value || "").trim();
+  const textoJust = (campoJustificativa.value || "").trim();
+
+  let emoji = "";
+  let labelBase = "";
   let tipoLog = "acao";
-  let acaoTexto = "";
 
   switch (tipoEstado) {
     case "resolvido":
-      pergunta = "O que foi feito para resolver este cenário?";
-      acaoTexto = "Cenário resolvido pelo técnico.";
+      emoji = "✅";
+      labelBase = "Cenário marcado como RESOLVIDO";
       break;
 
     case "manutencao":
-      pergunta = "O que está sendo feito / quais pendências existem?";
-      acaoTexto = "Cenário colocado em manutenção.";
+      emoji = "🟡";
+      labelBase = "Cenário colocado em MANUTENÇÃO";
       break;
 
     case "erro":
-      pergunta = "Explique o motivo do estado de erro:";
-      acaoTexto = "Erro forçado manualmente pelo técnico.";
+      emoji = "🔴";
+      labelBase = "Cenário mantido em estado de ERRO";
       tipoLog = "incidente";
       break;
 
@@ -427,23 +432,31 @@ async function registrarAcaoDeEstado(tipoEstado) {
       return;
   }
 
-  // 11.3 — Abre modal estilizado para inserir descrição
-  const descricao = await abrirModalEstado(tipoEstado, pergunta);
-  if (!descricao) return;
+  // 11.3 — Monta textos finais que vão para o relatório / PDF
+  const acaoFinal = textoAcao
+    ? `${emoji} ${labelBase} — ${textoAcao}`
+    : `${emoji} ${labelBase}`;
+
+  const justificativaFinal =
+    textoJust || "Sem detalhes adicionais informados pelo técnico.";
 
   const agora = Date.now();
 
   const log = {
     tipo: tipoLog,
     timestamp: agora,
-    tecnico: (campoTecnico.value || "").trim() || "Raquel Souza",
-    acao: acaoTexto,
-    justificativa: descricao.trim(),
-    estadoFinal: tipoEstado,
+    tecnico,
+    acao: acaoFinal,
+    justificativa: justificativaFinal,
+    estadoFinal: tipoEstado, // usado pelo bloco 16 para pintar o card
   };
 
   const logsAtualizados = adicionarLog(cenarioAtual, log);
   renderizarTimeline(cenarioAtual);
+
+  // Limpa campos do formulário para a próxima ação
+  campoAcao.value = "";
+  campoJustificativa.value = "";
 
   // 11.4 — Efeito visual exclusivo no botão selecionado
   document
@@ -454,11 +467,9 @@ async function registrarAcaoDeEstado(tipoEstado) {
     .querySelector(`[data-estado-btn="${tipoEstado}"]`)
     ?.classList.add("btn-estado-pill--ativo");
 
-  // 11.5 — Se resolveu, já gera o PDF automaticamente
-  if (tipoEstado === "resolvido") {
-    const textoRel = montarTextoRelatorio(cenarioAtual, logsAtualizados);
-    gerarPDF(cenarioAtual, logsAtualizados, textoRel);
-  }
+  // 11.5 — NÃO gera PDF aqui.
+  // O PDF / Whats / Email é acionado apenas pelos botões específicos
+  // (bloco 13.x), usando TODO o histórico de logs, incluindo este aqui.
 }
 
 // 11.6 — Listeners dos botões
@@ -476,9 +487,6 @@ btnErro?.addEventListener("click", () =>
 if (dock) {
   dock.style.display = "none";
 }
-
-
-
 // ======================================================================
 // 12. MODAL DE CONFIRMAÇÃO DE ENVIO (PDF / WhatsApp / Email)
 // ======================================================================
@@ -694,10 +702,18 @@ function abrirModalEstado(estado, pergunta) {
   });
 }
 // ======================================================================
-// 16. 🔄 SINCRONIZAÇÃO AUTOMÁTICA DOS CARDS COM OS LOGS
-//     - Define cor, alerta, neon e estado visual com base no último evento
+// 16. 🔄 SINCRONIZAÇÃO AUTOMÁTICA DOS CARDS (ATUALIZADA)
+// ----------------------------------------------------------------------
+// REGRAS NOVAS:
+//
+//  • Registrar ação normal (formulário) NÃO limpa o alerta vermelho.
+//  • Enquanto existir incidente sem um estado final (resolvido/manutenção),
+//    o card continua como ALERTA.
+//  • Só logs com `estadoFinal` mudam o estado para:
+//      - "resolvido"   → card verde (OK)
+//      - "manutencao"  → card amarelo (manutenção)
+//      - "erro"        → card vermelho (erro em investigação)
 // ======================================================================
-
 function atualizarEstadoDosCards() {
   const todos = carregarLogs();
 
@@ -708,51 +724,124 @@ function atualizarEstadoDosCards() {
 
     if (!card) return;
 
+    // ---------------------------------------------------------------
     // 16.1 — Limpa estados antigos
-    card.classList.remove("cenario-alerta", "cenario-ok", "cenario-manutencao");
-    if (alerta) alerta.hidden = true;
+    // ---------------------------------------------------------------
+    card.classList.remove(
+      "cenario-alerta",
+      "cenario-ok",
+      "cenario-manutencao"
+    );
 
+    if (alerta) {
+      alerta.hidden = true;
+      alerta.textContent = "";
+    }
+
+    // ---------------------------------------------------------------
     // 16.2 — Se não tem logs → OK
+    // ---------------------------------------------------------------
     if (!logs.length) {
       card.classList.add("cenario-ok");
       return;
     }
 
-    const ultimo = logs[logs.length - 1];
+    // 🆕 NOVO — garantir que estamos usando a ORDEM CRONOLÓGICA
+    //           (pelo timestamp) para decidir o estado atual
+    const ordenados = [...logs].sort(
+      (a, b) => (a.timestamp || 0) - (b.timestamp || 0)
+    );
 
-    // 16.3 — ERRO / INCIDENTE → vermelho
-    if (ultimo.tipo === "incidente") {
-      card.classList.add("cenario-alerta");
-      if (alerta) alerta.hidden = false;
-      return;
-    }
+    const ultimo = ordenados[ordenados.length - 1];
+    const agora = Date.now();
 
-    // 16.4 — MANUTENÇÃO → amarelo
-    if (ultimo.estadoFinal === "manutencao") {
-      card.classList.add("cenario-manutencao");
-      return;
-    }
+    // Se o último log tem mais de X minutos → considerar OK
+    // (evita ficar mostrando alerta de incidente antigo)
+    const LIMITE = 3 * 60 * 1000; // 3 minutos
 
-    // 16.5 — RESOLVIDO → verde
-    if (ultimo.estadoFinal === "resolvido") {
+    if (ultimo && ultimo.timestamp && agora - ultimo.timestamp > LIMITE) {
       card.classList.add("cenario-ok");
       return;
     }
 
-    // 16.6 — Ações comuns → OK
+    // ---------------------------------------------------------------
+    // 16.3 — Encontrar o ÚLTIMO log que possui estadoFinal
+    //        (resolvido, manutencao, erro) — usando ordem por timestamp
+    // ---------------------------------------------------------------
+    const ultimoEstado = [...ordenados]
+      .reverse()
+      .find((l) => l.estadoFinal);
+
+    // ---------------------------------------------------------------
+    // 16.4 — Verificar se EXISTE incidente ainda aberto
+    //        (ou seja: log.tipo === "incidente")
+    // ---------------------------------------------------------------
+    const temIncidenteAberto = ordenados.some((l) => l.tipo === "incidente");
+
+    // ---------------------------------------------------------------
+    // 16.5 — Se houver estadoFinal → esse valor MANDA no card
+    // ---------------------------------------------------------------
+    if (ultimoEstado) {
+      if (ultimoEstado.estadoFinal === "resolvido") {
+        card.classList.add("cenario-ok");
+        if (alerta) {
+          alerta.hidden = false;
+          alerta.textContent =
+            "🟢 Resolvido — Cenário estável após ação técnica.";
+        }
+        return;
+      }
+
+      if (ultimoEstado.estadoFinal === "manutencao") {
+        card.classList.add("cenario-manutencao");
+        if (alerta) {
+          alerta.hidden = false;
+          alerta.textContent =
+            "🟡 Em manutenção — Acompanhamento em andamento.";
+        }
+        return;
+      }
+
+      if (ultimoEstado.estadoFinal === "erro") {
+        card.classList.add("cenario-alerta");
+        if (alerta) {
+          alerta.hidden = false;
+          alerta.textContent =
+            "🔴 Erro em investigação — Incidente ativo.";
+        }
+        return;
+      }
+    }
+
+    // ---------------------------------------------------------------
+    // 16.6 — Sem estadoFinal, mas existe incidente aberto → ALERTA
+    //        registrar uma ação comum NÃO limpa o incidente
+    // ---------------------------------------------------------------
+    if (temIncidenteAberto) {
+      card.classList.add("cenario-alerta");
+      if (alerta) {
+        alerta.hidden = false;
+        alerta.textContent =
+          "🔴 Incidente em aberto — registre resolução ou manutenção.";
+      }
+      return;
+    }
+
+    // ---------------------------------------------------------------
+    // 16.7 — Nenhum incidente e sem estado especial → OK
+    // ---------------------------------------------------------------
     card.classList.add("cenario-ok");
   });
 }
-
 // ======================================================================
-// 16.7 — Chamado automaticamente ao carregar a página
+// 16.8 — Chamado automaticamente ao carregar a página
 // ======================================================================
 window.addEventListener("DOMContentLoaded", atualizarEstadoDosCards);
 
 
 
 // ======================================================================
-// 17. 🔁 INTERCEPTAÇÃO DO adicionarLog PARA SINCRONIZAR AUTOMATICAMENTE
+// 16.9 🔁 INTERCEPTAÇÃO DO adicionarLog PARA SINCRONIZAR AUTOMATICAMENTE
 // ======================================================================
 
 function syncDepoisDoLog() {
@@ -760,7 +849,7 @@ function syncDepoisDoLog() {
   if (cenarioAtual) renderizarTimeline(cenarioAtual);
 }
 
-// guarda função original
+// 17. guarda função original
 const _adicionarLogOriginal = adicionarLog;
 
 // 17.1 — Substitui a função, mantendo tudo igual, apenas adicionando sync

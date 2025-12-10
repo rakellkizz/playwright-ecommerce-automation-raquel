@@ -1,115 +1,136 @@
 // ======================================================================
-// IA HÍBRIDA — Primeiro tenta diagnóstico técnico local (gratuito),
-// depois tenta IA externa (OpenAI/Gemini), e por fim cai na IA Local.
+// 1. IA HÍBRIDA — LOCAL → EXTERNA → LOCAL (fallback garantido)
 // ----------------------------------------------------------------------
-// NÃO ALTERA NADA NO LAYOUT, no chat, nem no timer.
-// Apenas recebe uma frase e devolve um texto para o chat.
-// ======================================================================
-
-import { IA_LOCAL } from "./ai-local.js";         // IA 100% local (fallback)
-import { API_KEY, MODEL } from "./config.js";     // Configuração de IA externa
-import { gerarDiagnostico } from "./diagnostico.js"; // Diagnóstico por cenário
-
-// ======================================================================
-// FUNÇÃO PRINCIPAL — IA(textoUsuario)
-// ----------------------------------------------------------------------
-// Responsável por:
-//   1) Detectar palavras-chave e gerar diagnósticos técnicos (login, etc.)
-//   2) Se não houver API → usa IA local (gratuita)
-//   3) Se houver API → tenta OpenAI/Gemini
-//   4) Se a API falhar → volta para IA local
+// Fluxo:
+//   1) Tenta diagnóstico técnico imediato (login, carrinho etc.)
+//   2) Se não houver API → usa IA LOCAL (gratuita)
+//   3) Se houver API → tenta IA externa (OpenAI/Gemini)
+//   4) Se a API falhar → volta automaticamente para IA LOCAL
 //
-// -> Essa função é chamada exclusivamente pelo chat-ui.js
-// -> NÃO toca no DOM, não mexe na tela.
+// ESTE ARQUIVO NÃO:
+//   ✘ altera layout
+//   ✘ altera DOM
+//   ✘ mexe no timer ou HUD
+//
+// Ele SOMENTE devolve um texto para o chat-ui.js.
+// ======================================================================
+
+
+// ======================================================================
+// 1.1 IMPORTAÇÕES
+// ======================================================================
+import { IA_LOCAL } from "./ai-local.js";            // IA totalmente local
+import { API_KEY, MODEL } from "./config.js";        // Configuração externa
+import { gerarDiagnostico } from "./diagnostico.js"; // Diagnóstico técnico
+
+
+// ======================================================================
+// 2. FUNÇÃO PRINCIPAL — IA(textoUsuario)
+// ----------------------------------------------------------------------
+// É chamada exclusivamente pelo chat-ui.js.
+// Retorna SEMPRE um texto seguro (nunca quebra).
 // ======================================================================
 export async function IA(textoUsuario) {
 
-  // Normaliza texto para evitar erros de comparação
+  // -------------------------------------------------------------------
+  // 2.1 Normalização do texto
+  // -------------------------------------------------------------------
   const textoLower = textoUsuario.toLowerCase();
 
+
+
   // ======================================================================
-  // 1) DIAGNÓSTICO LOCAL IMEDIATO (SISTEMA DA RAQUEL 💜)
+  // 3. DIAGNÓSTICO LOCAL IMEDIATO — INTELIGÊNCIA C1 DO PROJETO
   // ----------------------------------------------------------------------
-  // Aqui detectamos termos relacionados a cenários reais do seu projeto:
-  // login, checkout, carrinho.
+  // Quando o usuário menciona um cenário real (login, checkout etc),
+  // chamamos gerarDiagnostico(cenarioId), que:
   //
-  // Ao detectar, chamamos gerarDiagnostico(), que:
-  //   • devolve um HTML bonitinho para o chat
-  //   • dispara evento "cenario:diagnostico" → logs + alertas
+  //   ✔ devolve HTML pronto para o chat
+  //   ✔ dispara o evento "cenario:diagnostico" → logs + alertas automáticos
+  //
+  // ESSA É A IA TÉCNICA QUE VOCÊ CRIOU, KELL 💜
   // ======================================================================
+
   if (textoLower.includes("login")) {
-  const r = gerarDiagnostico("login");
-  if (r) return r;
-}
+    const r = gerarDiagnostico("login");
+    if (r) return r;
+  }
 
-if (textoLower.includes("checkout")) {
-  const r = gerarDiagnostico("checkout");
-  if (r) return r;
-}
+  if (textoLower.includes("checkout")) {
+    const r = gerarDiagnostico("checkout");
+    if (r) return r;
+  }
 
-if (textoLower.includes("carrinho")) {
-  const r = gerarDiagnostico("carrinho");
-  if (r) return r;
-}
+  if (textoLower.includes("carrinho")) {
+    const r = gerarDiagnostico("carrinho");
+    if (r) return r;
+  }
 
-if (textoLower.includes("busca")) {
-  const r = gerarDiagnostico("busca");
-  if (r) return r;
-}
+  if (textoLower.includes("busca")) {
+    const r = gerarDiagnostico("busca");
+    if (r) return r;
+  }
 
-if (textoLower.includes("smoke")) {
-  const r = gerarDiagnostico("smoke");
-  if (r) return r;
-}
+  if (textoLower.includes("smoke")) {
+    const r = gerarDiagnostico("smoke");
+    if (r) return r;
+  }
 
-if (textoLower.includes("perfil")) {
-  const r = gerarDiagnostico("perfil");
-  if (r) return r;
-}
+  if (textoLower.includes("perfil")) {
+    const r = gerarDiagnostico("perfil");
+    if (r) return r;
+  }
+
+
+
   // ======================================================================
-  // 2) SEM API CONFIGURADA → IA LOCAL
+  // 4. SEM API CONFIGURADA → IA LOCAL (SEGURA, GRATUITA)
   // ----------------------------------------------------------------------
-  // Se a API não existir ou estiver curta (<10 chars),
-  // usamos IA_LOCAL.respostaSimples(), que é leve e garantida.
+  // Se API_KEY não estiver configurada, ou tiver menos de 10 caracteres,
+  // usamos a IA LOCAL sem hesitar.
+  //
+  // ➜ GARANTE que o chat NUNCA quebra.
   // ======================================================================
   if (!API_KEY || API_KEY.trim().length < 10) {
     return IA_LOCAL.respostaSimples(textoUsuario);
   }
 
+
+
   // ======================================================================
-  // 3) COM API → Tenta IA EXTERNA (OpenAI/Gemini)
+  // 5. COM API → TENTATIVA DE IA EXTERNA (OpenAI / Gemini)
   // ----------------------------------------------------------------------
-  // Aqui enviamos a pergunta para o modelo configurado.
-  // Se a API responder, retornamos o texto dela.
+  // Envia texto para modelo configurado.
+  // Assíncrono, leve, e compatível com GitHub Pages.
   //
-  // -> TOTALMENTE ASSÍNCRONO
-  // -> Não trava o navegador
-  // -> Seguro para GitHub Pages
+  // Qualquer erro → fallback automático (bloco 6)
   // ======================================================================
   try {
     const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${API_KEY}`,     // chave da usuária
+        "Authorization": `Bearer ${API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: MODEL,                             // ex: "gpt-3.5-turbo"
+        model: MODEL,                     // Ex: "gpt-3.5-turbo"
         messages: [
-          { role: "user", content: textoUsuario }  // texto enviado ao modelo
+          { role: "user", content: textoUsuario }
         ]
       })
     }).then(r => r.json());
 
-    // Extrai resposta ou retorna fallback "(sem resposta)"
     return resposta?.choices?.[0]?.message?.content || "(sem resposta)";
 
   } catch (erro) {
 
+
+
     // ==================================================================
-    // 4) API FALHOU → Volta para IA LOCAL (garantido)
+    // 6. FALHA NA API EXTERNA → VOLTA PARA A IA LOCAL
     // ------------------------------------------------------------------
-    // Aqui garantimos que o chat NUNCA quebra.
+    // ESSA PARTE GARANTE 100% DE CONTINUIDADE.
+    // Não importa se a OpenAI caiu, internet falhou, etc.
     // ==================================================================
     return IA_LOCAL.respostaSimples(textoUsuario);
   }
