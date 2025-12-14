@@ -85,7 +85,9 @@ function iniciarCicloManual() {
   }));
 
   // 4) Garante que qualquer ciclo automático anterior pare
+  if (typeof pararCountdownAutomatico === "function") {
   pararCountdownAutomatico();
+}
 
   // 5) Ativa loop principal
   iniciarLoopPrincipal();
@@ -193,6 +195,7 @@ function iniciarCountdownAutomatico() {
   atualizarAutoNextHUD();
 
   clearInterval(autoIntervalId);
+
   autoIntervalId = setInterval(() => {
     proximoCountdownSeg--;
 
@@ -200,31 +203,38 @@ function iniciarCountdownAutomatico() {
 
     if (proximoCountdownSeg <= 0) {
       clearInterval(autoIntervalId);
+
+      autoNextWrapper.classList.remove("auto-next--blink"); // limpa pisca
       autoNextWrapper.hidden = true;
 
       // INICIA NOVA RODADA AUTOMÁTICA
       iniciarCicloManual();
     }
-
   }, 1000);
 }
-
 // Atualiza HUD da barra automática
 function atualizarAutoNextHUD() {
   autoNextTime.textContent = formatar(proximoCountdownSeg);
 
   const perc = 100 - ((proximoCountdownSeg / (intervaloAutoMin * 60)) * 100);
   autoNextFill.style.width = `${perc}%`;
+
+  // ------------------------------------------------------------
+  // 🔔 Piscar quando estiver perto de iniciar a rodada automática
+  // ------------------------------------------------------------
+  const AVISO_SEG = 10; // você pode trocar (ex.: 15, 20)
+
+  if (proximoCountdownSeg > 0 && proximoCountdownSeg <= AVISO_SEG) {
+    autoNextWrapper.classList.add("auto-next--blink");
+
+    // (opcional) avisar sistemas/IA/chat que está prestes a iniciar
+    dispatchEvent(new CustomEvent("testes:preparar", {
+      detail: { faltamSegundos: proximoCountdownSeg }
+    }));
+  } else {
+    autoNextWrapper.classList.remove("auto-next--blink");
+  }
 }
-
-
-// Parar contagem automática
-function pararCountdownAutomatico() {
-  clearInterval(autoIntervalId);
-  autoNextWrapper.hidden = true;
-}
-
-
 
 // ======================================================================
 // EVENTOS DOS BOTÕES PRINCIPAIS
@@ -247,5 +257,31 @@ window.__timerController = {
     intervaloAutoMin
   })
 };
-// ====================================================================== 
-  
+// =======================================================
+// SOC — Atualiza estado visual do HUD do temporizador
+// =======================================================
+function atualizarEstadoHud(estado, detalhe = "") {
+  const hud = document.getElementById("timerHud");
+  const status = document.getElementById("timerHudStatus");
+
+  if (!hud) return;
+
+  // limpa estados anteriores
+  hud.classList.remove("timer-ok", "timer-manutencao", "timer-critico");
+
+  // aplica estado atual
+  if (estado === "ok") {
+    hud.classList.add("timer-ok");
+    if (status) status.textContent = "Operação normal";
+  }
+
+  if (estado === "manutencao") {
+    hud.classList.add("timer-manutencao");
+    if (status) status.textContent = detalhe || "Atenção operacional";
+  }
+
+  if (estado === "critico") {
+    hud.classList.add("timer-critico");
+    if (status) status.textContent = detalhe || "Anomalia detectada";
+  }
+}

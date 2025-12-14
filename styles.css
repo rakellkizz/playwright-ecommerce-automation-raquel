@@ -785,9 +785,36 @@ body {
   text-align: center;
   box-shadow: 0 0 22px rgba(168, 85, 247, 0.6);
 }
+/* ======================================================
+   23 CENÁRIO OK — pulsação verde (estado resolvido ativo)
+====================================================== */
+.cenario-card.cenario-ok {
+  border-color: #4dff88;
+  box-shadow:
+    0 0 0 1px rgba(77, 255, 136, 0.55),
+    0 0 18px 6px rgba(77, 255, 136, 0.35);
+  animation: card-ok-pulse 1.8s ease-in-out infinite;
+}
 
+@keyframes card-ok-pulse {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(77, 255, 136, 0.65),
+      0 0 14px 4px rgba(77, 255, 136, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(77, 255, 136, 0.9),
+      0 0 26px 10px rgba(77, 255, 136, 0.55);
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(77, 255, 136, 0.0),
+      0 0 14px 4px rgba(77, 255, 136, 0.25);
+  }
+}
 /* ===========================
-   23. ALERTA ORGANIZADO NO TOPO
+   24. ALERTA ORGANIZADO NO TOPO
    - Bloco extra de alerta dentro do card
 =========================== */
 .cenario-alerta-msg {
@@ -815,13 +842,13 @@ body {
 }
 
 /* ============================================================
-   24. HUD GLOBAL DO TEMPORIZADOR (painel SOC no topo)
+   25. HUD GLOBAL DO TEMPORIZADOR (painel SOC no topo)
 ============================================================ */
 .timer-hud {
   position: fixed;
   top: 1.8rem;
   right: 1.8rem;
-  width: 260px;
+  width: auto;
   padding: 0.9rem 1rem;
   border-radius: 1rem;
   background: radial-gradient(circle at 0 0, rgba(168, 85, 247, 0.35), #020617);
@@ -918,9 +945,116 @@ body {
   transform: translateY(-1px);
   border-color: rgba(248, 250, 252, 0.9);
 }
+/* ===========================================================
+   26. TIMER HUD — Redimensionável (igual ao chat)
+   - Permite puxar a borda e ajustar tamanho
+   - Mantém conteúdo “organizado” com scroll interno
+=========================================================== */
+#timerHud {
+  resize: both;              /* 🔹 estica na mão */
+  overflow: auto;            /* 🔹 mostra scroll se precisar */
+  min-width: 260px;
+  max-width: 520px;
+
+  width: auto;      /* ✅ deixa o resize mandar */
+  height: auto;     /* ✅ deixa o resize mandar */
+
+
+  min-height: 180px;
+  max-height: 640px;
+}
+
+/* Se a parte SOC estiver “cortando”, garante quebra */
+#timerHud * {
+  word-break: break-word;
+}
 
 /* ============================================================
-   25. BARRA GLOBAL NO RODAPÉ – Progresso do timer
+   27. TIMER — Inputs e usabilidade do técnico
+   - Digitação rápida
+   - Sem setinhas visuais
+   - UX para situações de crise
+============================================================ */
+
+/* Input de duração do ciclo */
+#timerDuracao {
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+/* ===========================================================
+   25. TEMPORIZADOR — Estados SOC (acoplado ao HUD existente)
+=========================================================== */
+
+/* ESTADO OK */
+.timer-hud.timer-ok {
+  border-color: #00ff9c;
+  box-shadow:
+    0 0 14px rgba(0, 255, 156, 0.6),
+    0 0 28px rgba(0, 255, 156, 0.4);
+}
+
+/* ESTADO MANUTENÇÃO */
+.timer-hud.timer-manutencao {
+  border-color: #ffeb3b;
+  box-shadow:
+    0 0 16px rgba(255, 235, 59, 0.8),
+    0 0 30px rgba(255, 235, 59, 0.5);
+  animation: timerPulseYellow 2.2s infinite;
+}
+
+/* ESTADO CRÍTICO */
+.timer-hud.timer-critico {
+  border-color: #ff4d4d;
+  box-shadow:
+    0 0 18px rgba(255, 60, 60, 0.9),
+    0 0 36px rgba(255, 0, 0, 0.7);
+  animation: timerPulseRed 1.4s infinite;
+}
+
+@keyframes timerPulseYellow {
+  0% { box-shadow: 0 0 6px rgba(255,235,59,0.4); }
+  50% { box-shadow: 0 0 22px rgba(255,235,59,0.9); }
+  100% { box-shadow: 0 0 6px rgba(255,235,59,0.4); }
+}
+
+@keyframes timerPulseRed {
+  0% { box-shadow: 0 0 6px rgba(255,60,60,0.4); }
+  50% { box-shadow: 0 0 26px rgba(255,0,0,1); }
+  100% { box-shadow: 0 0 6px rgba(255,60,60,0.4); }
+}
+/* ============================================================
+  28 RESTAURAR SETINHAS DO INPUT NUMBER (timer apenas)
+============================================================ */
+#timerHud input[type="number"] {
+  appearance: auto;
+  -webkit-appearance: number-input;
+  -moz-appearance: number-input;
+}
+
+/* ===========================================================
+   29. TIMER AUTO — Piscar quando estiver perto de iniciar os testes
+   (últimos segundos do countdown automático)
+=========================================================== */
+
+.auto-next--blink {
+  animation: autoBlink 0.7s infinite ease-in-out;
+}
+
+@keyframes autoBlink {
+  0%   { filter: brightness(1);   transform: scale(1); }
+  50%  { filter: brightness(1.25); transform: scale(1.02); }
+  100% { filter: brightness(1);   transform: scale(1); }
+}
+
+/* (opcional) deixa o texto do tempo mais chamativo quando piscar */
+.auto-next--blink #autoNextTime {
+  font-weight: 800;
+}
+
+
+/* ============================================================
+   30. BARRA GLOBAL NO RODAPÉ – Progresso do timer
 ============================================================ */
 .timer-bar {
   position: fixed;
@@ -963,7 +1097,7 @@ body {
 }
 
 /* =======================================================================
-   26. MODAL DE LOGS / WORKLOG – Overlay e caixa principal
+   31. MODAL DE LOGS / WORKLOG – Overlay e caixa principal
 ======================================================================= */
 
 /* Fundo escurecido atrás do modal (versão base) */
@@ -999,7 +1133,7 @@ body {
 }
 
 /* ===================================================================
-   27. AÇÕES DENTRO DO CARD DE CENÁRIO (PDF / WhatsApp / Email)
+   32. AÇÕES DENTRO DO CARD DE CENÁRIO (PDF / WhatsApp / Email)
 =================================================================== */
 .log-card-actions {
   margin-top: 10px;
@@ -1065,7 +1199,7 @@ body {
 }
 
 /* =======================================================================
-   28. Cabeçalho do modal de logs (título + fechar)
+   33. Cabeçalho do modal de logs (título + fechar)
 ======================================================================= */
 .log-modal__header {
   padding: 14px 18px;
@@ -1105,7 +1239,7 @@ body {
 }
 
 /* =======================================================================
-   29. Conteúdo do modal – duas colunas (timeline + formulário)
+   34. Conteúdo do modal – duas colunas (timeline + formulário)
 ======================================================================= */
 .log-modal__content {
   display: grid;
@@ -1122,7 +1256,7 @@ body {
 }
 
 /* =======================================================================
-   30. TIMELINE – Lado esquerdo (histórico de ações)
+   35. TIMELINE – Lado esquerdo (histórico de ações)
 ======================================================================= */
 .log-timeline {
   padding: 14px 18px;
@@ -1168,7 +1302,7 @@ body {
 }
 
 /* =======================================================================
-   31. FORMULÁRIO – Lado direito (registro de nova ação)
+   36. FORMULÁRIO – Lado direito (registro de nova ação)
 ======================================================================= */
 .log-form {
   padding: 14px 18px;
@@ -1233,7 +1367,7 @@ body {
 }
 
 /* =======================================================================
-   32. DOCK FLUTUANTE – Compartilhar relatório (PDF / Whats / Email)
+   37. DOCK FLUTUANTE – Compartilhar relatório (PDF / Whats / Email)
 ======================================================================= */
 .log-dock {
   position: fixed;
@@ -1276,7 +1410,7 @@ body {
 }
 
 /* =======================================================================
-   33. Correção definitiva – overlay e modal sempre acima
+   38. Correção definitiva – overlay e modal sempre acima
    - Garante que overlay cobre a tela e que modal está no topo
 ======================================================================= */
 .log-overlay {
@@ -1305,14 +1439,14 @@ body {
 }
 
 /* =======================================================================
-   34. IMPEDIR ROLAGEM DO FUNDO QUANDO O MODAL ESTÁ ABERTO
+   39. IMPEDIR ROLAGEM DO FUNDO QUANDO O MODAL ESTÁ ABERTO
 ======================================================================= */
 body.modal-aberto {
   overflow: hidden !important;
 }
 
 /* =======================================================================
-   35. BOTÕES INLINE (PDF / WhatsApp / Email) – Modelo B
+   40. BOTÕES INLINE (PDF / WhatsApp / Email) – Modelo B
    - Versão extra centralizada na própria página
 ======================================================================= */
 .log-actions-inline {
@@ -1358,7 +1492,7 @@ body.modal-aberto {
 }
 
 /* ============================================================
-   36. STATUS DOS CENÁRIOS – NEON PROFISSIONAL
+   41. STATUS DOS CENÁRIOS – NEON PROFISSIONAL
    - Usa classes combinadas .cenario-card + estado
 ============================================================ */
 
@@ -1413,6 +1547,31 @@ body.modal-aberto {
   font-weight: 600;
   box-shadow: 0 0 8px rgba(255, 223, 79, 0.8);
 }
+.cenario-card.cenario-manutencao {
+  border-color: #ffd84d;
+  box-shadow:
+    0 0 0 1px rgba(255, 216, 77, 0.55),
+    0 0 18px 6px rgba(255, 216, 77, 0.35);
+  animation: card-manutencao-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes card-manutencao-pulse {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(255, 216, 77, 0.65),
+      0 0 14px 4px rgba(255, 216, 77, 0.25);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(255, 216, 77, 0.9),
+      0 0 26px 10px rgba(255, 216, 77, 0.55);
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(255, 216, 77, 0.0),
+      0 0 14px 4px rgba(255, 216, 77, 0.25);
+  }
+}
 
 /* 🟢 OK / RESOLVIDO */
 .cenario-card.cenario-ok {
@@ -1437,7 +1596,7 @@ body.modal-aberto {
 }
 
 /* =======================================================
-   37. BOTÕES DE STATUS NO MODAL (cards de ação)
+   42. BOTÕES DE STATUS NO MODAL (cards de ação)
 ======================================================= */
 .log-status-buttons {
   margin-top: 22px;
@@ -1498,7 +1657,7 @@ body.modal-aberto {
 }
 
 /* =====================================================================
-   38. FIX OFICIAL – CHAT + LAUNCHER + TIMER flutuantes e arrastáveis
+   43. FIX OFICIAL – CHAT + LAUNCHER + TIMER flutuantes e arrastáveis
    - Garante que continuam acima do layout normal e arrastáveis
 ===================================================================== */
 #iaChat,
@@ -1511,7 +1670,7 @@ body.modal-aberto {
 }
 
 /* =====================================================================
-   39. HUD SOC – IA Monitoramento dentro do timerHud
+   44. HUD SOC – IA Monitoramento dentro do timerHud
 ===================================================================== */
 .hud-soc {
   margin-top: 8px;
@@ -1690,7 +1849,7 @@ body.modal-aberto {
   }
 }
 
-/* 40. CHAT – estados base com IDs (posição inicial/aberto) */
+/* 45. CHAT – estados base com IDs (posição inicial/aberto) */
 #iaChat {
   right: 30px;
   bottom: 120px;        /* fica acima do botão de IA */
@@ -1707,7 +1866,7 @@ body.modal-aberto {
   transform: translateY(0);
 }
 
-/* 41. BOTÃO FLUTUANTE (launcher) – posição inicial com ID */
+/* 46. BOTÃO FLUTUANTE (launcher) – posição inicial com ID */
 #iaLauncher {
   right: 30px;
   bottom: 30px;
@@ -1715,7 +1874,7 @@ body.modal-aberto {
   touch-action: none;
 }
 
-/* 42. TEMPORIZADOR – posição inicial (HUD) */
+/* 47. TEMPORIZADOR – posição inicial (HUD) */
 #timerHud {
   right: 30px;
   bottom: 200px;    /* acima do chat */
@@ -1724,7 +1883,7 @@ body.modal-aberto {
   touch-action: none;
 }
 
-/* 43. Efeito visual de arraste (ativado pelo JS com .dragging) */
+/* 48. Efeito visual de arraste (ativado pelo JS com .dragging) */
 #iaChat.dragging,
 #timerHud.dragging,
 #iaLauncher.dragging {
@@ -1735,7 +1894,7 @@ body.modal-aberto {
     0 0 28px rgba(255, 0, 255, 0.6);
 }
 
-/* 44. Posições seguras no mobile para não sumir da tela */
+/* 49. Posições seguras no mobile para não sumir da tela */
 @media (max-width: 480px) {
   #iaChat {
     right: 12px;
@@ -1754,14 +1913,14 @@ body.modal-aberto {
   }
 }
 
-/* 45. Proteção para não sair da tela (chat e HUD) */
+/* 50. Proteção para não sair da tela (chat e HUD) */
 #iaChat,
 #timerHud {
   max-width: calc(100vw - 20px);
   max-height: calc(100vh - 20px);
 }
 
-/* 46. Overlay NÃO bloqueia chat / timer / launcher */
+/* 51. Overlay NÃO bloqueia chat / timer / launcher */
 .log-overlay:not([hidden]) ~ #iaChat,
 .log-overlay:not([hidden]) ~ #iaLauncher,
 .log-overlay:not([hidden]) ~ #timerHud {
@@ -1769,7 +1928,7 @@ body.modal-aberto {
 }
 
 /* =====================================================================
-   47. AJUSTES GERAIS DE EXPERIÊNCIA NO MOBILE
+   52. AJUSTES GERAIS DE EXPERIÊNCIA NO MOBILE
    - Evita overscroll, seleção acidental, etc.
 ===================================================================== */
 html,
@@ -1782,7 +1941,7 @@ body {
 }
 
 /* =======================================================================
-   48. LED verde dos cenários – indica testes rodando
+   53. LED verde dos cenários – indica testes rodando
    - Pequeno círculo animado inserido via JS
 ======================================================================= */
 .cenario-led {
@@ -1801,7 +1960,7 @@ body {
 }
 
 /* ======================================================================
-   49. PAINEL ALLURE – Painel de KPIs de testes
+   54. PAINEL ALLURE – Painel de KPIs de testes
 ====================================================================== */
 .allure-panel {
   margin-top: 40px;
@@ -1849,7 +2008,7 @@ body {
 }
 
 /* ============================================================
-   50. HUD – Campos de configuração do técnico (timer)
+   55. HUD – Campos de configuração do técnico (timer)
 ============================================================ */
 .timer-hud__config {
   margin-top: 12px;
@@ -1890,7 +2049,7 @@ body {
 }
 
 /* ============================================================
-   51. Ajuste de cursor para elementos arrastáveis
+   56. Ajuste de cursor para elementos arrastáveis
 ============================================================ */
 
 /* Antes de arrastar */
@@ -1908,7 +2067,7 @@ body {
 }
 
 /* ======================================================
-   52. ESTADOS ESPECIAIS DOS CARDS – Animações extras
+   57. ESTADOS ESPECIAIS DOS CARDS – Animações extras
 ====================================================== */
 
 /* 🔴 ERRO CRÍTICO */
@@ -1959,7 +2118,7 @@ body {
 }
 
 /* ======================================================
-   53. FALSO POSITIVO – Destaque amarelo suave (versão final)
+   58. FALSO POSITIVO – Destaque amarelo suave (versão final)
    - Esta é a versão que já estava valendo: mantida como oficial
 ====================================================== */
 .cenario-falso-positivo {
@@ -1973,7 +2132,7 @@ body {
 }
 
 /* =====================================================================
-   54. BOTÕES DE ESTADO – formato pílula neon (Resolvido/Manutenção/Erro)
+   59. BOTÕES DE ESTADO – formato pílula neon (Resolvido/Manutenção/Erro)
    - Usados no modal de logs (com indicador luminoso)
 ===================================================================== */
 .log-estado-actions {
@@ -2071,7 +2230,7 @@ body {
 }
 
 /* =====================================================================
-   55. MODAL DE AÇÃO DO TÉCNICO – confirmação de texto
+   60. MODAL DE AÇÃO DO TÉCNICO – confirmação de texto
 ===================================================================== */
 .acao-modal {
   position: fixed;
@@ -2162,7 +2321,7 @@ body {
 }
 
 /* =====================================================================
-   56. MODAL DE ESTADO – justificativa de alteração de card
+   61. MODAL DE ESTADO – justificativa de alteração de card
 ===================================================================== */
 .modal-estado {
   position: fixed;
@@ -2228,7 +2387,7 @@ body {
 }
 
 /* ============================================================
-   57. MODAL DE CONFIRMAÇÃO DE ENVIO (WhatsApp / Email)
+   62. MODAL DE CONFIRMAÇÃO DE ENVIO (WhatsApp / Email)
    - Pré-visualização do texto gerado pela IA
 ============================================================ */
 .envio-modal {
@@ -2317,7 +2476,7 @@ body {
 }
 
 /* =========================================================
-   58. — CARD EM ALERTA (vermelho com pulso)
+   63. — CARD EM ALERTA (vermelho com pulso)
    ========================================================= */
 .cenario-card.cenario-alerta {
   border-color: #ff4b6a;
@@ -2327,7 +2486,7 @@ body {
   animation: card-alert-pulse 1.8s ease-in-out infinite;
 }
 
-/* 58.1 — CARD EM MANUTENÇÃO (amarelo estável) */
+/* 63.1 — CARD EM MANUTENÇÃO (amarelo estável) */
 .cenario-card.cenario-manutencao {
   border-color: #ffd65a;
   box-shadow:
@@ -2335,7 +2494,7 @@ body {
     0 0 18px 4px rgba(255, 214, 90, 0.30);
 }
 
-/* 58.2 — CARD OK (verde estável) */
+/* 63.2 — CARD OK (verde estável) */
 .cenario-card.cenario-ok {
   border-color: #5cf2a8;
   box-shadow:
@@ -2343,7 +2502,7 @@ body {
     0 0 16px 3px rgba(92, 242, 168, 0.25);
 }
 
-/* 58.3 — Animação de pulso para estado de ALERTA */
+/* 63.3 — Animação de pulso para estado de ALERTA */
 @keyframes card-alert-pulse {
   0% {
     box-shadow:
@@ -2362,11 +2521,183 @@ body {
   }
 }
 
-/* 59. 🛑 Correção final contra o botão inflar ao clicar/arrastar */
+/* 64. 🛑 Correção final contra o botão inflar ao clicar/arrastar */
 .ia-launcher,
 .ia-launcher:hover,
 .ia-launcher:active,
 .ia-launcher:focus,
 .ia-launcher:focus-visible {
   transform: none !important;
+}
+
+/* ===========================================
+   65. CHAT — Mensagem especial de crise (/sala)
+   - Estilo corporativo menor e elegante
+   - Unifica sala + torpedos
+=========================================== */
+
+/* Container geral da mensagem de crise */
+.ia-msg--crise {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* BOLHA estilizada — Sala de Crise e Torpedos */
+.ia-msg--crise .ia-msg__bubble--crise {
+  background: radial-gradient(circle at top left,
+    #3b0b16 0%,
+    #150510 45%,
+    #120010 100%
+  );
+  border: 1px solid rgba(255, 120, 150, 0.65);
+  box-shadow:
+    0 0 12px rgba(255, 60, 110, 0.7),
+    0 0 22px rgba(255, 0, 80, 0.42);
+  padding: 16px 18px;
+  border-radius: 14px;
+  max-width: 420px;         /* 🔥 tamanho corporativo (menor que o anterior) */
+}
+
+/* TÍTULO */
+.ia-msg__text--crise-title {
+  font-weight: 700;
+  color: #ffd1dc;
+  font-size: 0.96rem;
+  margin-bottom: 4px;
+}
+
+/* SUBTÍTULO */
+.ia-msg__text--crise-sub {
+  font-size: 0.85rem;
+  color: #ffdfe7;
+  margin-bottom: 6px;
+}
+
+/* META/horário */
+.ia-msg__text--crise-meta {
+  font-size: 0.78rem;
+  opacity: 0.85;
+  color: #ffb3c1;
+  margin-bottom: 10px;
+}
+
+/* LINK para Teams */
+.ia-msg__text--crise-link {
+  margin-top: 5px;
+}
+
+.ia-crise-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 18px;
+
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff3366, #ff7a3c);
+  color: #fff;
+
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  box-shadow:
+    0 0 12px rgba(255, 60, 120, 0.8),
+    0 0 20px rgba(255, 120, 60, 0.55);
+
+  transition: all 0.15s ease-out;
+}
+
+.ia-crise-link:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+/* ===========================================
+   66. — Torpedos corporativos (/crise)
+   - Fonte monoespaçada estilo SMS corporativo
+=========================================== */
+
+.ia-msg__torpedo-text {
+  display: block;
+  margin-top: 8px;
+  padding: 6px 0;
+  font-family: ui-monospace, Menlo, Consolas, "Courier New", monospace;
+  font-size: 0.78rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.42;
+}
+
+/* ===========================================
+   67 — Ações do torpedo: WhatsApp + Copiar
+=========================================== */
+
+.ia-msg--torpedo-actions .ia-msg__bubble--torpedo-actions {
+  display: inline-flex;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(18, 24, 48, 0.95);
+  border: 1px solid rgba(120, 180, 255, 0.6);
+  box-shadow: 0 0 10px rgba(80, 140, 255, 0.45);
+}
+
+.btn-whats-torpedo,
+.btn-copy-torpedo {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  background: transparent;
+  color: #eaf2ff;
+  cursor: pointer;
+  font-size: 0.72rem;
+}
+
+.btn-whats-torpedo {
+  border-color: rgba(0, 220, 140, 0.9);
+}
+
+.btn-copy-torpedo {
+  border-color: rgba(170, 190, 255, 0.9);
+}
+
+.btn-whats-torpedo:hover,
+.btn-copy-torpedo:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+/* ===========================================================
+   68. CHAT — Dimensões elásticas e área de mensagens
+   - Permite redimensionar o chat (estilo ferramenta corporativa)
+   - Mantém scroll interno organizado
+=========================================================== */
+
+#iaChat {
+  max-width: 520px;
+  min-width: 320px;
+  max-height: 640px;
+  min-height: 260px;
+
+  resize: both;          /* 🔹 permite redimensionar com o mouse */
+  overflow: hidden;      /* 🔹 evita quebra visual */
+}
+
+/* Área interna de mensagens rola de forma elegante */
+#iaMessages {
+  max-height: calc(100% - 88px); /* header + input */
+  overflow-y: auto;
+}
+/* ============================================================
+   69. TIMER HUD — Forçar redimensionamento sem alterar layout
+   (override final, sem mudar aparência)
+============================================================ */
+#timerHud {
+  resize: both !important;
+  overflow: auto !important;
+  min-width: 260px;
+  min-height: 180px;
 }

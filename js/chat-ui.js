@@ -120,6 +120,92 @@ if (form && input) {
     const texto = input.value.trim();
     if (!texto) return;
 
+    const textoLower = texto.toLowerCase();
+
+    // ---------------------------------------------------------------
+    // 6.1 — Comando especial: /sala https://teams...
+    //       • Não chama a IA
+    //       • Cria uma mensagem especial de sala de crise
+    // ---------------------------------------------------------------
+    if (textoLower.startsWith("/sala ")) {
+      const url = texto.substring(6).trim();
+
+      if (!url) {
+        chatAviso("Para enviar o convite, use: /sala https://teams... 💡");
+        input.value = "";
+        return;
+      }
+
+      addMensagemSalaCrise({
+        url,
+        titulo: "Sala de crise informada pelo técnico.",
+        origem: "Chat técnico",
+      });
+
+      window.dispatchEvent(
+        new CustomEvent("crise:link", {
+          detail: {
+            url,
+            titulo: "Sala de crise (via comando /sala)",
+            origem: "Chat técnico",
+          },
+        })
+      );
+
+      input.value = "";
+      return;
+    }
+
+    // ---------------------------------------------------------------
+    // 6.2 — Comando especial: /crise SISTEMA/AMBIENTE
+    //       • Gera torpedo ultra corporativo
+    //       • Mostra prévia no chat
+    //       • (próximo passo: integrar com Whats/Email/PDF)
+    // ---------------------------------------------------------------
+    if (textoLower.startsWith("/crise")) {
+      const resto = texto.substring(6).trim(); // depois de "/crise"
+      const alvo = resto || "Aplicação em Produção";
+
+      let msgTorpedo;
+
+      if (window.TorpedosUltra && window.TorpedosUltra.montarTorpedoCrise) {
+        msgTorpedo = window.TorpedosUltra.montarTorpedoCrise({
+          sistema: alvo,
+          ambiente: "Produção",
+          prioridade: "P1",
+          ticket: "INC-000000",
+          sla: "Resposta em 15 min • Normalização em 2h",
+          impacto: "Aplicação apresenta falha para os usuários.",
+          status: "Início",
+          repercussao: "Impacto elevado para o negócio.",
+          checkpoint: window.TorpedosUltra.formatarDataHoraCurta(),
+          inicio: window.TorpedosUltra.formatarDataHoraCurta(),
+          linkReuniao: "",
+          analista: "Raquel Souza",
+          gestor: "Gestor de TI",
+          times: "NOC, Aplicações, Infraestrutura",
+        });
+      } else {
+        msgTorpedo =
+          `Incidente Crítico: ${alvo}\n` +
+          `Status: Início\n` +
+          `Aplicação apresenta falha para os usuários.\n` +
+          `Início: ${new Date().toLocaleString("pt-BR")}`;
+      }
+
+      addMensagemTorpedoCrise(msgTorpedo);
+
+      // (na próxima etapa a gente liga isso com copiar/Whats/Email)
+      chatAviso("📲 Torpedo de crise gerado. Use-o para WhatsApp, SMS ou e-mail.");
+
+      input.value = "";
+      return;
+    }
+
+    // ---------------------------------------------------------------
+    // 6.3 — Fluxo normal do chat (mensagem comum → IA responde)
+    // ---------------------------------------------------------------
+
     // mostra mensagem do usuário
     addMessage(texto, "user");
     input.value = "";
@@ -155,7 +241,6 @@ if (form && input) {
     }
   });
 }
-
 // ======================================================================
 // 7) chatAviso() — Mensagens internas do sistema
 // ======================================================================
@@ -177,11 +262,165 @@ export function chatAviso(msg) {
   area.scrollTop = area.scrollHeight;
 }
 
-// Torna a função acessível globalmente para alertas automáticos
+// Torna a função acessível globalmente
 window.chatAviso = chatAviso;
 
+
 // ======================================================================
-// 8) CHAT DRAGGABLE — Chat arrastável + launcher acompanha
+// 7.1) Prévia de Torpedo de Crise (usado no /crise)
+// ======================================================================
+function addMensagemTorpedoCrise(texto) {
+  const area = document.getElementById("iaMessages");
+  if (!area) return;
+
+  const bloco = document.createElement("div");
+  bloco.className = "ia-msg ia-msg--ia";
+
+  bloco.innerHTML = `
+    <div class="ia-msg__avatar ia-msg__avatar--ia">AI</div>
+    <div class="ia-msg__bubble">
+      <p class="ia-msg__text">
+        <strong>🛰️ Torpedo de Crise gerado:</strong><br/><br/>
+        <pre class="ia-msg__torpedo-text">${texto.replace(/</g, "&lt;")}</pre>
+      </p>
+    </div>
+  `;
+
+  area.appendChild(bloco);
+  area.scrollTop = area.scrollHeight;
+}
+
+
+// ======================================================================
+// 7.2) Mensagem especial: Convite de sala de crise
+// ======================================================================
+function addMensagemSalaCrise({ url, titulo, origem }) {
+  if (!url) return;
+
+  const area = document.getElementById("iaMessages");
+  if (!area) return;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "ia-msg ia-msg--ia ia-msg--crise";
+
+  const agora = new Date();
+  const horario = agora.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  wrapper.innerHTML = `
+    <div class="ia-msg__avatar ia-msg__avatar--ia">AI</div>
+    <div class="ia-msg__bubble ia-msg__bubble--crise">
+      <p class="ia-msg__text ia-msg__text--crise-title">🚨 Convite para sala de crise</p>
+      <p class="ia-msg__text ia-msg__text--crise-sub">${titulo || "Reunião de crise iniciada."}</p>
+      <p class="ia-msg__text ia-msg__text--crise-meta">
+        🕒 ${horario}${origem ? ` • 📡 ${origem}` : ""}
+      </p>
+      <p class="ia-msg__text ia-msg__text--crise-link">
+        <a href="${url}" class="ia-crise-link" target="_blank" rel="noopener noreferrer">
+          🔗 Entrar na sala (Teams)
+        </a>
+      </p>
+    </div>
+  `;
+
+  area.appendChild(wrapper);
+  area.scrollTop = area.scrollHeight;
+}
+
+// Evento global de sala de crise
+window.addEventListener("crise:link", (ev) => {
+  const detail = ev.detail || {};
+
+  addMensagemSalaCrise({
+    url: detail.url,
+    titulo: detail.titulo,
+    origem: detail.origem || "Monitoramento",
+  });
+});
+
+
+// ======================================================================
+// 7.3) TORPEDOS CORPORATIVOS — Início / Andamento / Validação / Normalizado
+// ======================================================================
+
+// Botão para envio via WhatsApp
+function addBotaoWhats(texto) {
+  const area = document.getElementById("iaMessages");
+  if (!area) return;
+
+  const div = document.createElement("div");
+  div.className = "ia-msg ia-msg--ia";
+
+  div.innerHTML = `
+    <button class="btn-whats-torpedo"
+      onclick="window.open('https://wa.me/?text=${encodeURIComponent(texto)}', '_blank')">
+      📤 Enviar torpedo via WhatsApp
+    </button>
+  `;
+
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+// Helper: adiciona torpedo + botão whats
+function adicionarTorpedoNoChat(texto) {
+  addMessage(texto, "ia");
+  addBotaoWhats(texto);
+}
+
+
+// ------- Torpedo de INÍCIO -------
+export function gerarTorpedoInicio(dados = {}) {
+  const agora = new Date();
+  const horario = agora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+  const {
+    incidente = "E-Commerce Playwright",
+    ambiente = "Produção",
+    prioridade = "P1",
+    ticket = "NC-000000",
+    descricao = "Falha na aplicação.",
+    analista = "Raquel Souza",
+    gestor = "Gestor de TI"
+  } = dados;
+
+  const texto = `
+Governança de TI informa:
+Incidente Crítico: ${incidente}
+Ambiente impactado: ${ambiente}
+Prioridade: ${prioridade}
+Ticket: ${ticket}
+Status: Início
+Repercussão: Impacto elevado para os negócios
+Aplicação: ${descricao}
+Início: ${horario}
+Times envolvidos: NOC, Aplicações, Infraestrutura
+Analista responsável: ${analista}
+Gestor envolvido: ${gestor}
+`.trim();
+
+  adicionarTorpedoNoChat(texto);
+}
+
+// ------- Torpedo de ANDAMENTO -------
+export function gerarTorpedoEmAndamento(dados = {}) { /* ... permanece igual ... */ }
+
+// ------- Torpedo de VALIDAÇÃO -------
+export function gerarTorpedoValidacao(dados = {}) { /* ... permanece igual ... */ }
+
+// ------- Torpedo de NORMALIZADO -------
+export function gerarTorpedoNormalizado(dados = {}) { /* ... permanece igual ... */ }
+
+
+// Expor no window
+window.gerarTorpedoInicio = gerarTorpedoInicio;
+window.gerarTorpedoEmAndamento = gerarTorpedoEmAndamento;
+window.gerarTorpedoValidacao = gerarTorpedoValidacao;
+window.gerarTorpedoNormalizado = gerarTorpedoNormalizado;
+// ======================================================================
+// 8. CHAT DRAGGABLE — Chat arrastável + launcher acompanha
 // ======================================================================
 window.addEventListener("DOMContentLoaded", () => {
   const chatEl = document.getElementById("iaChat");
