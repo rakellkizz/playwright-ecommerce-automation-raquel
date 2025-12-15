@@ -17,15 +17,102 @@
 // ======================================================================
 
 
+// =======================================================
+// 1) DRAG DO TIMER HUD — usando SOMENTE o header como alça
+//    (não interfere em inputs / setinhas)
+// =======================================================
 window.addEventListener("DOMContentLoaded", () => {
+  const hud = document.getElementById("timerHud");
+  const handle = hud?.querySelector(".timer-hud__header"); // ✅ alça já existe
+  if (!hud || !handle) return;
 
+  let dragging = false;
+  let offX = 0;
+  let offY = 0;
+  let viaTouch = false;
+
+  handle.style.cursor = "grab";
+
+  function limitarNaTela(x, y) {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const r = hud.getBoundingClientRect();
+    return {
+      x: Math.min(Math.max(0, x), vw - r.width),
+      y: Math.min(Math.max(0, y), vh - r.height),
+    };
+  }
+
+  function start(px, py, isTouch) {
+    dragging = true;
+    viaTouch = isTouch;
+
+    handle.style.cursor = isTouch ? "default" : "grabbing";
+
+    hud.style.right = "auto";
+    hud.style.bottom = "auto";
+
+    const r = hud.getBoundingClientRect();
+    offX = px - r.left;
+    offY = py - r.top;
+
+    // evita scroll no touch durante arraste
+    hud.style.touchAction = "none";
+  }
+
+  function move(px, py) {
+    if (!dragging) return;
+    const pos = limitarNaTela(px - offX, py - offY);
+    hud.style.left = `${pos.x}px`;
+    hud.style.top = `${pos.y}px`;
+  }
+
+  function end() {
+    if (!dragging) return;
+    dragging = false;
+    viaTouch = false;
+    handle.style.cursor = "grab";
+    hud.style.touchAction = "";
+  }
+
+  // MOUSE (somente no header)
+  handle.addEventListener("mousedown", (ev) => {
+    if (ev.button !== 0) return;
+    start(ev.clientX, ev.clientY, false);
+  });
+
+  window.addEventListener("mousemove", (ev) => {
+    if (!dragging || viaTouch) return;
+    move(ev.clientX, ev.clientY);
+  });
+
+  window.addEventListener("mouseup", () => {
+    if (!dragging || viaTouch) return;
+    end();
+  });
+
+  // TOUCH (somente no header)
+  handle.addEventListener("touchstart", (ev) => {
+    const t = ev.touches[0];
+    start(t.clientX, t.clientY, true);
+  }, { passive: true });
+
+  handle.addEventListener("touchmove", (ev) => {
+    if (!dragging || !viaTouch) return;
+    const t = ev.touches[0];
+    move(t.clientX, t.clientY);
+    ev.preventDefault();
+  }, { passive: false });
+
+  handle.addEventListener("touchend", end);
+});
   // ====================================================================
   // 2. Seleção do HUD base (#timerHud)
   // ====================================================================
   const hud = document.getElementById("timerHud");
   if (!hud) {
     console.warn("HUD SOC: #timerHud não encontrado. Módulo ignorado.");
-    return;
+    //return;
   }
 
 
@@ -95,7 +182,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (!riskBadgeEl || !incidentsEl || !falhasEl || !tendenciaEl || !heatmapEl) {
     console.warn("HUD SOC: elementos internos não encontrados, abortando.");
-    return;
+    //return;
   }
 
 
@@ -255,5 +342,3 @@ window.addEventListener("DOMContentLoaded", () => {
     atualizarIncidentesRecentes(tendencia);
     atualizarHeatmap(tendencia);
   });
-
-});

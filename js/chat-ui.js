@@ -19,7 +19,42 @@ import {
   compartilharWhatsApp,
   compartilharEmail,
 } from "./relatorio.js";
+// ======================================================================
+// 1.1) 📌 SOC EVENTS — Trilha de auditoria (UI → Playwright → Allure)
+// ----------------------------------------------------------------------
+// ✔ NÃO muda layout
+// ✔ NÃO cria elementos
+// ✔ Apenas registra eventos técnicos (memória + localStorage)
+// ✔ Usado depois pelos testes Playwright
+// ======================================================================
+(function initSocEvents() {
+  if (window.__socEvents) return;
 
+  window.__socEvents = [];
+
+  window.socLog = function socLog(evento) {
+    const payload = {
+      ts: Date.now(),
+      ...evento,
+    };
+
+    window.__socEvents.push(payload);
+
+    // Limite de segurança (não pesa o navegador)
+    if (window.__socEvents.length > 300) {
+      window.__socEvents.shift();
+    }
+
+    try {
+      localStorage.setItem(
+        "soc_events",
+        JSON.stringify(window.__socEvents)
+      );
+    } catch (_) {
+      // silencioso por segurança
+    }
+  };
+})();
 // ======================================================================
 // 2) CAPTURA DOS ELEMENTOS DO CHAT
 // ======================================================================
@@ -500,19 +535,38 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function finalizarArraste() {
-    if (!isDragging) return;
-    isDragging = false;
-    isTouch = false;
+  if (!isDragging) return;
+  isDragging = false;
+  isTouch = false;
 
-    handle.style.cursor = "grab";
+  handle.style.cursor = "grab";
 
-    // devolve transições suaves
-    chatEl.style.transition = "";
-    launcherEl.style.transition = "";
+  // devolve transições suaves
+  chatEl.style.transition = "";
+  launcherEl.style.transition = "";
 
-    chatEl.style.touchAction = "";
+  chatEl.style.touchAction = "";
+
+  // ============================================================== 
+  // 8.1) 📌 SOC LOG — Fim de arraste do CHAT
+  //      (auditoria técnica → Playwright / Allure)
+  // ============================================================== 
+  try {
+    if (window.socLog) {
+      const r = chatEl.getBoundingClientRect();
+
+      // Evento final: terminou o arraste
+      window.socLog({
+        type: "chat_drag_end", // Evento de término do arraste
+        componente: "iaChat",
+        x: Math.round(r.left),
+        y: Math.round(r.top),
+      });
+    }
+  } catch (_) {
+    // falha silenciosa para não quebrar UX
   }
-
+}
   // MOUSE
   handle.addEventListener("mousedown", (event) => {
     if (event.button !== 0) return;

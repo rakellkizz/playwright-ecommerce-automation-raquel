@@ -63,7 +63,29 @@ function formatar(seg) {
   return `${m}:${s}`;
 }
 
+// ======================================================================
+//  X) STOP SAFE — garante que pararCountdownAutomatico exista
+//     (evita crash no clique do ciclo manual)
+// ======================================================================
+function pararCountdownAutomatico() {
+  try {
+    // Para o countdown automático real
+    if (autoIntervalId) {
+      clearInterval(autoIntervalId);
+      autoIntervalId = null;
+    }
 
+    proximoCountdownSeg = 0;
+
+    // Limpa HUD automático
+    if (autoNextWrapper) {
+      autoNextWrapper.classList.remove("auto-next--blink");
+      autoNextWrapper.hidden = true;
+    }
+  } catch (_) {
+    // falha silenciosa — não quebra UX
+  }
+}
 // ======================================================================
 // INICIAR O CICLO DE TESTES MANUALMENTE
 // ======================================================================
@@ -155,11 +177,15 @@ function finalizarCiclo() {
 // ======================================================================
 function pararCiclo() {
   clearInterval(intervaloPrincipal);
-  hudStatus.textContent = "Parado pelo técnico";
+
+  if (hudStatus) {
+    hudStatus.textContent = "Interrompido pelo técnico";
+    hudStatus.classList.add("timer-status--stopped");
+    hudStatus.classList.remove("timer-status--countdown", "timer-status--ready");
+  }
+
   barLabel.textContent = "Execução pausada manualmente.";
 }
-
-
 // ======================================================================
 // SISTEMA AUTOMÁTICO — ON/OFF
 // ======================================================================
@@ -214,28 +240,30 @@ function iniciarCountdownAutomatico() {
 }
 // Atualiza HUD da barra automática
 function atualizarAutoNextHUD() {
+  if (!autoNextTime || !autoNextFill) return;
+
   autoNextTime.textContent = formatar(proximoCountdownSeg);
 
-  const perc = 100 - ((proximoCountdownSeg / (intervaloAutoMin * 60)) * 100);
+  const totalSeg = intervaloAutoMin * 60;
+  const perc = 100 - ((proximoCountdownSeg / totalSeg) * 100);
   autoNextFill.style.width = `${perc}%`;
 
-  // ------------------------------------------------------------
-  // 🔔 Piscar quando estiver perto de iniciar a rodada automática
-  // ------------------------------------------------------------
-  const AVISO_SEG = 10; // você pode trocar (ex.: 15, 20)
+  // 🟣 Feedback claro no HUD principal
+  if (hudStatus) {
+    hudStatus.textContent = `Monitoramento inicia em ${formatar(proximoCountdownSeg)}`;
+    hudStatus.classList.add("timer-status--countdown");
+    hudStatus.classList.remove("timer-status--stopped", "timer-status--ready");
+  }
+
+  // 🔔 Piscar quando estiver perto de iniciar
+  const AVISO_SEG = 10;
 
   if (proximoCountdownSeg > 0 && proximoCountdownSeg <= AVISO_SEG) {
     autoNextWrapper.classList.add("auto-next--blink");
-
-    // (opcional) avisar sistemas/IA/chat que está prestes a iniciar
-    dispatchEvent(new CustomEvent("testes:preparar", {
-      detail: { faltamSegundos: proximoCountdownSeg }
-    }));
   } else {
     autoNextWrapper.classList.remove("auto-next--blink");
   }
 }
-
 // ======================================================================
 // EVENTOS DOS BOTÕES PRINCIPAIS
 // ======================================================================
@@ -285,3 +313,69 @@ function atualizarEstadoHud(estado, detalhe = "") {
     if (status) status.textContent = detalhe || "Anomalia detectada";
   }
 }
+// ======================================================================
+// (Z) PULSO DOS CARDS SINCRONIZADO COM O TEMPORIZADOR (SEM MEXER NO CSS)
+// ----------------------------------------------------------------------
+// ✔ Não altera layout
+// ✔ Não altera classes dos cards
+// ✔ Usa a cor atual da BORDA do card (verde/amarelo/vermelho) para pulsar
+// ✔ Liga/desliga conforme estado do timer (rodando ou pré-início automático)
+// ======================================================================
+
+(function () {
+  const CARD_SELECTOR = ".cenario-card";
+
+  function pulseCard(card, ligar) {
+    try {
+      // já está pulsando
+      if (ligar && card.__pulseAnim) return;
+
+      // desligar
+      if (!ligar && card.__pulseAnim) {
+        card.__pulseAnim.cancel();
+        card.__pulseAnim = null;
+        card.style.boxShadow = ""; // limpa sem mexer no resto
+        return;
+      }
+
+      if (!ligar) return;
+
+      // usa a cor da borda atual do card (pega verde/amarelo/vermelho do seu CSS)
+      const borderColor = getComputedStyle(card).borderColor || "rgba(255,255,255,0.35)";
+
+      card.__pulseAnim = card.animate(
+        [
+          { boxShadow: `0 0 0px ${borderColor}` },
+          { boxShadow: `0 0 18px ${borderColor}` },
+          { boxShadow: `0 0 0px ${borderColor}` }
+        ],
+        { duration: 900, iterations: Infinity }
+      );
+    } catch (_) {
+      // falha silenciosa — nunca quebra UX
+    }
+  }
+
+  function setCardsPulse(ligar) {
+    document.querySelectorAll(CARD_SELECTOR).forEach((card) => pulseCard(card, ligar));
+  }
+
+  // Exponho pra você testar no console se quiser:
+  window.__setCardsPulse = setCardsPulse;
+
+  // -------------------------------------------------------------------
+  // 1) Liga pulso quando o ciclo MANUAL começa
+  // -------------------------------------------------------------------
+  window.addEventListener("testes:iniciar", () => setCardsPulse(true));
+
+  // -------------------------------------------------------------------
+  // 2) Desliga pulso quando o ciclo finaliza
+  // -------------------------------------------------------------------
+  window.addEventListener("testes:finalizar", () => setCardsPulse(false));
+
+  // -------------------------------------------------------------------
+  // 3) Liga pulso quando estiver perto do AUTO começar (pré-início)
+  //    (você já dispara "testes:preparar" quando faltam poucos segundos)
+  // -------------------------------------------------------------------
+  window.addEventListener("testes:preparar", () => setCardsPulse(true));
+})();
