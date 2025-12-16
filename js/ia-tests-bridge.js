@@ -37,8 +37,28 @@ function registrarIncidenteIA(cenarioId) {
     new CustomEvent("cenario:diagnostico", { detail: payload })
   );
 }
+// ======================================================================
+// 2.3 SOC helper — refletir estado do cenário nos cards / SOC
+// ----------------------------------------------------------------------
+// ✔ NÃO altera layout
+// ✔ NÃO altera CSS
+// ✔ Apenas registra estado operacional para SOC / Playwright / Allure
+// ======================================================================
+function registrarStatusCardSOC({ cenarioId, status, origem = "engine" }) {
+  try {
+    if (!window.socLog) return;
 
-
+    window.socLog({
+      type: "card_status",
+      cenario: cenarioId,
+      status: status,           // ok | manutencao | critico
+      origem: origem,           // engine | ia | manual
+      ts: Date.now()
+    });
+  } catch (_) {
+    // falha silenciosa para não quebrar UX
+  }
+}
 // ======================================================================
 // 3. Evento: testes:anomalia
 // ----------------------------------------------------------------------
@@ -49,10 +69,16 @@ addEventListener("testes:anomalia", (ev) => {
   const id = ev.detail?.cenario;
   if (!id) return;
 
+  // 3.1 — IA registra incidente técnico
   registrarIncidenteIA(id);
+
+  // 3.2 — SOC reflete estado CRÍTICO no card
+  registrarStatusCardSOC({
+    cenarioId: id,
+    status: "critico",
+    origem: "engine"
+  });
 });
-
-
 // ======================================================================
 // 4. Evento: testes:finalizar
 // ----------------------------------------------------------------------
@@ -60,9 +86,13 @@ addEventListener("testes:anomalia", (ev) => {
 // ======================================================================
 addEventListener("testes:finalizar", () => {
   console.log("📘 [IA] Testes finalizados. IA pronta para análise do resumo.");
+
+  registrarStatusCardSOC({
+    cenarioId: "geral",
+    status: "ok",
+    origem: "engine"
+  });
 });
-
-
 // ======================================================================
 // 5. Função auxiliar — montar resumo simples no chat
 // ----------------------------------------------------------------------

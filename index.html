@@ -178,29 +178,43 @@
              8.1 Cenário: LOGIN
         ============================== -->
         <article class="card card-small cenario-card" data-cenario="login">
-          <h3 class="card-title">🔐 Login</h3>
 
-          <!-- alerta -->
-          <div id="alert-login" class="cenario-alerta-msg" hidden></div>
+  <!-- =====================================================
+       BADGE DE STATUS DO CENÁRIO
+       - NÃO interfere no LED
+       - NÃO interfere no pulsar
+       - NÃO altera lógica existente
+       - Apenas reflete o estado (OK / Manutenção / Crítico)
+  ====================================================== -->
+   <!-- Título do cenário -->
+  <h3 class="card-title">🔐 Login</h3>
 
-          <p class="card-text">
-            Fluxo de login completo, erros visíveis e bloqueio progressivo.
-          </p>
+  <!-- Alerta dinâmico (usado em anomalias / mensagens técnicas) -->
+  <div id="alert-login" class="cenario-alerta-msg" hidden></div>
 
-          <details class="cenario-details">
-            <summary>📄 Detalhes técnicos do cenário</summary>
-            <ul class="cenario-details__lista">
-              <li>Validação de credenciais incorretas.</li>
-              <li>Mensagens de erro visíveis e acessíveis.</li>
-              <li>Tempo de resposta da API de autenticação.</li>
-              <li>Bloqueio progressivo após tentativas inválidas.</li>
-            </ul>
+  <!-- Descrição funcional do cenário -->
+  <p class="card-text">
+    Fluxo de login completo, erros visíveis e bloqueio progressivo.
+  </p>
 
-            <button class="btn-log" data-open-log="login">
-              📝 Ver logs e registrar ação técnica
-            </button>
-          </details>
-        </article>
+  <!-- Detalhes técnicos expansíveis -->
+  <details class="cenario-details">
+    <summary>📄 Detalhes técnicos do cenário</summary>
+
+    <ul class="cenario-details__lista">
+      <li>Validação de credenciais incorretas.</li>
+      <li>Mensagens de erro visíveis e acessíveis.</li>
+      <li>Tempo de resposta da API de autenticação.</li>
+      <li>Bloqueio progressivo após tentativas inválidas.</li>
+    </ul>
+
+    <!-- Botão de logs / ação técnica -->
+    <button class="btn-log" data-open-log="login">
+      📝 Ver logs e registrar ação técnica
+    </button>
+  </details>
+
+</article>
 
         <!-- =============================
              8.2 Cenário: CARRINHO

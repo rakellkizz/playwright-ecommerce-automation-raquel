@@ -379,3 +379,37 @@ function atualizarEstadoHud(estado, detalhe = "") {
   // -------------------------------------------------------------------
   window.addEventListener("testes:preparar", () => setCardsPulse(true));
 })();
+// ======================================================================
+// RESIZE — Persistência do tamanho do HUD (mínimo e seguro)
+// - Não altera layout
+// - Só guarda width/height após resize
+// ======================================================================
+(function () {
+  const hudEl = document.getElementById("timerHud");
+  if (!hudEl) return;
+
+  const KEY = "timerhud:size";
+
+  // 1) Restaura tamanho salvo
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (saved && saved.w && saved.h) {
+      hudEl.style.width = saved.w + "px";
+      hudEl.style.height = saved.h + "px";
+    }
+  } catch (_) {}
+
+  // 2) Observa resize e salva
+  if ("ResizeObserver" in window) {
+    const ro = new ResizeObserver(() => {
+      try {
+        const r = hudEl.getBoundingClientRect();
+        localStorage.setItem(KEY, JSON.stringify({
+          w: Math.round(r.width),
+          h: Math.round(r.height),
+        }));
+      } catch (_) {}
+    });
+    ro.observe(hudEl);
+  }
+})();
