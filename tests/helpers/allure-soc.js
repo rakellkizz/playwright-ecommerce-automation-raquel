@@ -29,6 +29,19 @@ import fs from "fs";
 export async function anexarSocEvents(page, testInfo, nome = "SOC Events") {
 
   // ====================================================================
+  // 2.1 GARANTIA DA PASTA allure-results
+  // --------------------------------------------------------------------
+  // Em alguns ambientes (CI / primeira execução),
+  // a pasta pode não existir ainda.
+  //
+  // Criamos somente se necessário, sem sobrescrever nada.
+  // ====================================================================
+  if (!fs.existsSync("allure-results")) {
+    fs.mkdirSync("allure-results");
+  }
+
+
+  // ====================================================================
   // 3. COLETA DOS EVENTOS SOC NO BROWSER
   // --------------------------------------------------------------------
   // Executamos código DENTRO do navegador usando page.evaluate.
@@ -95,4 +108,18 @@ export async function anexarSocEvents(page, testInfo, nome = "SOC Events") {
     `allure-results/soc-events-${Date.now()}.json`,
     socEvents
   );
+
+
+  // ====================================================================
+  // 7. LIMPEZA DOS EVENTOS APÓS O ANEXO
+  // --------------------------------------------------------------------
+  // Evita que:
+  //   • eventos de um teste vazem para outro
+  //   • a Allure mostre dados acumulados
+  //
+  // Mantém cada teste isolado (boa prática profissional).
+  // ====================================================================
+  await page.evaluate(() => {
+    localStorage.removeItem("soc_events");
+  });
 }

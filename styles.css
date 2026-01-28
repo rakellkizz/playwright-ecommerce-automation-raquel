@@ -2827,5 +2827,150 @@ body {
   background: rgba(255,60,60,.18);
   border-color: rgba(255,60,60,.55);
 }
+/* ===============================
+   PULSAÇÃO MAIS FORTE — CARDS
+   =============================== */
+
+.cenario-alerta {
+  animation: pulse-alerta 1.1s infinite;
+  box-shadow: 0 0 28px rgba(255, 60, 60, 1);
+}
+
+@keyframes pulse-alerta {
+  0%   { box-shadow: 0 0 10px rgba(255, 60, 60, 0.5); }
+  50%  { box-shadow: 0 0 34px rgba(255, 60, 60, 1); }
+  100% { box-shadow: 0 0 10px rgba(255, 60, 60, 0.5); }
+}
+
+.cenario-manutencao {
+  animation: pulse-manutencao 1.4s infinite;
+  box-shadow: 0 0 26px rgba(255, 200, 0, 1);
+}
+
+@keyframes pulse-manutencao {
+  0%   { box-shadow: 0 0 8px rgba(255, 200, 0, 0.5); }
+  50%  { box-shadow: 0 0 30px rgba(255, 200, 0, 1); }
+  100% { box-shadow: 0 0 8px rgba(255, 200, 0, 0.5); }
+}
+
+/* ======================================================================
+   🆘 MODO SALA DE CRISE (SOC) — Visual (opcional)
+   ====================================================================== */
+
+#iaChat.ia-chat--crise {
+  outline: 2px solid rgba(255, 0, 0, 0.75);
+  box-shadow: 0 0 18px rgba(255, 0, 0, 0.35);
+}
+
+.ia-soc-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(120, 0, 0, 0.25);
+}
+
+.ia-soc-badge {
+  margin-left: auto;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* Botões — se você já tem .ia-btn, isso só complementa */
+.ia-btn--danger {
+  border: 1px solid rgba(255, 60, 60, 0.8);
+}
+
+.ia-btn--primary {
+  border: 1px solid rgba(100, 180, 255, 0.7);
+}
+
+/* =========================================================
+   FIX DEFINITIVO — TIMER HUD RESIZABLE (override final)
+   ---------------------------------------------------------
+   • Força resize nativo do browser
+   • Impede scripts de drag de quebrar o resize
+   • Não altera layout nem visual
+========================================================= */
+#timerHud {
+  position: fixed !important;
+  resize: both !important;
+  overflow: auto !important;
+
+  /* limites seguros */
+  min-width: 260px;
+  min-height: 180px;
+  max-width: 92vw;
+  max-height: 92vh;
+}
+/* =========================================================
+   TIMER HUD — RESIZE NATIVO (override final)
+========================================================= */
+#timerHud{
+  resize: both !important;
+  overflow: auto !important;
+
+  /* 🔥 IMPORTANTE: dê um tamanho base (auto às vezes não “pega”) */
+  width: 320px;
+  height: 220px;
+
+  /* limites seguros */
+  min-width: 260px;
+  min-height: 180px;
+  max-width: 92vw;
+  max-height: 92vh;
+}
+
+/* Drag só no header */
+#timerHud .timer-hud__header{
+  cursor: grab;
+}
+#timerHud.dragging .timer-hud__header{
+  cursor: grabbing;
+}
+/* =====================================================================
+   999. RECOVERY PATCH — Destravar interação (Timer HUD + Chat + Launcher)
+   ---------------------------------------------------------------------
+   ✅ NÃO muda layout/cores/fontes
+   ✅ Só garante que eventos de mouse/touch cheguem nos elementos
+   ✅ Evita que a timer-bar “roube” o clique no canto inferior direito
+===================================================================== */
+
+/* 999.1 — Timer HUD e Launcher PRECISAM receber clique/drag sempre */
+#timerHud,
+#iaLauncher {
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+/* 999.2 — Chat: fechado fica sem clique; aberto recebe clique */
+#iaChat {
+  touch-action: manipulation !important;
+}
+#iaChat:not(.ia-chat--open) {
+  pointer-events: none !important;   /* mantém o comportamento original */
+}
+#iaChat.ia-chat--open {
+  pointer-events: auto !important;   /* garante interação quando aberto */
+}
+
+/* 999.3 — Garantir que flutuantes ficam acima da barra do rodapé */
+#timerHud { z-index: 999999 !important; }
+#iaChat { z-index: 999999 !important; }
+#iaLauncher { z-index: 1000000 !important; }
+
+/* 999.4 — A barra do rodapé NÃO pode bloquear o clique no launcher */
+#timerBar {
+  pointer-events: none !important;   /* mantém visual, mas não captura clique */
+}
+
+/* 999.5 — Resize só funciona direito com overflow auto */
+#timerHud { overflow: auto !important; }
+
+/* Chat: se você está usando resize no #iaChat, overflow auto ajuda */
+#iaChat { overflow: auto !important; }
+
+
 
 

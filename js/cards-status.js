@@ -4,12 +4,34 @@
 //  ✔ LED verde pulsando enquanto testes estão rodando
 //  ✔ Card entra em “modo análise” quando o temporizador inicia
 //  ✔ Recebe anomalias e ativa o alerta vermelho
+//  ✔ Recebe manutenção manual (amarelo)
 //  ✔ Sai do modo testes quando o temporizador termina
-//  ✔ Não interfere no logs-controller.js nem no chat
+//  ✔ NÃO remove pulsação
+//  ✔ NÃO interfere no logs-controller.js nem no chat
 // ======================================================================
 
-//  ============================================================
-// 1) BADGE — atualiza o “Cenário OK” sem mexer no pulsar/LED
+
+// ============================================================
+// 🔒 PROTEÇÃO DE ESTADO — REGRA MESTRA DO SISTEMA
+// ------------------------------------------------------------
+// • Manutenção é SOBERANA
+// • Automação NÃO sobrescreve técnico
+// • Anomalia NÃO some sozinha
+// ============================================================
+function podeAlterarEstado(card, novoStatus) {
+  const estadoAtual = card.dataset.status;
+
+  // 🚫 Se está em manutenção, ninguém muda
+  if (estadoAtual === "manutencao" && novoStatus !== "manutencao") {
+    return false;
+  }
+
+  return true;
+}
+
+
+// ============================================================
+// 1) BADGE — reflete estado (OK / Manutenção / Anomalia)
 // ============================================================
 function atualizarBadgeCenario(card, status) {
   if (!card) return;
@@ -17,9 +39,13 @@ function atualizarBadgeCenario(card, status) {
   const badge = card.querySelector("[data-cenario-badge]");
   if (!badge) return;
 
-  badge.classList.remove("cenario-badge--ok", "cenario-badge--manutencao", "cenario-badge--critico");
+  badge.classList.remove(
+    "cenario-badge--ok",
+    "cenario-badge--manutencao",
+    "cenario-badge--critico"
+  );
 
-  if (status === "critico" || status === "erro") {
+  if (status === "erro" || status === "critico") {
     badge.textContent = "🚨 Crise";
     badge.classList.add("cenario-badge--critico");
     return;
@@ -31,22 +57,20 @@ function atualizarBadgeCenario(card, status) {
     return;
   }
 
-  // padrão: ok / analise
   badge.textContent = "✅ Cenário OK";
   badge.classList.add("cenario-badge--ok");
 }
 
+
 // ======================================================================
-// 2) SOC LOG — helper central (registra SOMENTE quando status muda)
+// 2) SOC LOG — registra SOMENTE quando status muda
 // ======================================================================
 function socSetStatus(cenarioId, novoStatus, origem = "cards-status") {
-  const card = document.querySelector(
-    `.cenario-card[data-cenario="${cenarioId}"]`
-  );
+  const card = document.querySelector(`.cenario-card[data-cenario="${cenarioId}"]`);
   if (!card) return false;
 
   const atual = card.dataset.status || "";
-  if (atual === novoStatus) return false; // 👈 evita duplicação
+  if (atual === novoStatus) return false;
 
   card.dataset.status = novoStatus;
 
@@ -56,31 +80,27 @@ function socSetStatus(cenarioId, novoStatus, origem = "cards-status") {
         type: "card_status",
         cenario: cenarioId,
         status: novoStatus,
-        origem: origem
+        origem
       });
     }
   } catch (_) {}
 
   return true;
 }
+
+
 // ======================================================================
-// FUNÇÃO: Ativar LED verde (indicando testes em execução)
+// LED VERDE — indica execução de testes (pulsação CSS)
 // ======================================================================
 function ativarLEDVerde(card) {
   if (!card) return;
-
-  // Evita duplicar LED
   if (card.querySelector(".cenario-led")) return;
 
   const led = document.createElement("div");
-  led.className = "cenario-led"; // classe que o CSS vai animar
+  led.className = "cenario-led";
   card.prepend(led);
 }
 
-
-// ======================================================================
-// FUNÇÃO: Remover LED verde (quando testes acabam)
-// ======================================================================
 function removerLED(card) {
   const led = card.querySelector(".cenario-led");
   if (led) led.remove();
@@ -88,185 +108,150 @@ function removerLED(card) {
 
 
 // ======================================================================
-// FUNÇÃO: Entrar em MODO ANÁLISE (testes rodando)
+// MODO ANÁLISE — testes rodando
 // ======================================================================
 function ativarModoAnalise(cenarioId) {
   const card = document.querySelector(`.cenario-card[data-cenario="${cenarioId}"]`);
   if (!card) return;
 
-  // Remove erros anteriores
-  card.classList.remove("cenario-alerta", "cenario-erro", "cenario-manutencao", "cenario-ok");
+  if (!podeAlterarEstado(card, "analise")) return;
 
-  // Coloca o LED verde
+  card.classList.remove(
+    "cenario-alerta",
+    "cenario-manutencao",
+    "cenario-ok",
+    "cenario-critico"
+  );
+
   ativarLEDVerde(card);
 
-  // Estado interno visual opcional
   card.dataset.status = "analise";
-
-  // SOC: registrando que o card entrou em análise
   socSetStatus(cenarioId, "analise", "ativarModoAnalise");
 
-  // Atualiza badge para OK (padrão)
   atualizarBadgeCenario(card, "ok");
-  }
-  
+}
+
 
 // ======================================================================
-// FUNÇÃO: Marcar como ANOMALIA DETECTADA
+// ANOMALIA — vermelho (automação / sistema)
 // ======================================================================
 function ativarAnomalia(cenarioId) {
   const card = document.querySelector(`.cenario-card[data-cenario="${cenarioId}"]`);
   if (!card) return;
 
+  if (!podeAlterarEstado(card, "erro")) return;
+
   removerLED(card);
+
+  // 🔴 LIMPA QUALQUER ESTADO ANTES DO VERMELHO
+  card.classList.remove(
+    "cenario-manutencao",
+    "cenario-ok",
+    "cenario-critico"
+  );
+
   card.classList.add("cenario-alerta");
   card.dataset.status = "erro";
 
-    // SOC: registrando que o card entrou em erro/anomalia
   socSetStatus(cenarioId, "erro", "ativarAnomalia");
-
-    // Atualiza badge para Crítico
   atualizarBadgeCenario(card, "critico");
-
 }
 
 
 // ======================================================================
-// FUNÇÃO: Voltar para estado OK
+// MANUTENÇÃO — amarelo (técnico)
+// ======================================================================
+function ativarManutencao(cenarioId) {
+  const card = document.querySelector(`.cenario-card[data-cenario="${cenarioId}"]`);
+  if (!card) return;
+
+  if (!podeAlterarEstado(card, "manutencao")) return;
+
+  removerLED(card);
+
+  // 🟡 LIMPA QUALQUER ESTADO CRÍTICO
+  card.classList.remove(
+    "cenario-alerta",
+    "cenario-erro",
+    "cenario-ok",
+    "cenario-critico"
+  );
+
+  card.classList.add("cenario-manutencao");
+  card.dataset.status = "manutencao";
+
+  socSetStatus(cenarioId, "manutencao", "ativarManutencao");
+  atualizarBadgeCenario(card, "manutencao");
+}
+
+
+// ======================================================================
+// OK — somente quando realmente permitido
 // ======================================================================
 function marcarOK(cenarioId) {
   const card = document.querySelector(`.cenario-card[data-cenario="${cenarioId}"]`);
   if (!card) return;
 
+  if (
+    card.dataset.status === "erro" ||
+    card.dataset.status === "manutencao"
+  ) {
+    return;
+  }
+
   removerLED(card);
+
+  card.classList.remove(
+    "cenario-alerta",
+    "cenario-manutencao",
+    "cenario-critico"
+  );
+
   card.classList.add("cenario-ok");
   card.dataset.status = "ok";
 
-    // SOC: registrando que o card voltou para OK
   socSetStatus(cenarioId, "ok", "marcarOK");
-
-    // Atualiza badge para OK
   atualizarBadgeCenario(card, "ok");
-
-
-  
 }
 
 
 // ======================================================================
-// EVENTO: Quando os testes começam
+// EVENTOS
 // ======================================================================
 addEventListener("testes:iniciar", () => {
   document.querySelectorAll(".cenario-card").forEach(card => {
-    const id = card.dataset.cenario;
-    ativarModoAnalise(id);
+    ativarModoAnalise(card.dataset.cenario);
   });
 });
 
-
-// ======================================================================
-// EVENTO: Quando ocorre um tick (1 segundo do timer)
-// Podemos adicionar lógica de monitoramento futuramente
-// ======================================================================
-addEventListener("testes:tick", (ev) => {
-  // console.log("Tick recebido: ", ev.detail);
-  // Aqui pode entrar lógica avançada se você quiser no futuro
-});
-
-
-// ======================================================================
-// EVENTO: Quando uma anomalia real é detectada POR OUTRO MÓDULO
-// (exemplo: IA, testes automáticos, etc.)
-// ======================================================================
 addEventListener("testes:anomalia", (ev) => {
   const id = ev.detail?.cenario;
-  if (!id) return;
-
-  ativarAnomalia(id);
+  if (id) ativarAnomalia(id);
 });
 
+addEventListener("testes:manutencao", (ev) => {
+  const id = ev.detail?.cenario;
+  if (id) ativarManutencao(id);
+});
 
-// ======================================================================
-// EVENTO: Quando os testes finalizam (timer zerou)
-// ======================================================================
 addEventListener("testes:finalizar", () => {
   document.querySelectorAll(".cenario-card").forEach(card => {
-    const id = card.dataset.cenario;
-    marcarOK(id);
+    if (
+      card.dataset.status !== "erro" &&
+      card.dataset.status !== "manutencao"
+    ) {
+      marcarOK(card.dataset.cenario);
+    }
   });
 });
 
 
 // ======================================================================
-// Expor para testes manuais (opcional)
+// Exposição para testes manuais
 // ======================================================================
 window.cardsStatus = {
   ativarModoAnalise,
   ativarAnomalia,
+  ativarManutencao,
   marcarOK
 };
-// ======================================================================
-// INTEGRAÇÃO EXTRA — Eventos disparados pelo tests-engine
-// ----------------------------------------------------------------------
-//  ✔ testes:ok-parcial → marca que o cenário continua estável
-//  ✔ testes:mudar-status → comando explícito do engine
-// ======================================================================
-
-// Cenário passou na verificação daquele segundo
-addEventListener("testes:ok-parcial", (ev) => {
-  const id = ev.detail?.cenario;
-  if (!id) return;
-
-  // Mantém LED verde, remove qualquer erro antigo
-  const card = document.querySelector(`.cenario-card[data-cenario="${id}"]`);
-  if (!card) return;
-
-  if (card.dataset.status !== "erro") {
-    // continua verde, estável
-    ativarLEDVerde(card);
-    card.classList.remove("cenario-ok", "cenario-erro", "cenario-alerta");
-    card.dataset.status = "analise";
-  }
-});
-
-
-// Comando explícito do engine → mudar status geral
-addEventListener("testes:mudar-status", (ev) => {
-  const id = ev.detail?.cenario;
-  const status = ev.detail?.status;
-  const card = document.querySelector(`.cenario-card[data-cenario="${id}"]`);
-atualizarBadgeCenario(card, status);
-
-  if (!id || !status) return;
-
-  if (status === "analise") {
-    ativarModoAnalise(id);
-  }
-  else if (status === "ok") {
-    marcarOK(id);
-  }
-  else if (status === "erro") {
-    ativarAnomalia(id);
-  }
-});
-// ============================================================
-// FALSO POSITIVO — animação amarela no card
-// ============================================================
-addEventListener("testes:falso-positivo", (ev) => {
-  const id = ev.detail.cenario;
-  const card = document.querySelector(`.cenario-card[data-cenario="${id}"]`);
-
-  if (card) {
-    card.classList.add("cenario-falso-positivo");
-
-    // SOC: registrando falso positivo (alerta amarelo)
-    socLogCardStatus(id, "falso_positivo", "testes:falso-positivo");
-
-
-    // Remove após 3 segundos
-    setTimeout(() => {
-      card.classList.remove("cenario-falso-positivo");
-    }, 3000);
-  }
-});
-
