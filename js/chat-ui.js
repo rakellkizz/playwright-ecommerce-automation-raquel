@@ -1,156 +1,437 @@
 // ======================================================================
 // chat-ui.js — Controle visual + UX do Chat da IA
 // ----------------------------------------------------------------------
-//   ✔ Abrir / fechar chat
-//   ✔ Exibir mensagens do usuário e da IA
-//   ✔ Animação "digitando"
-//   ✔ Scroll automático
-//   ✔ Chat arrastável (mouse + touch)
-//   ✔ Botão flutuante acompanha o chat ao arrastar
-//   ✔ Sem treta com aria-hidden / foco
+// ✔ Chat flutuante
+// ✔ Chat arrastável (mouse + touch)
+// ✔ Botão launcher acompanha o chat
+// ✔ Integração com IA híbrida (ENVIO/RESPOSTA)
+// ✔ Auditoria SOC (socLog)
+// ✔ Modo Sala de Crise (UX correta)
 // ======================================================================
 
+
 // ======================================================================
-// 1) IMPORTA IA HÍBRIDA + Funções de Relatório
+// 1) IMPORTS
 // ======================================================================
 import { IA } from "./ai-hibrida.js";
-import {
-  gerarPDF,
-  compartilharWhatsApp,
-  compartilharEmail,
-} from "./relatorio.js";
+import { gerarPDF, compartilharWhatsApp, compartilharEmail } from "./relatorio.js";
+
+// SOC (coletor e dashboard escutam eventos; não mexemos neles aqui)
+import "./soc-collector.js";
+import "./soc-dashboard.js";
+
+
 // ======================================================================
-// 1.1) 📌 SOC EVENTS — Trilha de auditoria (UI → Playwright → Allure)
+// 2) SOC LOG — Auditoria técnica (não interfere no layout)
 // ----------------------------------------------------------------------
-// ✔ NÃO muda layout
-// ✔ NÃO cria elementos
-// ✔ Apenas registra eventos técnicos (memória + localStorage)
-// ✔ Usado depois pelos testes Playwright
+// ✔ Cria window.socLog()
+// ✔ Guarda em memória e localStorage
+// ✔ Útil para Playwright / Allure / relatórios
 // ======================================================================
 (function initSocEvents() {
   if (window.__socEvents) return;
 
   window.__socEvents = [];
 
-  window.socLog = function socLog(evento) {
-    const payload = {
-      ts: Date.now(),
-      ...evento,
-    };
-
+  window.socLog = function (evento) {
+    const payload = { ts: Date.now(), ...evento };
     window.__socEvents.push(payload);
 
-    // Limite de segurança (não pesa o navegador)
-    if (window.__socEvents.length > 300) {
-      window.__socEvents.shift();
-    }
+    if (window.__socEvents.length > 300) window.__socEvents.shift();
 
     try {
-      localStorage.setItem(
-        "soc_events",
-        JSON.stringify(window.__socEvents)
-      );
+      localStorage.setItem("soc_events", JSON.stringify(window.__socEvents));
     } catch (_) {
-      // silencioso por segurança
+      // silencioso por segurança (não quebra UX)
     }
   };
 })();
-// ======================================================================
-// 2) CAPTURA DOS ELEMENTOS DO CHAT
-// ======================================================================
 
-// Botão flutuante que abre a janela
+
+// ======================================================================
+// 3) CAPTURA DE ELEMENTOS
+// ======================================================================
 const launcher = document.getElementById("iaLauncher");
-
-// Janela inteira do chat
 const chat = document.getElementById("iaChat");
-
-// Botão para fechar o chat
 const closeBtn = document.getElementById("iaChatClose");
-
-// Área onde mensagens novas aparecem
 const messages = document.getElementById("iaMessages");
-
-// Formulário de envio de texto
 const form = document.getElementById("iaForm");
-
-// Campo onde o usuário digita
 const input = document.getElementById("iaInput");
 
+
 // ======================================================================
-// 3) ABRIR CHAT (sem brigar com aria-hidden / foco)
+// 3.1) GUARDAS DE SEGURANÇA (para não quebrar silenciosamente)
+// ======================================================================
+const hasCore = !!(launcher && chat && messages && form && input);
+if (!hasCore) {
+  // Se algo faltar, a gente não quebra a página. Só registra no console.
+  console.warn("[chat-ui] Elementos essenciais não encontrados:", {
+    launcher: !!launcher,
+    chat: !!chat,
+    messages: !!messages,
+    form: !!form,
+    input: !!input,
+    closeBtn: !!closeBtn,
+  });
+}
+
+
+// ======================================================================
+// 4) ESTADO SOC (único e centralizado)
+// ======================================================================
+let socModoAtivo = false;
+let socSalaId = null;
+
+function gerarSocSalaId() {
+  return `SOC-${Date.now()}`;
+}
+
+
+// ======================================================================
+// 5) FUNÇÕES SOC (NÃO VISUAIS)
+// ----------------------------------------------------------------------
+// ✔ ativarModoSoc: liga o modo SOC e dispara evento para dashboard/coletor
+// ✔ continuarAnaliseSoc: mantém SOC ativo e registra decisão (evento + log)
+// ======================================================================
+function ativarModoSoc(motivo = "Ativação via chat") {
+  if (!socSalaId) socSalaId = gerarSocSalaId();
+  socModoAtivo = true;
+
+  // ====================================================================
+  // 5.1) 🧷 SOC — sincroniza ID da sala com o socCollector (para o painel)
+  // --------------------------------------------------------------------
+  // ✔ Sem refatorar o collector
+  // ✔ Se o collector existir, gravamos o ID oficial da sala
+  // ✔ Assim o painel deixa de mostrar "Não formalizada"
+  // ====================================================================
+  try {
+    const st = window.socCollector?.getState?.();
+    if (st) st.sala = socSalaId;
+  } catch (_) {
+    // silencioso (não pode quebrar o chat)
+  }
+
+  // marca visual no chat (classe; CSS já decide como mostrar)
+  chat?.classList.add("ia-chat--soc");
+
+  // dispara evento para quem quiser reagir (soc-dashboard / soc-collector)
+  window.dispatchEvent(
+    new CustomEvent("soc:continuar_analise", {
+      detail: {
+        sala: socSalaId,
+        decisao: motivo,
+        tipoNarrativo: "decisao_soc",
+        origem: "chat-ui",
+      },
+    })
+  );
+
+  // auditoria técnica
+  window.socLog?.({
+    type: "soc_ativado",
+    sala: socSalaId,
+    motivo,
+    origem: "chat-ui",
+  });
+
+  chatAviso(`🆘 <strong>Sala de Crise ativada</strong><br/>ID: ${socSalaId}`);
+}
+
+function continuarAnaliseSoc() {
+  if (!socModoAtivo) return;
+
+  // dispara evento (uma única vez) para manter o painel/estado em análise
+  window.dispatchEvent(
+    new CustomEvent("soc:continuar_analise", {
+      detail: {
+        sala: socSalaId,
+        decisao: "Manter incidente em análise (SOC)",
+        tipoNarrativo: "decisao_soc",
+        origem: "chat-ui",
+      },
+    })
+  );
+
+  // auditoria técnica
+  window.socLog?.({
+    type: "soc_continuar",
+    sala: socSalaId,
+    origem: "chat-ui",
+  });
+
+  chatAviso("🔎 Análise continuará em modo SOC.");
+}
+
+// expõe para testes / console
+window.ativarModoSoc = ativarModoSoc;
+window.continuarAnaliseSoc = continuarAnaliseSoc;
+
+// ======================================================================
+// 6) ABRIR / FECHAR CHAT (com sincronização ao abrir)
+// ----------------------------------------------------------------------
+// PROBLEMA que você estava sentindo:
+// - chat "des-sincroniza" do launcher ao abrir
+// SOLUÇÃO:
+// - ao abrir, posiciona o chat "grudado" no launcher atual (onde ele estiver)
+// - não cria handlers duplicados
 // ======================================================================
 if (launcher && chat) {
-  launcher.addEventListener("click", () => {
+  launcher.addEventListener("click", (ev) => {
+    ev.preventDefault();
+
+    // abre
     chat.classList.add("ia-chat--open");
     chat.style.pointerEvents = "auto";
     chat.setAttribute("aria-hidden", "false");
 
-    if (input) {
-      input.focus();
-    }
+    // garante que estamos usando left/top (evita conflitos com CSS right/bottom)
+    chat.style.right = "auto";
+    chat.style.bottom = "auto";
+
+    // posiciona o chat em relação ao launcher (onde ele estiver)
+    const rect = launcher.getBoundingClientRect();
+
+    // chat acima do launcher (12px)
+    chat.style.left = `${rect.left}px`;
+    chat.style.top = `${rect.top - chat.offsetHeight - 12}px`;
+
+    // foco no input após layout estabilizar
+    setTimeout(() => input?.focus(), 0);
   });
 }
-launcher.addEventListener("click", () => {
-  chat.classList.add("ia-chat--open");
 
-  // gruda no botão AO ABRIR
-  const rect = launcher.getBoundingClientRect();
-  chat.style.left = `${rect.left}px`;
-  chat.style.top = `${rect.top - chat.offsetHeight - 12}px`;
-
-  chat.style.right = "auto";
-  chat.style.bottom = "auto";
-});
-// ======================================================================
-// 4) FECHAR CHAT (remove foco ANTES de esconder)
-// ======================================================================
 if (closeBtn && chat) {
-  closeBtn.addEventListener("click", () => {
-    if (input) {
-      input.blur();
-    }
+  closeBtn.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    input?.blur();
 
     chat.classList.remove("ia-chat--open");
 
+    // pequena espera para CSS animar sem "tranco"
     setTimeout(() => {
       chat.style.pointerEvents = "none";
       chat.setAttribute("aria-hidden", "true");
     }, 120);
   });
 }
-// ⚠️ SEM "fechar ao clicar fora" para não dar conflito com o arraste.
+
 
 // ======================================================================
-// 5) addMessage() — Cria mensagens na interface do chat
+// 7) HELPERS DE TEXTO (para evitar quebra por caracteres especiais)
+// ----------------------------------------------------------------------
+// OBS: chatAviso usa HTML (bold/br), então não escapamos msg do sistema.
+// Para texto do usuário, escapamos para não “injetar” HTML sem querer.
+// ======================================================================
+function escapeHtml(texto = "") {
+  return String(texto)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+
+// ======================================================================
+// 8) MENSAGENS — addMessage()
+// ----------------------------------------------------------------------
+// ✔ Mantém sua estrutura visual
+// ✔ Usuário é escapado para segurança/estabilidade
+// ✔ IA pode usar HTML simples se você quiser (mantemos como veio)
 // ======================================================================
 function addMessage(texto, sender = "ia") {
   if (!messages) return;
 
   const div = document.createElement("div");
-  div.className =
-    sender === "user" ? "ia-msg ia-msg--user" : "ia-msg ia-msg--ia";
+  div.className = sender === "user" ? "ia-msg ia-msg--user" : "ia-msg ia-msg--ia";
+
+  const conteudo = sender === "user" ? escapeHtml(texto) : texto;
 
   div.innerHTML = `
-    <div class="ia-msg__avatar ${
-      sender === "user" ? "ia-msg__avatar--user" : "ia-msg__avatar--ia"
-    }">
-      ${sender === "user" ? "R" : "AI"}
-    </div>
-
-    <div class="ia-msg__bubble">${texto}</div>
+    <div class="ia-msg__avatar">${sender === "user" ? "R" : "AI"}</div>
+    <div class="ia-msg__bubble">${conteudo}</div>
   `;
 
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
 
+
 // ======================================================================
-// 6) ENVIO DA MENSAGEM (submit do formulário)
+// 9) CHAT AVISO (sistema)
+// ----------------------------------------------------------------------
+// ✔ Continua disponível globalmente: window.chatAviso
+// ======================================================================
+export function chatAviso(msg) {
+  addMessage(msg, "ia");
+}
+window.chatAviso = chatAviso;
+
+
+/// ======================================================================
+// 9.1) MENSAGEM SOC INTERATIVA — Sugestão de Sala de Crise no chat
+// ----------------------------------------------------------------------
+// ✔ Renderiza um bloco SOC com 2 botões:
+//    - 🆘 Abrir Sala (ativa SOC de fato)
+//    - 🔎 Continuar Análise (mantém em análise sem “formalizar sala”)
+// ✔ Blindado contra:
+//    - submit acidental (se estiver dentro de form)
+//    - fechamento do chat / propagação de clique
+// ======================================================================
+function addMensagemSocAcao() {
+  // Segurança: se não tem área de mensagens, não faz nada
+  if (!messages) return;
+
+  // --------------------------------------------------------------------
+  // 1) Cria o bloco visual (não muda layout existente do chat)
+  // --------------------------------------------------------------------
+  const bloco = document.createElement("div");
+  bloco.className = "ia-msg ia-msg--ia ia-msg--soc";
+
+  // ⚠️ IMPORTANTE:
+  // - type="button" evita virar submit em qualquer cenário
+  // - data-* permite localizar sem depender de ordem
+  bloco.innerHTML = `
+    <div class="ia-msg__avatar">AI</div>
+    <div class="ia-msg__bubble ia-msg__bubble--soc">
+      <strong>🆘 Situação crítica detectada</strong><br/>
+      Deseja abrir uma Sala de Crise?
+      <div class="ia-msg__actions">
+        <button type="button" class="ia-btn ia-btn--danger" data-soc-abrir>
+          🆘 Abrir Sala
+        </button>
+        <button type="button" class="ia-btn ia-btn--ghost" data-soc-continuar>
+          🔎 Continuar Análise
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Coloca no chat e garante scroll
+  messages.appendChild(bloco);
+  messages.scrollTop = messages.scrollHeight;
+
+  // --------------------------------------------------------------------
+  // 2) Captura dos botões (sem depender de ordem)
+  // --------------------------------------------------------------------
+  const btnAbrir = bloco.querySelector("[data-soc-abrir]");
+  const btnContinuar = bloco.querySelector("[data-soc-continuar]");
+
+  // --------------------------------------------------------------------
+  // 3) Handler blindado — Abrir Sala
+  // --------------------------------------------------------------------
+  if (btnAbrir) {
+    btnAbrir.addEventListener("click", (e) => {
+      // impede submit / propagação / efeitos colaterais no chat
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Auditoria técnica (se existir)
+      try {
+        window.socLog?.({
+          type: "soc_ui_click",
+          acao: "abrir_sala",
+          origem: "chat-ui:addMensagemSocAcao",
+          ts: Date.now(),
+        });
+      } catch (_) {}
+
+      // Ação principal
+      try {
+        ativarModoSoc("Abertura via sugestão da IA");
+      } catch (_) {
+        // Se algo falhar, avisa sem quebrar o chat
+        chatAviso("⚠️ Não foi possível ativar a Sala de Crise (verifique o console).");
+      }
+    });
+  }
+
+  // --------------------------------------------------------------------
+  // 4) Handler blindado — Continuar análise
+  // --------------------------------------------------------------------
+  if (btnContinuar) {
+    btnContinuar.addEventListener("click", (e) => {
+      // impede submit / propagação / efeitos colaterais no chat
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Auditoria técnica (se existir)
+      try {
+        window.socLog?.({
+          type: "soc_ui_click",
+          acao: "continuar_analise",
+          origem: "chat-ui:addMensagemSocAcao",
+          ts: Date.now(),
+        });
+      } catch (_) {}
+
+      // Ação principal
+      try {
+        continuarAnaliseSoc();
+      } catch (_) {
+        chatAviso("⚠️ Não foi possível continuar a análise (verifique o console).");
+      }
+    });
+  }
+}
+
+// Expor global para debug/console (como você já faz)
+window.addMensagemSocAcao = addMensagemSocAcao;
+
+// ======================================================================
+// 10.) 🔔 Gatilho padrão — sugerir Sala de Crise via evento
+// ----------------------------------------------------------------------
+// Qualquer módulo pode disparar:
+// window.dispatchEvent(new CustomEvent("soc:sugerir_crise", { detail: {...} }))
+// ======================================================================
+window.addEventListener("soc:sugerir_crise", (ev) => {
+  try {
+    const d = ev?.detail || {};
+
+    // 1) Mostra a UI de decisão (botões) dentro do chat
+    addMensagemSocAcao();
+
+    // 2) Auditoria técnica (para Allure/Playwright)
+    window.socLog?.({
+      type: "soc_sugestao_crise",
+      origem: d.origem || "sistema",
+      motivo: d.motivo || "Sem motivo informado",
+      cenarioId: d.cenarioId || "geral",
+    });
+
+    // 3) Registro narrativo (para entrar no relatório/PDF)
+    window.dispatchEvent(
+      new CustomEvent("logs:add", {
+        detail: {
+          id: d.cenarioId || "geral",
+          log: {
+            tipo: "soc_sugestao",
+            timestamp: Date.now(),
+            tecnico: "Sistema · SOC",
+            acao: "🆘 Sugestão: abrir Sala de Crise",
+            justificativa: d.motivo || "Sinal crítico detectado.",
+          },
+        },
+      })
+    );
+  } catch (_) {
+    // silencioso para não quebrar UX
+  }
+});
+// ======================================================================
+// 11) ENVIO DE MENSAGEM (FORM SUBMIT) — ESTE ERA O PONTO QUEBRADO
+// ----------------------------------------------------------------------
+// PROBLEMA anterior:
+// - não existia listener de submit -> o browser recarregava a página
+// - ao recarregar, o chat “fecha” e nada aparece
+// SOLUÇÃO:
+// - e.preventDefault() + fluxo completo (user -> typing -> IA -> resposta)
+// - mantém chat aberto e foco no input
 // ======================================================================
 if (form && input) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    e.stopPropagation();
 
     const texto = input.value.trim();
     if (!texto) return;
@@ -158,304 +439,67 @@ if (form && input) {
     const textoLower = texto.toLowerCase();
 
     // ---------------------------------------------------------------
-    // 6.1 — Comando especial: /sala https://teams...
-    //       • Não chama a IA
-    //       • Cria uma mensagem especial de sala de crise
+    // 11.1) Comando rápido pra testar SOC sem depender do analyzer:
+    //       Digite: /soc
     // ---------------------------------------------------------------
-    if (textoLower.startsWith("/sala ")) {
-      const url = texto.substring(6).trim();
-
-      if (!url) {
-        chatAviso("Para enviar o convite, use: /sala https://teams... 💡");
-        input.value = "";
-        return;
-      }
-
-      addMensagemSalaCrise({
-        url,
-        titulo: "Sala de crise informada pelo técnico.",
-        origem: "Chat técnico",
-      });
-
-      window.dispatchEvent(
-        new CustomEvent("crise:link", {
-          detail: {
-            url,
-            titulo: "Sala de crise (via comando /sala)",
-            origem: "Chat técnico",
-          },
-        })
-      );
-
+    if (textoLower === "/soc") {
       input.value = "";
+      addMensagemSocAcao();
+      setTimeout(() => input?.focus(), 0);
       return;
     }
 
     // ---------------------------------------------------------------
-    // 6.2 — Comando especial: /crise SISTEMA/AMBIENTE
-    //       • Gera torpedo ultra corporativo
-    //       • Mostra prévia no chat
-    //       • (próximo passo: integrar com Whats/Email/PDF)
+    // 11.2) Fluxo normal: usuário -> IA
     // ---------------------------------------------------------------
-    if (textoLower.startsWith("/crise")) {
-      const resto = texto.substring(6).trim(); // depois de "/crise"
-      const alvo = resto || "Aplicação em Produção";
-
-      let msgTorpedo;
-
-      if (window.TorpedosUltra && window.TorpedosUltra.montarTorpedoCrise) {
-        msgTorpedo = window.TorpedosUltra.montarTorpedoCrise({
-          sistema: alvo,
-          ambiente: "Produção",
-          prioridade: "P1",
-          ticket: "INC-000000",
-          sla: "Resposta em 15 min • Normalização em 2h",
-          impacto: "Aplicação apresenta falha para os usuários.",
-          status: "Início",
-          repercussao: "Impacto elevado para o negócio.",
-          checkpoint: window.TorpedosUltra.formatarDataHoraCurta(),
-          inicio: window.TorpedosUltra.formatarDataHoraCurta(),
-          linkReuniao: "",
-          analista: "Raquel Souza",
-          gestor: "Gestor de TI",
-          times: "NOC, Aplicações, Infraestrutura",
-        });
-      } else {
-        msgTorpedo =
-          `Incidente Crítico: ${alvo}\n` +
-          `Status: Início\n` +
-          `Aplicação apresenta falha para os usuários.\n` +
-          `Início: ${new Date().toLocaleString("pt-BR")}`;
-      }
-
-      addMensagemTorpedoCrise(msgTorpedo);
-
-      // (na próxima etapa a gente liga isso com copiar/Whats/Email)
-      chatAviso("📲 Torpedo de crise gerado. Use-o para WhatsApp, SMS ou e-mail.");
-
-      input.value = "";
-      return;
-    }
-
-    // ---------------------------------------------------------------
-    // 6.3 — Fluxo normal do chat (mensagem comum → IA responde)
-    // ---------------------------------------------------------------
-
-    // mostra mensagem do usuário
     addMessage(texto, "user");
     input.value = "";
+
+    // evento humano (se sua IA investigativa usar)
+    window.dispatchEvent(
+      new CustomEvent("ia:resposta_humana", {
+        detail: { texto, timestamp: Date.now() },
+      })
+    );
 
     // animação "digitando..."
     const typing = document.createElement("div");
     typing.className = "ia-msg ia-msg--typing";
     typing.innerHTML = `
-      <div class="ia-msg__avatar ia-msg__avatar--ia">AI</div>
+      <div class="ia-msg__avatar">AI</div>
       <div class="ia-msg__bubble">
         <div class="ia-dot"></div>
         <div class="ia-dot"></div>
         <div class="ia-dot"></div>
       </div>
     `;
-    messages.appendChild(typing);
-    messages.scrollTop = messages.scrollHeight;
+    messages?.appendChild(typing);
+    messages && (messages.scrollTop = messages.scrollHeight);
 
-    // chama IA híbrida
-    const resposta = await IA(texto);
+    try {
+      const resposta = await IA(texto);
 
-    // troca "digitando" pela resposta real
-    typing.remove();
-    addMessage(resposta);
+      typing.remove();
+      addMessage(resposta, "ia");
+    } catch (err) {
+      typing.remove();
+      addMessage("⚠️ Não consegui responder agora. Tente novamente.", "ia");
 
-    // Se resposta parecer diagnóstico, sugere PDF
-    if (
-      resposta.includes("Severidade:") ||
-      resposta.includes("Impacto:") ||
-      resposta.includes("Ação recomendada:")
-    ) {
-      chatAviso("📄 Deseja gerar PDF do incidente? Digite: gerar pdf");
+      // auditoria mínima sem quebrar UX
+      window.socLog?.({
+        type: "chat_ia_erro",
+        erro: String(err?.message || err),
+      });
+    } finally {
+      // mantém chat aberto e foco depois de enviar (evita "fecha" visual)
+      setTimeout(() => input?.focus(), 0);
     }
   });
 }
-// ======================================================================
-// 7) chatAviso() — Mensagens internas do sistema
-// ======================================================================
-export function chatAviso(msg) {
-  const area = document.getElementById("iaMessages");
-  if (!area) return;
-
-  const bloco = document.createElement("div");
-  bloco.classList.add("ia-msg", "ia-msg--ia");
-
-  bloco.innerHTML = `
-    <div class="ia-msg__avatar ia-msg__avatar--ia">AI</div>
-    <div class="ia-msg__bubble">
-      <p class="ia-msg__text">${msg}</p>
-    </div>
-  `;
-
-  area.appendChild(bloco);
-  area.scrollTop = area.scrollHeight;
-}
-
-// Torna a função acessível globalmente
-window.chatAviso = chatAviso;
 
 
 // ======================================================================
-// 7.1) Prévia de Torpedo de Crise (usado no /crise)
-// ======================================================================
-function addMensagemTorpedoCrise(texto) {
-  const area = document.getElementById("iaMessages");
-  if (!area) return;
-
-  const bloco = document.createElement("div");
-  bloco.className = "ia-msg ia-msg--ia";
-
-  bloco.innerHTML = `
-    <div class="ia-msg__avatar ia-msg__avatar--ia">AI</div>
-    <div class="ia-msg__bubble">
-      <p class="ia-msg__text">
-        <strong>🛰️ Torpedo de Crise gerado:</strong><br/><br/>
-        <pre class="ia-msg__torpedo-text">${texto.replace(/</g, "&lt;")}</pre>
-      </p>
-    </div>
-  `;
-
-  area.appendChild(bloco);
-  area.scrollTop = area.scrollHeight;
-}
-
-
-// ======================================================================
-// 7.2) Mensagem especial: Convite de sala de crise
-// ======================================================================
-function addMensagemSalaCrise({ url, titulo, origem }) {
-  if (!url) return;
-
-  const area = document.getElementById("iaMessages");
-  if (!area) return;
-
-  const wrapper = document.createElement("div");
-  wrapper.className = "ia-msg ia-msg--ia ia-msg--crise";
-
-  const agora = new Date();
-  const horario = agora.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-  wrapper.innerHTML = `
-    <div class="ia-msg__avatar ia-msg__avatar--ia">AI</div>
-    <div class="ia-msg__bubble ia-msg__bubble--crise">
-      <p class="ia-msg__text ia-msg__text--crise-title">🚨 Convite para sala de crise</p>
-      <p class="ia-msg__text ia-msg__text--crise-sub">${titulo || "Reunião de crise iniciada."}</p>
-      <p class="ia-msg__text ia-msg__text--crise-meta">
-        🕒 ${horario}${origem ? ` • 📡 ${origem}` : ""}
-      </p>
-      <p class="ia-msg__text ia-msg__text--crise-link">
-        <a href="${url}" class="ia-crise-link" target="_blank" rel="noopener noreferrer">
-          🔗 Entrar na sala (Teams)
-        </a>
-      </p>
-    </div>
-  `;
-
-  area.appendChild(wrapper);
-  area.scrollTop = area.scrollHeight;
-}
-
-// Evento global de sala de crise
-window.addEventListener("crise:link", (ev) => {
-  const detail = ev.detail || {};
-
-  addMensagemSalaCrise({
-    url: detail.url,
-    titulo: detail.titulo,
-    origem: detail.origem || "Monitoramento",
-  });
-});
-
-
-// ======================================================================
-// 7.3) TORPEDOS CORPORATIVOS — Início / Andamento / Validação / Normalizado
-// ======================================================================
-
-// Botão para envio via WhatsApp
-function addBotaoWhats(texto) {
-  const area = document.getElementById("iaMessages");
-  if (!area) return;
-
-  const div = document.createElement("div");
-  div.className = "ia-msg ia-msg--ia";
-
-  div.innerHTML = `
-    <button class="btn-whats-torpedo"
-      onclick="window.open('https://wa.me/?text=${encodeURIComponent(texto)}', '_blank')">
-      📤 Enviar torpedo via WhatsApp
-    </button>
-  `;
-
-  area.appendChild(div);
-  area.scrollTop = area.scrollHeight;
-}
-
-// Helper: adiciona torpedo + botão whats
-function adicionarTorpedoNoChat(texto) {
-  addMessage(texto, "ia");
-  addBotaoWhats(texto);
-}
-
-
-// ------- Torpedo de INÍCIO -------
-export function gerarTorpedoInicio(dados = {}) {
-  const agora = new Date();
-  const horario = agora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-
-  const {
-    incidente = "E-Commerce Playwright",
-    ambiente = "Produção",
-    prioridade = "P1",
-    ticket = "NC-000000",
-    descricao = "Falha na aplicação.",
-    analista = "Raquel Souza",
-    gestor = "Gestor de TI"
-  } = dados;
-
-  const texto = `
-Governança de TI informa:
-Incidente Crítico: ${incidente}
-Ambiente impactado: ${ambiente}
-Prioridade: ${prioridade}
-Ticket: ${ticket}
-Status: Início
-Repercussão: Impacto elevado para os negócios
-Aplicação: ${descricao}
-Início: ${horario}
-Times envolvidos: NOC, Aplicações, Infraestrutura
-Analista responsável: ${analista}
-Gestor envolvido: ${gestor}
-`.trim();
-
-  adicionarTorpedoNoChat(texto);
-}
-
-// ------- Torpedo de ANDAMENTO -------
-export function gerarTorpedoEmAndamento(dados = {}) { /* ... permanece igual ... */ }
-
-// ------- Torpedo de VALIDAÇÃO -------
-export function gerarTorpedoValidacao(dados = {}) { /* ... permanece igual ... */ }
-
-// ------- Torpedo de NORMALIZADO -------
-export function gerarTorpedoNormalizado(dados = {}) { /* ... permanece igual ... */ }
-
-
-// Expor no window
-window.gerarTorpedoInicio = gerarTorpedoInicio;
-window.gerarTorpedoEmAndamento = gerarTorpedoEmAndamento;
-window.gerarTorpedoValidacao = gerarTorpedoValidacao;
-window.gerarTorpedoNormalizado = gerarTorpedoNormalizado;
-// ======================================================================
-// 8. CHAT DRAGGABLE — Chat arrastável + launcher acompanha
+// 12) CHAT DRAGGABLE — Chat arrastável + launcher acompanha (seu original)
 // ======================================================================
 window.addEventListener("DOMContentLoaded", () => {
   const chatEl = document.getElementById("iaChat");
@@ -463,7 +507,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
   if (!chatEl || !launcherEl) return;
 
-  // se tiver header, usamos como “alça”; senão, o próprio chat
   const handle = document.querySelector(".ia-chat__header") || chatEl;
 
   let isDragging = false;
@@ -473,7 +516,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
   handle.style.cursor = "grab";
 
-  // limita o elemento na viewport
   function limitarNaTela(element, x, y) {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
@@ -496,11 +538,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
     handle.style.cursor = viaTouch ? "default" : "grabbing";
 
-    // tira transições pra não “pular”
     chatEl.style.transition = "none";
     launcherEl.style.transition = "none";
 
-    // remove amarras de right/bottom (CSS) para usar left/top
     chatEl.style.right = "auto";
     chatEl.style.bottom = "auto";
     launcherEl.style.right = "auto";
@@ -510,7 +550,6 @@ window.addEventListener("DOMContentLoaded", () => {
     offsetX = px - rect.left;
     offsetY = py - rect.top;
 
-    // evita scroll enquanto arrasta
     chatEl.style.touchAction = "none";
   }
 
@@ -519,14 +558,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const pos = limitarNaTela(chatEl, px - offsetX, py - offsetY);
 
-    // move chat
     chatEl.style.left = `${pos.x}px`;
     chatEl.style.top = `${pos.y}px`;
 
-    // pega posição real do chat após mover
     const rect = chatEl.getBoundingClientRect();
 
-    // move launcher logo abaixo do chat (12px)
     launcherEl.style.left = `${rect.left}px`;
     launcherEl.style.top = `${rect.bottom + 12}px`;
 
@@ -535,38 +571,31 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function finalizarArraste() {
-  if (!isDragging) return;
-  isDragging = false;
-  isTouch = false;
+    if (!isDragging) return;
 
-  handle.style.cursor = "grab";
+    isDragging = false;
+    isTouch = false;
 
-  // devolve transições suaves
-  chatEl.style.transition = "";
-  launcherEl.style.transition = "";
+    handle.style.cursor = "grab";
 
-  chatEl.style.touchAction = "";
+    chatEl.style.transition = "";
+    launcherEl.style.transition = "";
 
-  // ============================================================== 
-  // 8.1) 📌 SOC LOG — Fim de arraste do CHAT
-  //      (auditoria técnica → Playwright / Allure)
-  // ============================================================== 
-  try {
-    if (window.socLog) {
-      const r = chatEl.getBoundingClientRect();
+    chatEl.style.touchAction = "";
 
-      // Evento final: terminou o arraste
-      window.socLog({
-        type: "chat_drag_end", // Evento de término do arraste
-        componente: "iaChat",
-        x: Math.round(r.left),
-        y: Math.round(r.top),
-      });
-    }
-  } catch (_) {
-    // falha silenciosa para não quebrar UX
+    try {
+      if (window.socLog) {
+        const r = chatEl.getBoundingClientRect();
+        window.socLog({
+          type: "chat_drag_end",
+          componente: "iaChat",
+          x: Math.round(r.left),
+          y: Math.round(r.top),
+        });
+      }
+    } catch (_) {}
   }
-}
+
   // MOUSE
   handle.addEventListener("mousedown", (event) => {
     if (event.button !== 0) return;
@@ -595,7 +624,7 @@ window.addEventListener("DOMContentLoaded", () => {
       if (!isDragging || !isTouch) return;
       const touch = event.touches[0];
       mover(touch.clientX, touch.clientY);
-      event.preventDefault(); // impede scroll
+      event.preventDefault();
     },
     { passive: false }
   );
@@ -605,8 +634,10 @@ window.addEventListener("DOMContentLoaded", () => {
     finalizarArraste();
   });
 });
+
+
 // ======================================================================
-// 9) BOTÃO IA DRAGGABLE — se move sozinho e puxa o chat se estiver aberto
+// 13) BOTÃO IA DRAGGABLE — se move sozinho e puxa o chat se estiver aberto
 // ======================================================================
 (function () {
   const launcher = document.getElementById("iaLauncher");
@@ -617,7 +648,6 @@ window.addEventListener("DOMContentLoaded", () => {
   let offsetX = 0;
   let offsetY = 0;
 
-  // cursor igual ao temporizador
   launcher.style.cursor = "grab";
 
   launcher.addEventListener("mousedown", (ev) => {
@@ -628,7 +658,6 @@ window.addEventListener("DOMContentLoaded", () => {
     offsetX = ev.clientX - rect.left;
     offsetY = ev.clientY - rect.top;
 
-    // deixar o botão livre para mover
     launcher.style.right = "auto";
     launcher.style.bottom = "auto";
   });
@@ -642,9 +671,8 @@ window.addEventListener("DOMContentLoaded", () => {
     launcher.style.left = `${x}px`;
     launcher.style.top = `${y}px`;
 
-    // se o chat estiver aberto, acompanha
     if (chat && chat.classList.contains("ia-chat--open")) {
-      const h = launcher.offsetHeight + 12; // distância entre eles
+      const h = launcher.offsetHeight + 12;
       chat.style.left = `${x}px`;
       chat.style.top = `${y + h}px`;
       chat.style.right = "auto";
@@ -657,7 +685,4 @@ window.addEventListener("DOMContentLoaded", () => {
     launcher.style.cursor = "grab";
   });
 })();
-
-// ======================================================================
-// FIM DO ARQUIVO — Chat flutuante, arrastável, botão acompanha
 // ======================================================================

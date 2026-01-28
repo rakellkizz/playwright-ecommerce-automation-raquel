@@ -2,6 +2,18 @@
 // config.js — Configurações globais da IA
 // ======================================================================
 
+// ============================================================
+// config.js — flags globais do site (Debug via query/hash)
+// ============================================================
+
+export const DEBUG =
+  new URLSearchParams(location.search).get("debug") === "1" ||
+  location.hash.toLowerCase().includes("debug");
+
+// Facilita CSS/JS (sem mexer em layout/HTML)
+if (DEBUG) {
+  document.documentElement.setAttribute("data-debug", "1");
+}
 // ======================================================================
 // 🔑 API KEY — deixe vazia para usar APENAS IA LOCAL
 // ======================================================================
