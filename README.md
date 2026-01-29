@@ -52,6 +52,9 @@ https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/playwright-r
 - Debug (SOC Ops): https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/?debug=1
 
 ---
+### 🛡️ SOC Ops – Modo Debug
+👉 https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/debug.html
+
 
 # 🧪 Testes Implementados
 
