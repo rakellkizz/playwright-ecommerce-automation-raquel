@@ -5,37 +5,37 @@
 // ✔ NÃO altera lógica existente
 // ✔ Apenas dispara eventos reais
 // ✔ Só aparece se ?debug=1
-// ✔ BLINDADO contra DOM ainda não carregado
+//
+// Blindagem extra:
+// ✔ Espera DOM pronto (evita document.body null no GitHub Pages)
 // ======================================================================
 
 (function socDebugPanel() {
-  // --------------------------------------------------------------------
-  // 🔒 GUARD GLOBAL — impede inicialização duplicada
-  // --------------------------------------------------------------------
+  // 🔒 Guard
   if (window.__SOC_DEBUG_PANEL__) return;
   window.__SOC_DEBUG_PANEL__ = true;
 
   // --------------------------------------------------------------------
-  // 🔎 ATIVA SOMENTE EM MODO DEBUG (?debug=1)
+  // 🚦 Ativação por URL (?debug=1)
   // --------------------------------------------------------------------
   const params = new URLSearchParams(window.location.search);
   if (params.get("debug") !== "1") return;
 
   // --------------------------------------------------------------------
-  // 📋 CENÁRIOS SUPORTADOS
+  // 🧠 Montagem segura (garante body disponível)
   // --------------------------------------------------------------------
-  const cenarios = ["login", "carrinho", "checkout", "busca", "smoke", "perfil"];
+  function mount() {
+    // Se ainda não existe body, tenta novamente no próximo frame (fallback)
+    if (!document.body) {
+      requestAnimationFrame(mount);
+      return;
+    }
 
-  // --------------------------------------------------------------------
-  // 🧱 FUNÇÃO DE CONSTRUÇÃO DO PAINEL
-  // (isolada para permitir fallback via DOMContentLoaded)
-  // --------------------------------------------------------------------
-  function montarPainel() {
-    // Garante body disponível
-    if (!document.body) return;
+    const cenarios = ["login", "carrinho", "checkout", "busca", "smoke", "perfil"];
 
-    // Container principal
+    // Container
     const panel = document.createElement("div");
+    panel.id = "socDebugPanel";
     panel.style.cssText = `
       position: fixed;
       bottom: 20px;
@@ -56,9 +56,6 @@
       <hr/>
     `;
 
-    // --------------------------------------------------------------
-    // Botões por cenário
-    // --------------------------------------------------------------
     cenarios.forEach((c) => {
       const bloco = document.createElement("div");
       bloco.style.marginBottom = "8px";
@@ -92,25 +89,12 @@
       panel.appendChild(bloco);
     });
 
-    // --------------------------------------------------------------
-    // 🔗 Anexa com segurança ao body
-    // --------------------------------------------------------------
     document.body.appendChild(panel);
-
     console.info("🛡️ SOC Ops Debug carregado com sucesso");
   }
 
   // --------------------------------------------------------------------
-  // 🕒 GARANTIA DE DOM — monta agora ou após DOMContentLoaded
-  // --------------------------------------------------------------------
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", montarPainel);
-  } else {
-    montarPainel();
-  }
-
-  // --------------------------------------------------------------------
-  // 📡 DISPATCH DE EVENTOS SOC
+  // 🔌 Disparador de eventos
   // --------------------------------------------------------------------
   function dispatch(ev, cenario) {
     window.dispatchEvent(
@@ -118,6 +102,15 @@
         detail: cenario ? { cenario } : {},
       })
     );
+  }
+
+  // --------------------------------------------------------------------
+  // ✅ Inicialização (DOM Ready)
+  // --------------------------------------------------------------------
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", mount, { once: true });
+  } else {
+    mount();
   }
 })();
 // ======================================================================
