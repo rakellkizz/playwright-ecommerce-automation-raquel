@@ -1,7 +1,27 @@
   // ======================================================================
-  // Import do módulo de análise técnica
-  // ======================================================================
-  import { analisarEventos } from "../ai-monitoring/analyzer.js";
+// logs-controller.js — Compatibilidade (SEM módulos) para analyzer.js
+// ----------------------------------------------------------------------
+// Resolve:
+// • 404 no GitHub Pages (quando analyzer.js não existe / não sobe)
+// • "Unexpected token export" (quando o site não roda como module)
+// • Mantém o sistema funcionando mesmo sem o analyzer
+//
+// NÃO altera layout
+// NÃO altera fluxos principais
+// Apenas cria um fallback seguro
+// ======================================================================
+
+const analisarEventos =
+  (window && window.analisarEventos) ||
+  function analisarEventosFallback() {
+    return {
+      timestamp: Date.now(),
+      totalEventos: 0,
+      categorias: {},
+      severidadeGeral: "normal",
+      _fallback: true,
+    };
+  };
 
   // ======================================================================
   // 1. IMPORTAÇÕES
