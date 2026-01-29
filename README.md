@@ -46,6 +46,11 @@ https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/
 📊 **Playwright HTML Report:**  
 https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/playwright-report/
 
+## 🔧 Modo Debug (SOC Ops)
+
+- Produção (normal): https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/
+- Debug (SOC Ops): https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/?debug=1
+
 ---
 
 # 🧪 Testes Implementados
