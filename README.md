@@ -46,6 +46,13 @@ https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/
 📊 **Playwright HTML Report:**  
 https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/playwright-report/
 
+## 🌐 Demo Online
+
+🔹 Dashboard principal  
+https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/
+
+🔹 SOC Ops Debug  
+https://rakellkizz.github.io/playwright-ecommerce-automation-raquel/debug.html
 ---
 
 # 🧪 Testes Implementados
